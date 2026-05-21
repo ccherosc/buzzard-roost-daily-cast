@@ -98,8 +98,8 @@ export function buildResult(spotId, lureId, castStyleId) {
     flavor:   fish.flavor,
     coupon: {
       code,
-      label:    COUPON_RULES[rarity].label,
-      discount: COUPON_RULES[rarity].discount,
+      label:    (COUPON_RULES[rarity] ?? COUPON_RULES.common).label,
+      discount: (COUPON_RULES[rarity] ?? COUPON_RULES.common).discount,
     },
     spot:      spotId,
     lure:      lureId,
