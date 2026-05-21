@@ -22,7 +22,7 @@ export const CAST_STYLES = [
   { id: 'safeCast',      name: 'Safe Cast',      emoji: '🛡', description: 'Controlled, reliable placement.', riskLevel: 'safe',      riskLabel: 'Safe' },
   { id: 'precisionCast', name: 'Precision Cast', emoji: '🎯', description: 'Drop it right in the strike zone.', riskLevel: 'precision', riskLabel: 'Precision' },
   { id: 'powerCast',     name: 'Power Cast',     emoji: '💪', description: 'Distance plus depth.',             riskLevel: 'power',     riskLabel: 'Power' },
-  { id: 'riskyCast',     name: 'Risky Cast',     emoji: '⚡', description: 'Legendary risk. Legendary reward.',  riskLevel: 'risky',     riskLabel: 'High Risk' },
+  { id: 'riskyCast',     name: 'Risky Cast',     emoji: '⚡', description: 'Throw caution to the wind. Anything can happen.',  riskLevel: 'risky',     riskLabel: 'High Risk' },
 ];
 
 export const MOCK_LEADERBOARD = [

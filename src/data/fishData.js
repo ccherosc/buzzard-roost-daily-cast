@@ -14,7 +14,7 @@ export const FISH_DATABASE = {
     { id: 'largemouth_bass',  name: 'Largemouth Bass',  emoji: '🐠', rarity: 'uncommon', weightMin: 1.5, weightMax: 8.0,  flavor: 'The bread and butter of bass fishing.' },
     { id: 'smallmouth_bass',  name: 'Smallmouth Bass',  emoji: '🐟', rarity: 'uncommon', weightMin: 1.0, weightMax: 6.0,  flavor: 'Pound for pound the hardest fighter in freshwater.' },
     { id: 'walleye',          name: 'Walleye',           emoji: '🐡', rarity: 'uncommon', weightMin: 1.5, weightMax: 10.0, flavor: 'Ghost of the deep. Marble-eyed predator.' },
-    { id: 'channel_catfish',  name: 'Channel Catfish',   emoji: '🦑', rarity: 'uncommon', weightMin: 2.0, weightMax: 12.0, flavor: 'Bottom feeder. No shame in that game.' },
+    { id: 'channel_catfish',  name: 'Channel Catfish',   emoji: '🐟', rarity: 'uncommon', weightMin: 2.0, weightMax: 12.0, flavor: 'Bottom feeder. No shame in that game.' },
     { id: 'carp',             name: 'Carp',              emoji: '🐚', rarity: 'uncommon', weightMin: 3.0, weightMax: 15.0, flavor: 'Underrated. Fights like a freight train.' },
   ],
   rare: [
@@ -27,7 +27,7 @@ export const FISH_DATABASE = {
     { id: 'trophy_bass',    name: 'Trophy Bass',    emoji: '🏆', rarity: 'epic', weightMin: 20.0, weightMax: 45.0, flavor: 'Wall-worthy. You\'ll be telling this story for years.' },
     { id: 'giant_catfish',  name: 'Giant Catfish',  emoji: '🐊', rarity: 'epic', weightMin: 25.0, weightMax: 60.0, flavor: 'Ancient bottom dweller. Older than your grandpa.' },
     { id: 'tiger_muskie',   name: 'Tiger Muskie',   emoji: '🐯', rarity: 'epic', weightMin: 18.0, weightMax: 50.0, flavor: 'Hybrid predator. Rare and ravenous.' },
-    { id: 'alligator_gar',  name: 'Alligator Gar',  emoji: '🐊', rarity: 'epic', weightMin: 30.0, weightMax: 60.0, flavor: 'Living fossil. Over 100 million years in the making.' },
+    { id: 'alligator_gar',  name: 'Alligator Gar',  emoji: '🦎', rarity: 'epic', weightMin: 30.0, weightMax: 60.0, flavor: 'Living fossil. Over 100 million years in the making.' },
   ],
   legendary: [
     { id: 'golden_trout',     name: 'Golden Trout',        emoji: '🌟', rarity: 'legendary', weightMin: 50.0,  weightMax: 120.0, flavor: 'A fish of pure legend. Anglers spend lifetimes chasing this ghost.' },
@@ -37,8 +37,12 @@ export const FISH_DATABASE = {
   ],
 };
 
-// Flat array of all fish, useful for validation
-export const ALL_FISH = Object.values(FISH_DATABASE).flat();
+// Flat array — rarity is derived from the array key to prevent drift
+export const ALL_FISH = Object.freeze(
+  Object.entries(FISH_DATABASE).flatMap(([rarity, fish]) =>
+    fish.map(f => ({ ...f, rarity }))
+  )
+);
 
 // Look up a fish by id
 export function getFishById(id) {
