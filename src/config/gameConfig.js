@@ -65,11 +65,12 @@ export const COUPON_RULES = {
 
 // ── Scarcity copy shown on Epic/Legendary cards ───────────
 export const SCARCITY_COPY = {
-  epic:      'Only 10% of anglers ever land a catch like this.',
+  epic:      'Only 7% of anglers ever land a catch like this.',
   legendary: 'Only 3% of anglers ever hook a legend like this.',
 };
 
 // ── Streak badge thresholds ───────────────────────────────
+// NOTE: Must remain sorted descending by `min`. streakEmoji() relies on this order.
 export const STREAK_TIERS = [
   { min: 100, emoji: '👑', label: 'Legend' },
   { min:  30, emoji: '💎', label: 'Dedicated Angler' },

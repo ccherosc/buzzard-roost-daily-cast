@@ -1,5 +1,6 @@
 /* src/App.css */
 .app-shell {
+  min-height: 100vh;
   min-height: 100dvh;
   background: var(--bg-dark);
   background-image:
@@ -18,6 +19,7 @@
 .app-card {
   width: 100%;
   max-width: 480px;
+  min-height: 100vh;
   min-height: 100dvh;
   background: var(--bg-card);
   display: flex;
