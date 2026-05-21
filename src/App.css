@@ -1,0 +1,46 @@
+/* src/App.css */
+.app-shell {
+  min-height: 100dvh;
+  background: var(--bg-dark);
+  background-image:
+    radial-gradient(ellipse at 20% 50%, rgba(10,40,80,0.3) 0%, transparent 70%),
+    radial-gradient(ellipse at 80% 20%, rgba(10,20,50,0.4) 0%, transparent 60%);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 0;
+}
+
+@media (min-width: 540px) {
+  .app-shell { padding: 24px 16px 48px; align-items: center; }
+}
+
+.app-card {
+  width: 100%;
+  max-width: 480px;
+  min-height: 100dvh;
+  background: var(--bg-card);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+@media (min-width: 540px) {
+  .app-card {
+    min-height: auto;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border-card);
+    box-shadow: 0 24px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(42,90,140,0.2);
+  }
+}
+
+.app-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.phase-enter { animation: fadeIn 0.3s ease forwards; }
