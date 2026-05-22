@@ -58,10 +58,9 @@ export default function CastAnimation({ onComplete }) {
 
       {/* Sky */}
       <div className="ca__sky">
-        <div className="ca__moon" aria-hidden="true" />
-        {Array.from({ length: 8 }).map((_, i) => (
-          <div key={i} className="ca__star" style={{ '--i': i }} aria-hidden="true" />
-        ))}
+        <div className="ca__sun" aria-hidden="true" />
+        <div className="ca__cloud ca__cloud--1" aria-hidden="true" />
+        <div className="ca__cloud ca__cloud--2" aria-hidden="true" />
         <div className="ca__tree ca__tree--l" aria-hidden="true" />
         <div className="ca__tree ca__tree--r" aria-hidden="true" />
       </div>
