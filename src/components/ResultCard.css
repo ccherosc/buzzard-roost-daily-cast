@@ -1,0 +1,200 @@
+/* src/components/ResultCard.css */
+.rc {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-5);
+  gap: var(--space-5);
+  animation: fadeIn 0.3s ease;
+}
+
+.rc__heading {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  letter-spacing: 3px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+/* ── 3D flip ──────────────────────────────────────────── */
+.rc__flip-wrap {
+  perspective: 900px;
+  width: 260px; height: 320px;
+}
+
+.rc__flip {
+  width: 100%; height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.8s cubic-bezier(0.4,0,0.2,1);
+}
+
+.rc__flip-wrap--flipped .rc__flip {
+  transform: rotateY(180deg);
+}
+
+.rc__face {
+  position: absolute; inset: 0;
+  border-radius: var(--radius-lg);
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-5);
+}
+
+/* Back face */
+.rc__face--back {
+  background: linear-gradient(135deg, #0d1f35, #122540);
+  border: 1px solid var(--border-card);
+}
+.rc__back-eagle { font-size: 2.5rem; }
+.rc__back-brand {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  color: var(--brand-accent);
+  text-transform: uppercase;
+}
+.rc__back-q {
+  font-family: var(--font-display);
+  font-size: 4rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.1);
+  margin-top: var(--space-2);
+}
+
+/* Front face — rarity backgrounds */
+.rc__face--front { transform: rotateY(180deg); }
+
+.rc__face--common    { background: linear-gradient(135deg, #1a1f2a, #121820); border: 1px solid rgba(156,163,175,0.4); box-shadow: var(--glow-common); }
+.rc__face--uncommon  { background: linear-gradient(135deg, #0f2a18, #091a10); border: 1px solid rgba(34,197,94,0.4);   box-shadow: var(--glow-uncommon); }
+.rc__face--rare      { background: linear-gradient(135deg, #0f1e3a, #091428); border: 1px solid rgba(59,130,246,0.4);  box-shadow: var(--glow-rare); }
+.rc__face--epic      { background: linear-gradient(135deg, #1e0f3a, #140928); border: 1px solid rgba(168,85,247,0.4);  box-shadow: var(--glow-epic); }
+.rc__face--legendary {
+  background: linear-gradient(135deg, #2a1a00, #1a1000);
+  border: 1px solid rgba(245,158,11,0.5);
+  box-shadow: var(--glow-legendary);
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+/* Rarity badge on front */
+.rc__rarity-badge {
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  letter-spacing: 2px;
+  padding: 3px 12px;
+  border-radius: var(--radius-full);
+  border: 1px solid;
+}
+.rc__rarity-badge--common    { color: var(--rarity-common);    border-color: rgba(156,163,175,0.5); }
+.rc__rarity-badge--uncommon  { color: var(--rarity-uncommon);  border-color: rgba(34,197,94,0.5); }
+.rc__rarity-badge--rare      { color: var(--rarity-rare);      border-color: rgba(59,130,246,0.5); }
+.rc__rarity-badge--epic      { color: var(--rarity-epic);      border-color: rgba(168,85,247,0.5); }
+.rc__rarity-badge--legendary { color: var(--rarity-legendary); border-color: rgba(245,158,11,0.5); background: rgba(245,158,11,0.08); }
+
+.rc__emoji { font-size: 5rem; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5)); }
+
+.rc__name {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+.rc__flavor {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.4;
+}
+
+.rc__stats {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-1);
+}
+.rc__stat { text-align: center; }
+.rc__stat-label { display: block; font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-family: var(--font-display); }
+.rc__stat-value { display: block; font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--text-primary); }
+.rc__stat-divider { width: 1px; height: 28px; background: var(--border-subtle); }
+
+.rc__scarcity {
+  font-size: 0.68rem;
+  color: var(--rarity-legendary);
+  text-align: center;
+  font-style: italic;
+}
+
+/* ── Coupon ───────────────────────────────────────────── */
+.rc__coupon {
+  width: 100%;
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  text-align: center;
+  animation: slideUp 0.4s ease;
+  /* Perforated edge via radial-gradient */
+  background-image: radial-gradient(circle at 0 50%, transparent 8px, var(--bg-card-raised) 8px),
+                    radial-gradient(circle at 100% 50%, transparent 8px, var(--bg-card-raised) 8px);
+  background-size: 100% 100%;
+  background-color: var(--bg-card-raised);
+  border-top: 2px dashed;
+  border-bottom: 2px dashed;
+}
+.rc__coupon--legendary { border-color: rgba(245,158,11,0.5); }
+.rc__coupon--epic      { border-color: rgba(168,85,247,0.5); }
+.rc__coupon--rare      { border-color: rgba(59,130,246,0.5); }
+.rc__coupon--uncommon  { border-color: rgba(34,197,94,0.4); }
+.rc__coupon--common    { border-color: var(--border-card); }
+
+.rc__coupon-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-2); }
+.rc__coupon-label    { font-family: var(--font-display); font-size: 0.75rem; letter-spacing: 1px; color: var(--text-muted); text-transform: uppercase; }
+.rc__coupon-discount { font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--brand-primary); }
+.rc__coupon-code {
+  display: block;
+  font-family: 'Courier New', monospace;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 2px;
+  background: rgba(0,0,0,0.3);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  user-select: all;
+}
+.rc__coupon-hint { font-size: 0.7rem; color: var(--text-muted); margin-top: var(--space-2); }
+
+/* ── Badges ───────────────────────────────────────────── */
+.rc__badges {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: rgba(244,196,48,0.06);
+  border: 1px solid rgba(244,196,48,0.2);
+  border-radius: var(--radius-md);
+  animation: slideUp 0.4s ease 0.2s both;
+}
+.rc__badges-title { font-size: 0.8rem; color: var(--brand-accent); font-family: var(--font-display); letter-spacing: 0.5px; }
+.rc__badges-row { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-2); }
+.rc__badge {
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  background: rgba(244,196,48,0.1);
+  border: 1px solid rgba(244,196,48,0.3);
+  border-radius: var(--radius-full);
+  color: var(--brand-accent);
+}
+
+/* ── Actions ──────────────────────────────────────────── */
+.rc__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+}
+.rc__actions .btn { width: 100%; }
