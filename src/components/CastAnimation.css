@@ -167,8 +167,8 @@
   border-radius: 50%;
   background: rgba(100,180,255,0.8);
   opacity: 0;
-  --dx: calc(cos(calc(var(--i) * 60deg)) * 25px);
-  --dy: calc(sin(calc(var(--i) * 60deg)) * -20px);
+  --dx: calc(cos(var(--i) * 60deg) * 25px);
+  --dy: calc(sin(var(--i) * 60deg) * -20px);
 }
 .ca--splash .ca__drop,
 .ca--hooked .ca__drop {
