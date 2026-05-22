@@ -6,6 +6,10 @@
 // any game logic.
 // ============================================================
 
+// ── Dev flags ────────────────────────────────────────────
+// Set to false before launch to enforce the one-cast-per-day limit.
+export const DEV_DISABLE_DAILY_LIMIT = true;
+
 export const RARITIES = ['common', 'uncommon', 'rare', 'epic', 'legendary'];
 
 // ── Base rarity weights (before modifiers) ────────────────

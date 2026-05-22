@@ -11,6 +11,7 @@ import PlayerStats   from './components/PlayerStats.jsx';
 import AlreadyPlayed from './components/AlreadyPlayed.jsx';
 import { SPOTS, LURES, CAST_STYLES } from './data/gameData.js';
 import { buildResult } from './utils/gameLogic.js';
+import { DEV_DISABLE_DAILY_LIMIT } from './config/gameConfig.js';
 import {
   hasPlayedToday, loadTodayResult, loadPlayerData,
   saveResult, updateStreak, checkAndUnlockBadges,
@@ -42,7 +43,7 @@ export default function App() {
     const data = loadPlayerData();
     setPlayerData(data);
 
-    if (hasPlayedToday()) {
+    if (!DEV_DISABLE_DAILY_LIMIT && hasPlayedToday()) {
       const todayResult = loadTodayResult();
       if (todayResult) {
         setResult(todayResult);
