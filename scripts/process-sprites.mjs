@@ -25,22 +25,22 @@ console.log(`Spritesheet: ${W} x ${H}`);
 const ROW_H = Math.floor(H / 3);
 
 const SPRITES = [
-  // row 0 — 4 sprites, skip IDLE at col 0
-  { name: 'fishing-se',   row: 0, col: 1, cols: 4 },
-  { name: 'cast',         row: 0, col: 2, cols: 4 },
-  { name: 'line-out',     row: 0, col: 3, cols: 4 },
-  // row 1 — 5 sprites
-  { name: 'waiting',      row: 1, col: 0, cols: 5 },
-  { name: 'bite',         row: 1, col: 1, cols: 5 },
-  { name: 'reel-start',   row: 1, col: 2, cols: 5 },
-  { name: 'reeling',      row: 1, col: 3, cols: 5 },
-  { name: 'reel-strong',  row: 1, col: 4, cols: 5 },
-  // row 2 — 5 sprites
-  { name: 'fish-on',      row: 2, col: 0, cols: 5 },
-  { name: 'pulling',      row: 2, col: 1, cols: 5 },
-  { name: 'fish-up',      row: 2, col: 2, cols: 5 },
-  { name: 'showing',      row: 2, col: 3, cols: 5 },
-  { name: 'recast',       row: 2, col: 4, cols: 5 },
+  // row 0 — 5 sprites: fishing-se | cast | line-out | waiting | bite
+  { name: 'fishing-se',  row: 0, col: 0, cols: 5 },
+  { name: 'cast',        row: 0, col: 1, cols: 5 },
+  { name: 'line-out',    row: 0, col: 2, cols: 5 },
+  { name: 'waiting',     row: 0, col: 3, cols: 5 },
+  { name: 'bite',        row: 0, col: 4, cols: 5 },
+  // row 1 — 5 sprites: reel-start | reeling | reel-strong | fish-on | pulling
+  { name: 'reel-start',  row: 1, col: 0, cols: 5 },
+  { name: 'reeling',     row: 1, col: 1, cols: 5 },
+  { name: 'reel-strong', row: 1, col: 2, cols: 5 },
+  { name: 'fish-on',     row: 1, col: 3, cols: 5 },
+  { name: 'pulling',     row: 1, col: 4, cols: 5 },
+  // row 2 — 3 sprites left-aligned: fish-up | showing | recast
+  { name: 'fish-up',     row: 2, col: 0, cols: 5 },
+  { name: 'showing',     row: 2, col: 1, cols: 5 },
+  { name: 'recast',      row: 2, col: 2, cols: 5 },
 ];
 
 // ── Background color (sample top-left corner) ────────────
@@ -68,14 +68,8 @@ for (const s of SPRITES) {
   // Clone, crop to sprite cell
   const frame = sheet.clone().crop(x, y, cellW, ROW_H);
 
-  // Remove background + blank the top 38px label strip entirely
-  const LABEL_STRIP = 38;
+  // Remove background (magenta chroma key — clean cut)
   frame.scan(0, 0, frame.getWidth(), frame.getHeight(), function(px, py, idx) {
-    // Always erase the label strip at the top of each cell
-    if (py < LABEL_STRIP) {
-      this.bitmap.data[idx + 3] = 0;
-      return;
-    }
     const r = this.bitmap.data[idx + 0];
     const g = this.bitmap.data[idx + 1];
     const b = this.bitmap.data[idx + 2];
