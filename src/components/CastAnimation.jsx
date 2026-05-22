@@ -4,12 +4,12 @@ import './CastAnimation.css';
 
 // Each phase: frames[] cycles at frameMs interval, single entry = static
 const PHASES = [
-  { key: 'casting', duration: 1500, label: 'Casting…',                  frames: ['fishing-se', 'cast'],          frameMs: 500  },
-  { key: 'splash',  duration:  800, label: '💦 Splash!',                 frames: ['line-out'],                    frameMs: 0    },
-  { key: 'waiting', duration: 2500, label: '🎣 Waiting for a bite…',     frames: ['fishing-se', 'waiting'],       frameMs: 1000 },
-  { key: 'tension', duration:  800, label: "⚡ Something's on the line!", frames: ['fishing-se', 'bite'],          frameMs: 300  },
-  { key: 'hooked',  duration: 1000, label: '🐟 Fish hooked!',             frames: ['fish-on', 'pulling'],          frameMs: 250  },
-  { key: 'reeling', duration:  700, label: 'Reeling in…',                frames: ['reel-strong', 'showing'],     frameMs: 350  },
+  { key: 'casting', duration: 1500, label: 'Casting…',                   frames: ['fishing-se', 'cast'],      frameMs: 500  },
+  { key: 'splash',  duration:  800, label: '💦 Splash!',                  frames: ['line-out'],                frameMs: 0    },
+  { key: 'waiting', duration: 2500, label: '🎣 Waiting for a bite…',      frames: ['fishing-se', 'waiting'],   frameMs: 1000 },
+  { key: 'tension', duration:  800, label: "⚡ Something's on the line!", frames: ['fishing-se', 'bite'],      frameMs: 300  },
+  { key: 'hooked',  duration: 1000, label: '🐟 Fish on!',                 frames: ['fish-on', 'pulling'],     frameMs: 250  },
+  { key: 'reeling', duration:  700, label: '🏆 Reeling in!',              frames: ['reel-strong', 'showing'], frameMs: 350  },
 ];
 
 function spriteUrl(name) {
@@ -51,7 +51,10 @@ export default function CastAnimation({ onComplete }) {
     const phase = PHASES[phaseIdx];
     if (phase.frames.length <= 1 || !phase.frameMs) { setFrameIdx(0); return; }
     setFrameIdx(0);
-    const id = setInterval(() => setFrameIdx(prev => (prev + 1) % phase.frames.length), phase.frameMs);
+    const id = setInterval(
+      () => setFrameIdx(prev => (prev + 1) % phase.frames.length),
+      phase.frameMs,
+    );
     return () => clearInterval(id);
   }, [phaseIdx]);
 
@@ -70,7 +73,7 @@ export default function CastAnimation({ onComplete }) {
         <div className="ca__tree ca__tree--r" aria-hidden="true" />
       </div>
 
-      {/* Fisherman — outer div handles centering, inner div handles phase animations */}
+      {/* Fisherman — fixed 184×184 box prevents pose-shift between frames */}
       <div className="ca__fisherman" aria-label="Fisherman animation">
         <div className="ca__fisherman-inner">
           <img
@@ -79,6 +82,16 @@ export default function CastAnimation({ onComplete }) {
             alt=""
             className="ca__sprite"
           />
+        </div>
+      </div>
+
+      {/* Dock — wooden planks + posts, straddles the waterline */}
+      <div className="ca__dock" aria-hidden="true">
+        <div className="ca__dock-plank" />
+        <div className="ca__dock-legs">
+          <div className="ca__dock-leg" />
+          <div className="ca__dock-leg" />
+          <div className="ca__dock-leg" />
         </div>
       </div>
 
@@ -100,7 +113,7 @@ export default function CastAnimation({ onComplete }) {
         </div>
       </div>
 
-      {/* Phase label */}
+      {/* Phase label — top of sky, out of the way */}
       <div className="ca__label">
         <span key={phase.key} className="ca__label-text">{phase.label}</span>
       </div>

@@ -2,7 +2,7 @@
 .ca {
   position: relative;
   width: 100%;
-  min-height: 440px;
+  min-height: 420px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -11,167 +11,246 @@
 /* ── Sky ──────────────────────────────────────────────── */
 .ca__sky {
   flex: 1;
-  background: linear-gradient(180deg, #1a6fbf 0%, #4ab0e8 55%, #87CEEB 100%);
+  background: linear-gradient(180deg, #1565C0 0%, #3fa8e8 45%, #B3E5FC 100%);
   position: relative;
   overflow: hidden;
-  min-height: 240px;
+  min-height: 230px;
 }
 
 /* Sun */
 .ca__sun {
   position: absolute;
-  top: 20px; right: 32px;
-  width: 52px; height: 52px;
+  top: 16px; right: 28px;
+  width: 46px; height: 46px;
   border-radius: 50%;
-  background: radial-gradient(circle at 38% 38%, #fff9c4, #FFD54F);
+  background: radial-gradient(circle at 38% 38%, #FFFDE7, #FFD54F);
   box-shadow:
-    0 0 0 10px rgba(255,213,79,0.18),
-    0 0 0 22px rgba(255,213,79,0.09),
-    0 0 50px rgba(255,200,0,0.5);
+    0 0 0 8px  rgba(255,213,79,0.15),
+    0 0 0 18px rgba(255,213,79,0.08),
+    0 0 38px   rgba(255,200,0,0.45);
   animation: sunPulse 4s ease-in-out infinite;
 }
 @keyframes sunPulse {
-  0%,100% { box-shadow: 0 0 0 10px rgba(255,213,79,0.18), 0 0 0 22px rgba(255,213,79,0.09), 0 0 50px rgba(255,200,0,0.5); }
-  50%      { box-shadow: 0 0 0 15px rgba(255,213,79,0.22), 0 0 0 30px rgba(255,213,79,0.11), 0 0 70px rgba(255,200,0,0.7); }
+  0%,100% {
+    box-shadow: 0 0 0 8px rgba(255,213,79,0.15),
+                0 0 0 18px rgba(255,213,79,0.08),
+                0 0 38px  rgba(255,200,0,0.45);
+  }
+  50% {
+    box-shadow: 0 0 0 14px rgba(255,213,79,0.22),
+                0 0 0 28px rgba(255,213,79,0.11),
+                0 0 58px  rgba(255,200,0,0.65);
+  }
 }
 
 /* Clouds */
 .ca__cloud {
   position: absolute;
-  background: rgba(255,255,255,0.88);
+  background: rgba(255,255,255,0.92);
   border-radius: 50px;
 }
 .ca__cloud::before, .ca__cloud::after {
   content: '';
   position: absolute;
-  background: rgba(255,255,255,0.88);
+  background: rgba(255,255,255,0.92);
   border-radius: 50%;
 }
 .ca__cloud--1 {
-  top: 32px; left: 15%;
-  width: 72px; height: 22px;
-  animation: cloudDrift 20s linear infinite;
+  top: 26px; left: 10%;
+  width: 68px; height: 20px;
+  animation: cloudDrift 22s linear infinite;
 }
-.ca__cloud--1::before { width: 36px; height: 36px; top: -18px; left: 10px; }
-.ca__cloud--1::after  { width: 26px; height: 26px; top: -12px; left: 36px; }
+.ca__cloud--1::before { width: 32px; height: 32px; top: -16px; left: 10px; }
+.ca__cloud--1::after  { width: 22px; height: 22px; top: -11px; left: 36px; }
 .ca__cloud--2 {
-  top: 58px; left: 50%;
-  width: 52px; height: 16px;
-  opacity: 0.72;
-  animation: cloudDrift 28s linear 6s infinite;
+  top: 54px; left: 52%;
+  width: 48px; height: 14px;
+  opacity: 0.68;
+  animation: cloudDrift 30s linear 6s infinite;
 }
-.ca__cloud--2::before { width: 26px; height: 26px; top: -13px; left: 8px; }
-.ca__cloud--2::after  { width: 18px; height: 18px; top: -9px;  left: 28px; }
+.ca__cloud--2::before { width: 22px; height: 22px; top: -11px; left: 8px; }
+.ca__cloud--2::after  { width: 15px; height: 15px; top: -8px;  left: 27px; }
 @keyframes cloudDrift {
-  from { transform: translateX(-120%); }
-  to   { transform: translateX(200%); }
+  from { transform: translateX(-150%); }
+  to   { transform: translateX(240%); }
 }
 
 /* Trees */
 .ca__tree {
   position: absolute; bottom: 0;
   width: 0; height: 0;
-  border-left: 28px solid transparent;
-  border-right: 28px solid transparent;
-  border-bottom: 80px solid #2e6b1f;
+  border-left:  24px solid transparent;
+  border-right: 24px solid transparent;
+  border-bottom: 72px solid #2b6420;
 }
 .ca__tree::before {
   content: '';
   position: absolute;
-  bottom: -60px; left: -20px;
+  bottom: -52px; left: -17px;
   width: 0; height: 0;
-  border-left: 20px solid transparent;
-  border-right: 20px solid transparent;
-  border-bottom: 60px solid #2e6b1f;
+  border-left:  17px solid transparent;
+  border-right: 17px solid transparent;
+  border-bottom: 52px solid #2b6420;
 }
-.ca__tree--l { left: 10px; }
-.ca__tree--r { right: 10px; transform: scaleX(-1); }
+.ca__tree::after {
+  content: '';
+  position: absolute;
+  bottom: -30px; left: -11px;
+  width: 8px; height: 30px;
+  background: #5c3a1e;
+  left: -4px;
+}
+.ca__tree--l { left: 6px; }
+.ca__tree--r { right: 6px; transform: scaleX(-1); }
 
-/* ── Fisherman outer — handles position only ──────────── */
+/* ── Dock ─────────────────────────────────────────────── */
+.ca__dock {
+  position: absolute;
+  /* bottom of dock sits just below waterline so posts dip in */
+  bottom: 104px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(62%, 230px);
+  z-index: 1;
+}
+
+/* Deck planks */
+.ca__dock-plank {
+  width: 100%;
+  height: 14px;
+  background: linear-gradient(180deg, #D4A245 0%, #A97B2A 100%);
+  border-radius: 3px 3px 0 0;
+  position: relative;
+  box-shadow:
+    0 3px 10px rgba(0,0,0,0.30),
+    inset 0 1px 0 rgba(255,255,255,0.25);
+}
+/* Plank grain lines */
+.ca__dock-plank::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 3px 3px 0 0;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0px, transparent 25px,
+    rgba(0,0,0,0.14) 25px, rgba(0,0,0,0.14) 26px
+  );
+}
+/* Top edge highlight */
+.ca__dock-plank::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.0), rgba(255,255,255,0.35) 50%, rgba(255,255,255,0.0));
+  border-radius: 3px 3px 0 0;
+}
+/* Posts */
+.ca__dock-legs {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 16px;
+}
+.ca__dock-leg {
+  width: 10px;
+  height: 30px;
+  background: linear-gradient(180deg, #A97B2A 0%, #7A5218 100%);
+  border-radius: 0 0 3px 3px;
+  box-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+}
+
+/* ── Fisherman outer — handles centering only ─────────── */
 .ca__fisherman {
   position: absolute;
-  /* Sit exactly AT the waterline (water = 110px tall) */
-  bottom: 110px;
+  /* sits on top of dock deck (104 + 14 = 118) */
+  bottom: 118px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 2;
   pointer-events: none;
-  /* Wide enough that rod tip never clips */
-  width: min(90%, 360px);
+  /* fixed square matches forced-square sprite below */
+  width: 184px;
+  height: 184px;
   display: flex;
   justify-content: center;
   align-items: flex-end;
+  overflow: hidden;
 }
 
 /* ── Fisherman inner — handles phase animations ───────── */
 .ca__fisherman-inner {
+  width: 184px;
+  height: 184px;
   display: flex;
   align-items: flex-end;
   justify-content: center;
   transform-origin: bottom center;
+  flex-shrink: 0;
 }
 
-/* Sprite image */
+/* Sprite image — forced square so every pose occupies the same box */
 .ca__sprite {
-  height: 230px;
-  width: auto;
-  max-width: 100%;
+  width: 184px;
+  height: 184px;
   object-fit: contain;
+  object-position: center bottom;
   display: block;
-  /* Smooth crossfade on every sprite swap (key change remounts) */
-  animation: spriteIn 0.25s ease;
+  flex-shrink: 0;
+  /* Smooth crossfade on every sprite swap */
+  animation: spriteIn 0.2s ease;
 }
 @keyframes spriteIn {
-  from { opacity: 0; transform: scale(0.97) translateY(4px); }
-  to   { opacity: 1; transform: scale(1)    translateY(0); }
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1); }
 }
 
 /* ── Phase animations on the INNER div ───────────────── */
 
-/* Casting: lean forward */
+/* Casting: slight lean forward */
 .ca--casting .ca__fisherman-inner {
-  animation: castLean 0.8s ease-in-out infinite alternate;
+  animation: castLean 0.85s ease-in-out infinite alternate;
 }
 @keyframes castLean {
-  from { transform: rotate(-2deg) translateX(-6px); }
-  to   { transform: rotate(1deg)  translateX(4px); }
+  from { transform: rotate(-1.5deg) translateX(-3px); }
+  to   { transform: rotate(1.5deg)  translateX(3px);  }
 }
 
-/* Splash: settle back */
+/* Splash: settle */
 .ca--splash .ca__fisherman-inner {
   animation: settleBack 0.4s ease-out forwards;
 }
 @keyframes settleBack {
-  from { transform: rotate(1deg) translateX(4px); }
-  to   { transform: rotate(0deg) translateX(0); }
+  from { transform: rotate(1.5deg) translateX(3px); }
+  to   { transform: rotate(0deg)   translateX(0);   }
 }
 
-/* Waiting: gentle float */
+/* Waiting: slow gentle float */
 .ca--waiting .ca__fisherman-inner {
-  animation: gentleFloat 2.8s ease-in-out infinite;
+  animation: gentleFloat 3.2s ease-in-out infinite;
 }
 @keyframes gentleFloat {
   0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(-6px); }
+  50%       { transform: translateY(-4px); }
 }
 
-/* Tension: quick anticipation bounce */
+/* Tension: anticipation bounce */
 .ca--tension .ca__fisherman-inner {
-  animation: tensionBounce 0.35s ease-in-out infinite;
+  animation: tensionBounce 0.32s ease-in-out infinite;
 }
 @keyframes tensionBounce {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50%       { transform: translateY(-5px) rotate(-1.5deg); }
+  0%, 100% { transform: translateY(0)    rotate(0deg); }
+  50%       { transform: translateY(-4px) rotate(-1.2deg); }
 }
 
 /* Hooked: intense shake */
 .ca--hooked .ca__fisherman-inner {
-  animation: hookedShake 0.2s ease-in-out infinite;
+  animation: hookedShake 0.16s ease-in-out infinite;
 }
 @keyframes hookedShake {
-  0%, 100% { transform: translateX(0)   rotate(0deg) scale(1.02); }
-  33%       { transform: translateX(-5px) rotate(-2deg) scale(1.04); }
-  66%       { transform: translateX(5px)  rotate(2deg)  scale(1.02); }
+  0%, 100% { transform: translateX(0)    rotate(0deg)  scale(1.02); }
+  33%       { transform: translateX(-4px) rotate(-2deg) scale(1.03); }
+  66%       { transform: translateX(4px)  rotate(2deg)  scale(1.02); }
 }
 
 /* Reeling: triumphant rise */
@@ -179,81 +258,143 @@
   animation: triumphRise 0.5s ease-out forwards;
 }
 @keyframes triumphRise {
-  from { transform: translateY(6px) scale(0.98); }
-  to   { transform: translateY(0)   scale(1.02); }
+  from { transform: translateY(6px) scale(0.97); }
+  to   { transform: translateY(0)   scale(1.03); }
 }
 
 /* ── Water ────────────────────────────────────────────── */
 .ca__water {
   height: 110px;
-  background: linear-gradient(180deg, #2196F3 0%, #1565C0 100%);
-  border-top: 2px solid rgba(100,200,255,0.6);
+  background: linear-gradient(180deg, #1E88E5 0%, #1565C0 100%);
+  border-top: 2px solid rgba(100,210,255,0.65);
   position: relative;
   overflow: visible;
+}
+
+/* Sunlight shimmer on water surface */
+.ca__water::before {
+  content: '';
+  position: absolute;
+  top: 4px; right: 6%;
+  width: 32%; height: 55%;
+  background: linear-gradient(135deg, rgba(255,255,255,0.10) 0%, transparent 65%);
+  border-radius: 50%;
+  pointer-events: none;
 }
 
 .ca__wave {
   position: absolute;
   top: -5px; left: -20px; right: -20px;
   height: 10px;
-  background: rgba(150,220,255,0.3);
+  background: rgba(150,225,255,0.28);
   border-radius: 50%;
   animation: waterWave 3.5s ease-in-out infinite;
 }
-.ca__wave--2 { top: -2px; animation-delay: 1.4s; animation-duration: 4.5s; opacity: 0.5; }
+.ca__wave--2 {
+  top: -2px;
+  animation-delay: 1.4s;
+  animation-duration: 4.5s;
+  opacity: 0.42;
+}
+@keyframes waterWave {
+  0%,100% { transform: scaleX(1)    translateY(0);   }
+  50%      { transform: scaleX(1.02) translateY(2px); }
+}
 
 /* ── Bobber ───────────────────────────────────────────── */
 .ca__bobber {
   position: absolute;
-  top: 12px; left: 65%;
-  width: 20px; height: 26px;
-  animation: bobberFloat 2s ease-in-out infinite;
+  top: 10px; left: 68%;
+  width: 18px; height: 24px;
+  animation: bobberFloat 2.2s ease-in-out infinite;
   transition: left 1.5s ease, opacity 0.5s ease;
 }
-.ca--waiting .ca__bobber { animation: bobberFloat 2s ease-in-out infinite; }
-.ca--tension .ca__bobber { animation: bobberBite  0.4s ease-in-out infinite; }
-.ca--hooked  .ca__bobber { opacity: 0; transform: translateY(40px); transition: all 0.3s; }
-.ca--casting .ca__bobber { left: 90%; opacity: 0; }
-.ca--splash  .ca__bobber { left: 65%; opacity: 1; }
 
-.ca__bobber-top { width: 20px; height: 13px; background: #e03030; border-radius: 10px 10px 0 0; }
-.ca__bobber-bot { width: 20px; height: 13px; background: #f8f8f8; border-radius: 0 0 10px 10px; border-top: 1px solid rgba(0,0,0,0.15); }
+/* Fishing line — threads up-left from bobber toward rod */
+.ca__bobber::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 9px;
+  width: 1px;
+  height: 88px;
+  background: linear-gradient(to bottom, transparent 0%, rgba(190,190,190,0.55) 100%);
+  transform-origin: bottom center;
+  transform: rotate(-28deg);
+}
+
+.ca--waiting .ca__bobber { animation: bobberFloat 2.2s ease-in-out infinite; }
+.ca--tension .ca__bobber { animation: bobberBite  0.38s ease-in-out infinite; }
+.ca--hooked  .ca__bobber { opacity: 0; transform: translateY(40px); transition: all 0.3s; }
+.ca--casting .ca__bobber { left: 92%; opacity: 0; }
+.ca--splash  .ca__bobber { left: 68%; opacity: 1; }
+
+.ca__bobber-top {
+  width: 18px; height: 12px;
+  background: radial-gradient(circle at 40% 40%, #EF5350, #C62828);
+  border-radius: 9px 9px 0 0;
+}
+.ca__bobber-bot {
+  width: 18px; height: 12px;
+  background: linear-gradient(180deg, #F5F5F5, #E0E0E0);
+  border-radius: 0 0 9px 9px;
+  border-top: 1px solid rgba(0,0,0,0.1);
+}
+
+@keyframes bobberFloat {
+  0%,100% { transform: translateY(0)   rotate(0deg); }
+  50%      { transform: translateY(3px) rotate(2deg); }
+}
+@keyframes bobberBite {
+  0%,100% { transform: translateY(0)   rotate(0deg); }
+  50%      { transform: translateY(8px) rotate(5deg); }
+}
 
 /* ── Ripples ──────────────────────────────────────────── */
 .ca__ripple {
   position: absolute;
-  top: 22px; left: calc(65% + 10px);
+  top: 20px; left: calc(68% + 9px);
   transform: translateX(-50%);
-  width: 40px; height: 12px;
-  border: 1px solid rgba(150,220,255,0.6);
+  width: 36px; height: 10px;
+  border: 1px solid rgba(150,225,255,0.55);
   border-radius: 50%;
   opacity: 0;
 }
-.ca--splash  .ca__ripple--1 { animation: ripple 1.5s ease-out 0.1s forwards; }
-.ca--waiting .ca__ripple--1 { animation: ripple 2.5s ease-out 0.0s infinite; }
-.ca--waiting .ca__ripple--2 { animation: ripple 2.5s ease-out 0.8s infinite; }
-.ca--waiting .ca__ripple--3 { animation: ripple 2.5s ease-out 1.6s infinite; }
-.ca--tension .ca__ripple--1 { animation: ripple 0.8s ease-out 0.0s infinite; }
-.ca--hooked  .ca__ripple--1 { animation: ripple 0.5s ease-out 0s 3; width: 80px; height: 24px; }
+.ca--splash  .ca__ripple--1 { animation: ripple 1.5s ease-out 0.1s  forwards; }
+.ca--waiting .ca__ripple--1 { animation: ripple 2.5s ease-out 0.0s  infinite; }
+.ca--waiting .ca__ripple--2 { animation: ripple 2.5s ease-out 0.85s infinite; }
+.ca--waiting .ca__ripple--3 { animation: ripple 2.5s ease-out 1.70s infinite; }
+.ca--tension .ca__ripple--1 { animation: ripple 0.8s ease-out 0.0s  infinite; }
+.ca--hooked  .ca__ripple--1 { animation: ripple 0.5s ease-out 0s 3; width: 72px; height: 20px; }
+@keyframes ripple {
+  0%   { transform: translateX(-50%) scale(0.3); opacity: 0.8; }
+  100% { transform: translateX(-50%) scale(2.6); opacity: 0;   }
+}
 
 /* ── Splash drops ─────────────────────────────────────── */
-.ca__splash { position: absolute; top: 12px; left: 65%; }
+.ca__splash { position: absolute; top: 10px; left: 68%; }
 .ca__drop {
   position: absolute;
   width: 4px; height: 4px;
   border-radius: 50%;
-  background: rgba(150,220,255,0.9);
+  background: rgba(150,225,255,0.9);
   opacity: 0;
-  --dx: calc(cos(var(--i) * 60deg) * 25px);
-  --dy: calc(sin(var(--i) * 60deg) * -20px);
+  --dx: calc(cos(var(--i) * 60deg) * 22px);
+  --dy: calc(sin(var(--i) * 60deg) * -18px);
 }
 .ca--splash .ca__drop,
-.ca--hooked .ca__drop { animation: splashDrop 0.6s ease-out calc(var(--i) * 0.05s) forwards; }
+.ca--hooked .ca__drop {
+  animation: splashDrop 0.55s ease-out calc(var(--i) * 0.05s) forwards;
+}
+@keyframes splashDrop {
+  0%   { opacity: 1; transform: translate(0, 0); }
+  100% { opacity: 0; transform: translate(var(--dx), var(--dy)); }
+}
 
-/* ── Phase label ──────────────────────────────────────── */
+/* ── Phase label — floats in sky above fisherman ─────── */
 .ca__label {
   position: absolute;
-  bottom: 120px; left: 50%;
+  top: 14px; left: 50%;
   transform: translateX(-50%);
   white-space: nowrap;
   z-index: 3;
@@ -261,23 +402,27 @@
 .ca__label-text {
   display: block;
   font-family: var(--font-display);
-  font-size: 1.1rem;
+  font-size: 0.98rem;
   font-weight: 600;
   color: #fff;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   text-align: center;
-  animation: popIn 0.3s ease;
-  background: rgba(10,60,120,0.65);
-  padding: 6px 16px;
+  animation: popIn 0.28s ease;
+  background: rgba(10,55,130,0.60);
+  padding: 5px 14px;
   border-radius: var(--radius-full);
-  border: 1px solid rgba(100,180,255,0.4);
+  border: 1px solid rgba(100,185,255,0.38);
   backdrop-filter: blur(4px);
+}
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.90) translateY(4px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0);   }
 }
 
 /* ── Progress dots ────────────────────────────────────── */
 .ca__progress {
   position: absolute;
-  bottom: 14px; left: 50%;
+  bottom: 12px; left: 50%;
   transform: translateX(-50%);
   display: flex; gap: 6px;
   z-index: 3;
@@ -285,7 +430,7 @@
 .ca__pdot {
   width: 6px; height: 6px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.35);
+  background: rgba(255,255,255,0.28);
   transition: background var(--t-normal);
 }
 .ca__pdot--done { background: var(--brand-primary); }
