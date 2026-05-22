@@ -1,0 +1,217 @@
+/* src/components/CastAnimation.css */
+.ca {
+  position: relative;
+  width: 100%;
+  min-height: 380px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Sky ──────────────────────────────────────────────── */
+.ca__sky {
+  flex: 1;
+  background: linear-gradient(180deg, #020814 0%, #0a1628 60%, #0d2040 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.ca__moon {
+  position: absolute; top: 16px; right: 28px;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #f4e8a0, #d4c060);
+  box-shadow: 0 0 20px rgba(244,230,140,0.5);
+}
+
+.ca__star {
+  position: absolute;
+  width: 2px; height: 2px;
+  border-radius: 50%;
+  background: white;
+  left:  calc(8% + var(--i) * 12%);
+  top:   calc(5% + var(--i) * 6%);
+  animation: twinkle 2s ease-in-out calc(var(--i) * 0.3s) infinite;
+}
+
+/* Trees */
+.ca__tree {
+  position: absolute;
+  bottom: 0;
+  width: 0; height: 0;
+  border-left: 28px solid transparent;
+  border-right: 28px solid transparent;
+  border-bottom: 80px solid #0a1a0a;
+}
+.ca__tree::before {
+  content: '';
+  position: absolute;
+  bottom: -60px; left: -20px;
+  width: 0; height: 0;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-bottom: 60px solid #0a1a0a;
+}
+.ca__tree--l { left: 10px; }
+.ca__tree--r { right: 10px; transform: scaleX(-1); }
+
+/* ── Dock + Rod ───────────────────────────────────────── */
+.ca__dock-wrap {
+  position: absolute;
+  bottom: 90px;
+  left: 0;
+  width: 60%;
+  height: 30px;
+}
+
+.ca__dock {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 120px; height: 14px;
+  background: linear-gradient(180deg, #6b3a1f, #4a2210);
+  border-radius: 2px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+.ca__dock::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: repeating-linear-gradient(90deg, #8b5e3c 0, #8b5e3c 18px, #6b3a1f 18px, #6b3a1f 22px);
+}
+
+.ca__rod {
+  position: absolute;
+  bottom: 10px; left: 20px;
+  width: 200px; height: 150px;
+  overflow: visible;
+  transition: transform 1.5s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* Rod swings during casting phase */
+.ca--casting .ca__rod { transform: rotate(-20deg) translateY(-10px); }
+.ca--splash  .ca__rod { transform: rotate(5deg); }
+
+/* Line flexes on bite */
+.ca--tension .ca__line,
+.ca--hooked  .ca__line { stroke: #ffee88; }
+
+/* ── Water ────────────────────────────────────────────── */
+.ca__water {
+  height: 100px;
+  background: linear-gradient(180deg, #0a2840 0%, #050e18 100%);
+  border-top: 1px solid rgba(42,90,140,0.6);
+  position: relative;
+  overflow: visible;
+}
+
+.ca__wave {
+  position: absolute;
+  top: -5px; left: -20px; right: -20px;
+  height: 10px;
+  background: rgba(42,90,140,0.25);
+  border-radius: 50%;
+  animation: waterWave 3.5s ease-in-out infinite;
+}
+.ca__wave--2 { top: -2px; animation-delay: 1.4s; animation-duration: 4.5s; opacity: 0.5; }
+
+/* ── Bobber ───────────────────────────────────────────── */
+.ca__bobber {
+  position: absolute;
+  top: 10px; left: 52%;
+  width: 20px; height: 26px;
+  animation: bobberFloat 2s ease-in-out infinite;
+  transition: left 1.5s ease;
+}
+.ca--waiting .ca__bobber { animation: bobberFloat 2s ease-in-out infinite; }
+.ca--tension .ca__bobber { animation: bobberBite 0.4s ease-in-out infinite; }
+.ca--hooked  .ca__bobber { opacity: 0; transform: translateY(40px); transition: all 0.3s; }
+.ca--casting .ca__bobber { left: 80%; opacity: 0; }
+.ca--splash  .ca__bobber { left: 52%; opacity: 1; }
+
+.ca__bobber-top {
+  width: 20px; height: 13px;
+  background: #e03030;
+  border-radius: 10px 10px 0 0;
+}
+.ca__bobber-bot {
+  width: 20px; height: 13px;
+  background: #f8f8f8;
+  border-radius: 0 0 10px 10px;
+  border-top: 1px solid rgba(0,0,0,0.15);
+}
+
+/* ── Ripples ──────────────────────────────────────────── */
+.ca__ripple {
+  position: absolute;
+  top: 20px; left: calc(52% + 10px);
+  transform: translateX(-50%);
+  width: 40px; height: 12px;
+  border: 1px solid rgba(42,90,160,0.5);
+  border-radius: 50%;
+  opacity: 0;
+}
+.ca--splash  .ca__ripple--1 { animation: ripple 1.5s ease-out 0.1s forwards; }
+.ca--waiting .ca__ripple--1 { animation: ripple 2.5s ease-out 0s infinite; }
+.ca--waiting .ca__ripple--2 { animation: ripple 2.5s ease-out 0.8s infinite; }
+.ca--waiting .ca__ripple--3 { animation: ripple 2.5s ease-out 1.6s infinite; }
+.ca--tension .ca__ripple--1 { animation: ripple 0.8s ease-out 0s infinite; }
+.ca--hooked  .ca__ripple--1 { animation: ripple 0.5s ease-out 0s 3; width: 80px; height: 24px; }
+
+/* ── Splash drops ─────────────────────────────────────── */
+.ca__splash { position: absolute; top: 10px; left: 52%; }
+
+.ca__drop {
+  position: absolute;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: rgba(100,180,255,0.8);
+  opacity: 0;
+  --dx: calc(cos(calc(var(--i) * 60deg)) * 25px);
+  --dy: calc(sin(calc(var(--i) * 60deg)) * -20px);
+}
+.ca--splash .ca__drop,
+.ca--hooked .ca__drop {
+  animation: splashDrop 0.6s ease-out calc(var(--i) * 0.05s) forwards;
+}
+
+/* ── Label ────────────────────────────────────────────── */
+.ca__label {
+  position: absolute;
+  bottom: 110px; left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.ca__label-text {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 1px;
+  text-align: center;
+  animation: popIn 0.3s ease;
+  background: rgba(6,12,24,0.75);
+  padding: 6px 16px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-card);
+  backdrop-filter: blur(4px);
+}
+
+/* ── Progress dots ────────────────────────────────────── */
+.ca__progress {
+  position: absolute;
+  bottom: 10px; left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+}
+
+.ca__pdot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--border-card);
+  transition: background var(--t-normal);
+}
+.ca__pdot--done { background: var(--brand-primary); }
