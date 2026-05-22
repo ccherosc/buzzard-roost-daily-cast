@@ -1,6 +1,6 @@
 // scripts/process-sprites.mjs
-// Extracts individual sprites from the fisherman spritesheet,
-// removes the dark background, and saves transparent PNGs.
+// Extracts 18 named sprites from the new 6×6 fisherman spritesheet.
+// Background is already transparent — no chroma-key removal needed.
 
 import Jimp from 'jimp';
 import { mkdir } from 'fs/promises';
@@ -9,79 +9,64 @@ import { existsSync } from 'fs';
 const INPUT  = 'src/assets/fisherman-spritesheet.png';
 const OUTPUT = 'src/assets/sprites';
 
-// ── First pass: detect image dimensions ──────────────────
 const sheet = await Jimp.read(INPUT);
-const W = sheet.getWidth();
-const H = sheet.getHeight();
+const W = sheet.getWidth();   // 1254
+const H = sheet.getHeight();  // 1254
 console.log(`Spritesheet: ${W} x ${H}`);
 
-// ── Sprite grid layout ───────────────────────────────────
-// Row 0 (4 sprites): IDLE | FISHING-SE | CAST | LINE-OUT
-// Row 1 (5 sprites): WAITING | BITE | REEL-START | REELING | REEL-STRONG
-// Row 2 (5 sprites): FISH-ON | PULLING | FISH-UP | SHOWING | RECAST
-//
-// We skip IDLE (row 0, col 0) — user requested removal.
+// 6×6 grid, each cell 209×209
+const COLS   = 6;
+const ROWS   = 6;
+const CELL_W = Math.floor(W / COLS);  // 209
+const CELL_H = Math.floor(H / ROWS);  // 209
+console.log(`Cell size: ${CELL_W} x ${CELL_H}`);
 
-const ROW_H = Math.floor(H / 3);
-
+// ── Named sprites ──────────────────────────────────────────────
+// row / col are 0-indexed from top-left
 const SPRITES = [
-  // row 0 — 5 sprites: fishing-se | cast | line-out | waiting | bite
-  { name: 'fishing-se',  row: 0, col: 0, cols: 5 },
-  { name: 'cast',        row: 0, col: 1, cols: 5 },
-  { name: 'line-out',    row: 0, col: 2, cols: 5 },
-  { name: 'waiting',     row: 0, col: 3, cols: 5 },
-  { name: 'bite',        row: 0, col: 4, cols: 5 },
-  // row 1 — 5 sprites: reel-start | reeling | reel-strong | fish-on | pulling
-  { name: 'reel-start',  row: 1, col: 0, cols: 5 },
-  { name: 'reeling',     row: 1, col: 1, cols: 5 },
-  { name: 'reel-strong', row: 1, col: 2, cols: 5 },
-  { name: 'fish-on',     row: 1, col: 3, cols: 5 },
-  { name: 'pulling',     row: 1, col: 4, cols: 5 },
-  // row 2 — 3 sprites left-aligned: fish-up | showing | recast
-  { name: 'fish-up',     row: 2, col: 0, cols: 5 },
-  { name: 'showing',     row: 2, col: 1, cols: 5 },
-  { name: 'recast',      row: 2, col: 2, cols: 5 },
+  // ── Waiting idle loop (rod held, subtle pose variations) ──────
+  { name: 'wait-a',      row: 0, col: 0 },   // relaxed grip, neutral
+  { name: 'wait-b',      row: 0, col: 2 },   // slight forward lean
+  { name: 'wait-c',      row: 0, col: 4 },   // slight back lean
+  { name: 'watch',       row: 0, col: 5 },   // hand to brow, scanning
+
+  // ── Casting sequence ──────────────────────────────────────────
+  { name: 'cast-throw',  row: 1, col: 1 },   // dynamic release, body forward
+  { name: 'cast-follow', row: 1, col: 2 },   // follow-through lean
+  { name: 'line-out',    row: 1, col: 0 },   // rod low-right, line in water
+
+  // ── Bite / tension ────────────────────────────────────────────
+  { name: 'alert',       row: 3, col: 0 },   // sitting up alert, rod dropping
+  { name: 'bite',        row: 3, col: 1 },   // rod bent sharply down — fish!
+
+  // ── Fighting fish ─────────────────────────────────────────────
+  { name: 'fight-a',     row: 3, col: 3 },   // leaning back, pulling hard
+  { name: 'fight-b',     row: 4, col: 1 },   // variant lean, rod arced
+  { name: 'fight-c',     row: 3, col: 5 },   // leaning far back, rod high
+  { name: 'fight-d',     row: 4, col: 5 },   // maximum intensity pull
+
+  // ── Triumph / reeling ─────────────────────────────────────────
+  { name: 'triumph-a',   row: 5, col: 0 },   // rod pulled up high, both hands
+  { name: 'triumph-b',   row: 5, col: 1 },   // big grin, victory
+  { name: 'triumph-c',   row: 5, col: 2 },   // excited, mouth open
+
+  // ── Catch reveal ──────────────────────────────────────────────
+  { name: 'catch-a',     row: 5, col: 3 },   // small fish dangling
+  { name: 'catch-b',     row: 5, col: 4 },   // bigger fish, wide smile
 ];
 
-// ── Background color (sample top-left corner) ────────────
-const bgColor = sheet.getPixelColor(4, 4);
-const bgR = (bgColor >> 24) & 0xff;
-const bgG = (bgColor >> 16) & 0xff;
-const bgB = (bgColor >>  8) & 0xff;
-console.log(`Background color: rgb(${bgR}, ${bgG}, ${bgB})`);
-
-const THRESHOLD = 40; // color distance tolerance
-
-function colorDistance(r1, g1, b1, r2, g2, b2) {
-  return Math.sqrt((r1-r2)**2 + (g1-g2)**2 + (b1-b2)**2);
-}
-
-// ── Output dir ───────────────────────────────────────────
 if (!existsSync(OUTPUT)) await mkdir(OUTPUT, { recursive: true });
 
-// ── Extract and save each sprite ─────────────────────────
 for (const s of SPRITES) {
-  const cellW = Math.floor(W / s.cols);
-  const x = s.col * cellW;
-  const y = s.row * ROW_H;
+  const x = s.col * CELL_W;
+  const y = s.row * CELL_H;
 
-  // Clone, crop to sprite cell
-  const frame = sheet.clone().crop(x, y, cellW, ROW_H);
-
-  // Remove background (magenta chroma key — clean cut)
-  frame.scan(0, 0, frame.getWidth(), frame.getHeight(), function(px, py, idx) {
-    const r = this.bitmap.data[idx + 0];
-    const g = this.bitmap.data[idx + 1];
-    const b = this.bitmap.data[idx + 2];
-    const dist = colorDistance(r, g, b, bgR, bgG, bgB);
-    if (dist < THRESHOLD) {
-      this.bitmap.data[idx + 3] = 0; // transparent
-    }
-  });
+  // Crop cell — background already transparent, no removal needed
+  const frame = sheet.clone().crop(x, y, CELL_W, CELL_H);
 
   const outPath = `${OUTPUT}/${s.name}.png`;
   await frame.writeAsync(outPath);
-  console.log(`✓ ${s.name}.png  (${cellW}x${ROW_H} from ${x},${y})`);
+  console.log(`✓ ${s.name}.png  [row ${s.row}, col ${s.col}] → x:${x}, y:${y}`);
 }
 
-console.log('\nAll sprites extracted to', OUTPUT);
+console.log(`\n✅ ${SPRITES.length} sprites extracted to ${OUTPUT}`);

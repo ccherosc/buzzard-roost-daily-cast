@@ -1,386 +1,283 @@
 /* src/components/CastAnimation.css */
+
+/* ── Root container ───────────────────────────────────────────── */
 .ca {
   position: relative;
   width: 100%;
-  min-height: 420px;
+  min-height: 380px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
 }
 
-/* ── Sky ──────────────────────────────────────────────── */
+/* ── Sky ──────────────────────────────────────────────────────── */
 .ca__sky {
   flex: 1;
-  background: linear-gradient(180deg, #1565C0 0%, #3fa8e8 45%, #B3E5FC 100%);
+  min-height: 160px;
+  background: linear-gradient(180deg, #1565C0 0%, #3fa8e8 48%, #B8E8FC 100%);
   position: relative;
   overflow: hidden;
-  min-height: 230px;
 }
 
 /* Sun */
 .ca__sun {
   position: absolute;
-  top: 16px; right: 28px;
-  width: 46px; height: 46px;
+  top: 14px; right: 22px;
+  width: 44px; height: 44px;
   border-radius: 50%;
   background: radial-gradient(circle at 38% 38%, #FFFDE7, #FFD54F);
   box-shadow:
-    0 0 0 8px  rgba(255,213,79,0.15),
-    0 0 0 18px rgba(255,213,79,0.08),
-    0 0 38px   rgba(255,200,0,0.45);
+    0 0 0 7px  rgba(255,213,79,0.16),
+    0 0 0 16px rgba(255,213,79,0.09),
+    0 0 34px   rgba(255,200,0,0.42);
   animation: sunPulse 4s ease-in-out infinite;
 }
 @keyframes sunPulse {
   0%,100% {
-    box-shadow: 0 0 0 8px rgba(255,213,79,0.15),
-                0 0 0 18px rgba(255,213,79,0.08),
-                0 0 38px  rgba(255,200,0,0.45);
+    box-shadow: 0 0 0  7px rgba(255,213,79,0.16),
+                0 0 0 16px rgba(255,213,79,0.09),
+                0 0 34px  rgba(255,200,0,0.42);
   }
   50% {
-    box-shadow: 0 0 0 14px rgba(255,213,79,0.22),
-                0 0 0 28px rgba(255,213,79,0.11),
-                0 0 58px  rgba(255,200,0,0.65);
+    box-shadow: 0 0 0 12px rgba(255,213,79,0.22),
+                0 0 0 24px rgba(255,213,79,0.11),
+                0 0 54px  rgba(255,200,0,0.64);
   }
 }
 
 /* Clouds */
 .ca__cloud {
   position: absolute;
-  background: rgba(255,255,255,0.92);
+  background: rgba(255,255,255,0.93);
   border-radius: 50px;
 }
 .ca__cloud::before, .ca__cloud::after {
   content: '';
   position: absolute;
-  background: rgba(255,255,255,0.92);
+  background: rgba(255,255,255,0.93);
   border-radius: 50%;
 }
 .ca__cloud--1 {
-  top: 26px; left: 10%;
-  width: 68px; height: 20px;
-  animation: cloudDrift 22s linear infinite;
+  top: 22px; left: 8%;
+  width: 66px; height: 18px;
+  animation: cloudDrift 24s linear infinite;
 }
-.ca__cloud--1::before { width: 32px; height: 32px; top: -16px; left: 10px; }
-.ca__cloud--1::after  { width: 22px; height: 22px; top: -11px; left: 36px; }
+.ca__cloud--1::before { width: 32px; height: 32px; top: -16px; left: 9px; }
+.ca__cloud--1::after  { width: 22px; height: 22px; top: -11px; left: 34px; }
 .ca__cloud--2 {
-  top: 54px; left: 52%;
-  width: 48px; height: 14px;
-  opacity: 0.68;
-  animation: cloudDrift 30s linear 6s infinite;
+  top: 46px; left: 54%;
+  width: 46px; height: 13px;
+  opacity: 0.66;
+  animation: cloudDrift 32s linear 7s infinite;
 }
-.ca__cloud--2::before { width: 22px; height: 22px; top: -11px; left: 8px; }
-.ca__cloud--2::after  { width: 15px; height: 15px; top: -8px;  left: 27px; }
+.ca__cloud--2::before { width: 21px; height: 21px; top: -10px; left: 7px; }
+.ca__cloud--2::after  { width: 14px; height: 14px; top: -7px;  left: 26px; }
 @keyframes cloudDrift {
-  from { transform: translateX(-150%); }
-  to   { transform: translateX(240%); }
+  from { transform: translateX(-160%); }
+  to   { transform: translateX(260%); }
 }
 
-/* Trees */
+/* Pine trees at sky horizon */
 .ca__tree {
   position: absolute; bottom: 0;
   width: 0; height: 0;
-  border-left:  24px solid transparent;
-  border-right: 24px solid transparent;
-  border-bottom: 72px solid #2b6420;
+  border-left:  22px solid transparent;
+  border-right: 22px solid transparent;
+  border-bottom: 68px solid #2b6420;
 }
 .ca__tree::before {
   content: '';
   position: absolute;
-  bottom: -52px; left: -17px;
+  bottom: -50px; left: -16px;
   width: 0; height: 0;
-  border-left:  17px solid transparent;
-  border-right: 17px solid transparent;
-  border-bottom: 52px solid #2b6420;
+  border-left:  16px solid transparent;
+  border-right: 16px solid transparent;
+  border-bottom: 50px solid #2b6420;
 }
 .ca__tree::after {
   content: '';
   position: absolute;
-  bottom: -30px; left: -11px;
-  width: 8px; height: 30px;
+  bottom: -68px; left: -3px;
+  width: 6px; height: 24px;
   background: #5c3a1e;
-  left: -4px;
 }
-.ca__tree--l { left: 6px; }
-.ca__tree--r { right: 6px; transform: scaleX(-1); }
+.ca__tree--l { left: 4px; }
+.ca__tree--r { right: 4px; transform: scaleX(-1); }
 
-/* ── Dock ─────────────────────────────────────────────── */
-.ca__dock {
+/* ── Scene ────────────────────────────────────────────────────── */
+/* Fixed-height container that holds the sprite + water overlays. */
+/* Dock and water are baked into the sprites — CSS only provides  */
+/* the water-bg to extend the sprite's water across full width.   */
+.ca__scene {
+  position: relative;
+  height: 268px;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  /* overflow: visible so float animations aren't clipped at top */
+}
+
+/* ── Water background ─────────────────────────────────────────── */
+/* Extends the sprite's water band to the full container width.   */
+/* Height and color matched to the sprite's 19px water zone       */
+/* at 260px render scale (19 × 260/209 ≈ 24px, +4px buffer).     */
+.ca__water-bg {
   position: absolute;
-  /* bottom of dock sits just below waterline so posts dip in */
-  bottom: 104px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(62%, 230px);
+  bottom: 0; left: 0; right: 0;
+  height: 28px;
+  /* Match sprite water: #0A19C8 top transition, #0B6BEF main body */
+  background: linear-gradient(180deg, #0A19C8 0%, #0B6BEF 100%);
   z-index: 1;
 }
 
-/* Deck planks */
-.ca__dock-plank {
-  width: 100%;
-  height: 14px;
-  background: linear-gradient(180deg, #D4A245 0%, #A97B2A 100%);
-  border-radius: 3px 3px 0 0;
-  position: relative;
-  box-shadow:
-    0 3px 10px rgba(0,0,0,0.30),
-    inset 0 1px 0 rgba(255,255,255,0.25);
-}
-/* Plank grain lines */
-.ca__dock-plank::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 3px 3px 0 0;
-  background: repeating-linear-gradient(
-    90deg,
-    transparent 0px, transparent 25px,
-    rgba(0,0,0,0.14) 25px, rgba(0,0,0,0.14) 26px
-  );
-}
-/* Top edge highlight */
-.ca__dock-plank::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, rgba(255,255,255,0.0), rgba(255,255,255,0.35) 50%, rgba(255,255,255,0.0));
-  border-radius: 3px 3px 0 0;
-}
-/* Posts */
-.ca__dock-legs {
-  display: flex;
-  justify-content: space-between;
-  padding: 0 16px;
-}
-.ca__dock-leg {
-  width: 10px;
-  height: 30px;
-  background: linear-gradient(180deg, #A97B2A 0%, #7A5218 100%);
-  border-radius: 0 0 3px 3px;
-  box-shadow: 1px 1px 3px rgba(0,0,0,0.2);
-}
-
-/* ── Fisherman outer — handles centering only ─────────── */
+/* ── Fisherman ────────────────────────────────────────────────── */
+/* Outer div: size + centering only (no transform for animation). */
 .ca__fisherman {
-  position: absolute;
-  /* sits on top of dock deck (104 + 14 = 118) */
-  bottom: 118px;
-  left: 50%;
-  transform: translateX(-50%);
+  position: relative;
+  width: 260px;
+  height: 260px;
   z-index: 2;
   pointer-events: none;
-  /* fixed square matches forced-square sprite below */
-  width: 184px;
-  height: 184px;
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  overflow: hidden;
-}
-
-/* ── Fisherman inner — handles phase animations ───────── */
-.ca__fisherman-inner {
-  width: 184px;
-  height: 184px;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  transform-origin: bottom center;
   flex-shrink: 0;
 }
 
-/* Sprite image — forced square so every pose occupies the same box */
+/* Inner div: all phase animations target this element.          */
+/* transform-origin: bottom center keeps the dock grounded.      */
+.ca__fisherman-inner {
+  width: 260px;
+  height: 260px;
+  transform-origin: bottom center;
+}
+
+/* Sprite — fixed square box so every pose occupies the same     */
+/* screen region; no positional jump between frames.             */
 .ca__sprite {
-  width: 184px;
-  height: 184px;
+  width: 260px;
+  height: 260px;
   object-fit: contain;
   object-position: center bottom;
   display: block;
-  flex-shrink: 0;
-  /* Smooth crossfade on every sprite swap */
-  animation: spriteIn 0.2s ease;
+  /* Quick crossfade — 120ms works even at 200ms frame cycles    */
+  animation: spriteIn 0.12s ease;
 }
 @keyframes spriteIn {
-  from { opacity: 0; transform: scale(0.97); }
-  to   { opacity: 1; transform: scale(1); }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
-/* ── Phase animations on the INNER div ───────────────── */
+/* ── Phase animations on .ca__fisherman-inner ────────────────── */
+/* These add life ON TOP of the sprite frame changes.             */
+/* Fast-cycling phases (≤220ms) get micro-amplitude so they don't */
+/* fight the frame content. Slow phases get the full effect.      */
 
-/* Casting: slight lean forward */
+/* Casting: gentle energy sway while frames carry the action */
 .ca--casting .ca__fisherman-inner {
-  animation: castLean 0.85s ease-in-out infinite alternate;
+  animation: castSway 0.9s ease-in-out infinite alternate;
 }
-@keyframes castLean {
-  from { transform: rotate(-1.5deg) translateX(-3px); }
-  to   { transform: rotate(1.5deg)  translateX(3px);  }
+@keyframes castSway {
+  from { transform: rotate(-1deg) translateX(-2px); }
+  to   { transform: rotate(1deg)  translateX(2px);  }
 }
 
-/* Splash: settle */
+/* Splash: settle to neutral */
 .ca--splash .ca__fisherman-inner {
   animation: settleBack 0.4s ease-out forwards;
 }
 @keyframes settleBack {
-  from { transform: rotate(1.5deg) translateX(3px); }
-  to   { transform: rotate(0deg)   translateX(0);   }
+  from { transform: rotate(0.8deg) translateX(2px); }
+  to   { transform: none; }
 }
 
-/* Waiting: slow gentle float */
+/* Waiting: slow breathing float — the main visible idle state */
 .ca--waiting .ca__fisherman-inner {
-  animation: gentleFloat 3.2s ease-in-out infinite;
+  animation: breatheFloat 3.6s ease-in-out infinite;
 }
-@keyframes gentleFloat {
-  0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(-4px); }
+@keyframes breatheFloat {
+  0%, 100% { transform: translateY(0)    scale(1);     }
+  50%       { transform: translateY(-3px) scale(1.005); }
 }
 
-/* Tension: anticipation bounce */
+/* Tension: micro-bounce matches the 220ms frame swap rhythm */
 .ca--tension .ca__fisherman-inner {
-  animation: tensionBounce 0.32s ease-in-out infinite;
+  animation: microBounce 0.22s ease-in-out infinite;
 }
-@keyframes tensionBounce {
-  0%, 100% { transform: translateY(0)    rotate(0deg); }
-  50%       { transform: translateY(-4px) rotate(-1.2deg); }
+@keyframes microBounce {
+  0%, 100% { transform: translateY(0);    }
+  50%       { transform: translateY(-2px); }
 }
 
-/* Hooked: intense shake */
+/* Hooked: micro lateral rock while fight frames carry drama */
 .ca--hooked .ca__fisherman-inner {
-  animation: hookedShake 0.16s ease-in-out infinite;
+  animation: microRock 0.2s ease-in-out infinite;
 }
-@keyframes hookedShake {
-  0%, 100% { transform: translateX(0)    rotate(0deg)  scale(1.02); }
-  33%       { transform: translateX(-4px) rotate(-2deg) scale(1.03); }
-  66%       { transform: translateX(4px)  rotate(2deg)  scale(1.02); }
+@keyframes microRock {
+  0%, 100% { transform: translateX(0);    }
+  33%       { transform: translateX(-2px); }
+  66%       { transform: translateX(2px);  }
 }
 
-/* Reeling: triumphant rise */
+/* Reeling: triumphant rise into the victory frames */
 .ca--reeling .ca__fisherman-inner {
-  animation: triumphRise 0.5s ease-out forwards;
+  animation: triumphRise 0.45s ease-out forwards;
 }
 @keyframes triumphRise {
-  from { transform: translateY(6px) scale(0.97); }
-  to   { transform: translateY(0)   scale(1.03); }
+  from { transform: translateY(5px) scale(0.97); }
+  to   { transform: translateY(0)   scale(1.02); }
 }
 
-/* ── Water ────────────────────────────────────────────── */
-.ca__water {
-  height: 110px;
-  background: linear-gradient(180deg, #1E88E5 0%, #1565C0 100%);
-  border-top: 2px solid rgba(100,210,255,0.65);
-  position: relative;
-  overflow: visible;
+/* Catch: gentle proud pulse while showing the fish */
+.ca--catch .ca__fisherman-inner {
+  animation: catchPulse 1s ease-in-out infinite;
+}
+@keyframes catchPulse {
+  0%, 100% { transform: scale(1);    }
+  50%       { transform: scale(1.02); }
 }
 
-/* Sunlight shimmer on water surface */
-.ca__water::before {
-  content: '';
-  position: absolute;
-  top: 4px; right: 6%;
-  width: 32%; height: 55%;
-  background: linear-gradient(135deg, rgba(255,255,255,0.10) 0%, transparent 65%);
-  border-radius: 50%;
-  pointer-events: none;
-}
-
-.ca__wave {
-  position: absolute;
-  top: -5px; left: -20px; right: -20px;
-  height: 10px;
-  background: rgba(150,225,255,0.28);
-  border-radius: 50%;
-  animation: waterWave 3.5s ease-in-out infinite;
-}
-.ca__wave--2 {
-  top: -2px;
-  animation-delay: 1.4s;
-  animation-duration: 4.5s;
-  opacity: 0.42;
-}
-@keyframes waterWave {
-  0%,100% { transform: scaleX(1)    translateY(0);   }
-  50%      { transform: scaleX(1.02) translateY(2px); }
-}
-
-/* ── Bobber ───────────────────────────────────────────── */
-.ca__bobber {
-  position: absolute;
-  top: 10px; left: 68%;
-  width: 18px; height: 24px;
-  animation: bobberFloat 2.2s ease-in-out infinite;
-  transition: left 1.5s ease, opacity 0.5s ease;
-}
-
-/* Fishing line — threads up-left from bobber toward rod */
-.ca__bobber::before {
-  content: '';
-  position: absolute;
-  bottom: 100%;
-  left: 9px;
-  width: 1px;
-  height: 88px;
-  background: linear-gradient(to bottom, transparent 0%, rgba(190,190,190,0.55) 100%);
-  transform-origin: bottom center;
-  transform: rotate(-28deg);
-}
-
-.ca--waiting .ca__bobber { animation: bobberFloat 2.2s ease-in-out infinite; }
-.ca--tension .ca__bobber { animation: bobberBite  0.38s ease-in-out infinite; }
-.ca--hooked  .ca__bobber { opacity: 0; transform: translateY(40px); transition: all 0.3s; }
-.ca--casting .ca__bobber { left: 92%; opacity: 0; }
-.ca--splash  .ca__bobber { left: 68%; opacity: 1; }
-
-.ca__bobber-top {
-  width: 18px; height: 12px;
-  background: radial-gradient(circle at 40% 40%, #EF5350, #C62828);
-  border-radius: 9px 9px 0 0;
-}
-.ca__bobber-bot {
-  width: 18px; height: 12px;
-  background: linear-gradient(180deg, #F5F5F5, #E0E0E0);
-  border-radius: 0 0 9px 9px;
-  border-top: 1px solid rgba(0,0,0,0.1);
-}
-
-@keyframes bobberFloat {
-  0%,100% { transform: translateY(0)   rotate(0deg); }
-  50%      { transform: translateY(3px) rotate(2deg); }
-}
-@keyframes bobberBite {
-  0%,100% { transform: translateY(0)   rotate(0deg); }
-  50%      { transform: translateY(8px) rotate(5deg); }
-}
-
-/* ── Ripples ──────────────────────────────────────────── */
+/* ── Ripple rings ─────────────────────────────────────────────── */
+/* Positioned where the fishing line enters the water.            */
+/* calc(50% + 108px) ≈ 77% of a 400px scene — right of sprite.  */
 .ca__ripple {
   position: absolute;
-  top: 20px; left: calc(68% + 9px);
+  bottom: 10px;
+  left: calc(50% + 108px);
   transform: translateX(-50%);
-  width: 36px; height: 10px;
-  border: 1px solid rgba(150,225,255,0.55);
+  width: 32px; height: 9px;
+  border: 1.5px solid rgba(100,195,255,0.60);
   border-radius: 50%;
   opacity: 0;
+  z-index: 3;
 }
-.ca--splash  .ca__ripple--1 { animation: ripple 1.5s ease-out 0.1s  forwards; }
-.ca--waiting .ca__ripple--1 { animation: ripple 2.5s ease-out 0.0s  infinite; }
-.ca--waiting .ca__ripple--2 { animation: ripple 2.5s ease-out 0.85s infinite; }
-.ca--waiting .ca__ripple--3 { animation: ripple 2.5s ease-out 1.70s infinite; }
-.ca--tension .ca__ripple--1 { animation: ripple 0.8s ease-out 0.0s  infinite; }
-.ca--hooked  .ca__ripple--1 { animation: ripple 0.5s ease-out 0s 3; width: 72px; height: 20px; }
+.ca--splash  .ca__ripple--1 { animation: ripple 1.4s ease-out 0.08s forwards; }
+.ca--waiting .ca__ripple--1 { animation: ripple 2.6s ease-out 0.0s  infinite; }
+.ca--waiting .ca__ripple--2 { animation: ripple 2.6s ease-out 0.88s infinite; }
+.ca--waiting .ca__ripple--3 { animation: ripple 2.6s ease-out 1.76s infinite; }
+.ca--tension .ca__ripple--1 { animation: ripple 0.75s ease-out 0.0s infinite; }
+.ca--hooked  .ca__ripple--1 {
+  animation: ripple 0.45s ease-out 0s 3;
+  width: 64px; height: 18px;
+}
 @keyframes ripple {
-  0%   { transform: translateX(-50%) scale(0.3); opacity: 0.8; }
-  100% { transform: translateX(-50%) scale(2.6); opacity: 0;   }
+  0%   { transform: translateX(-50%) scale(0.3); opacity: 0.85; }
+  100% { transform: translateX(-50%) scale(2.8); opacity: 0;    }
 }
 
-/* ── Splash drops ─────────────────────────────────────── */
-.ca__splash { position: absolute; top: 10px; left: 68%; }
+/* ── Splash drops ─────────────────────────────────────────────── */
+.ca__splash {
+  position: absolute;
+  bottom: 12px;
+  left: calc(50% + 108px);
+  z-index: 3;
+}
 .ca__drop {
   position: absolute;
   width: 4px; height: 4px;
   border-radius: 50%;
-  background: rgba(150,225,255,0.9);
+  background: rgba(140,220,255,0.92);
   opacity: 0;
-  --dx: calc(cos(var(--i) * 60deg) * 22px);
-  --dy: calc(sin(var(--i) * 60deg) * -18px);
+  --dx: calc(cos(var(--i) * 60deg) * 20px);
+  --dy: calc(sin(var(--i) * 60deg) * -16px);
 }
 .ca--splash .ca__drop,
 .ca--hooked .ca__drop {
@@ -391,46 +288,46 @@
   100% { opacity: 0; transform: translate(var(--dx), var(--dy)); }
 }
 
-/* ── Phase label — floats in sky above fisherman ─────── */
+/* ── Phase label ──────────────────────────────────────────────── */
+/* Sits in the upper-sky zone, clear of the sprite and sun.       */
 .ca__label {
   position: absolute;
-  top: 14px; left: 50%;
+  top: 12px; left: 50%;
   transform: translateX(-50%);
   white-space: nowrap;
-  z-index: 3;
+  z-index: 5;
 }
 .ca__label-text {
   display: block;
   font-family: var(--font-display);
-  font-size: 0.98rem;
+  font-size: 0.95rem;
   font-weight: 600;
   color: #fff;
-  letter-spacing: 0.5px;
-  text-align: center;
-  animation: popIn 0.28s ease;
-  background: rgba(10,55,130,0.60);
-  padding: 5px 14px;
+  letter-spacing: 0.4px;
+  animation: popIn 0.25s ease;
+  background: rgba(8, 45, 120, 0.60);
+  padding: 4px 13px;
   border-radius: var(--radius-full);
-  border: 1px solid rgba(100,185,255,0.38);
+  border: 1px solid rgba(100,185,255,0.35);
   backdrop-filter: blur(4px);
 }
 @keyframes popIn {
-  from { opacity: 0; transform: scale(0.90) translateY(4px); }
+  from { opacity: 0; transform: scale(0.88) translateY(4px); }
   to   { opacity: 1; transform: scale(1)    translateY(0);   }
 }
 
-/* ── Progress dots ────────────────────────────────────── */
+/* ── Progress dots ────────────────────────────────────────────── */
 .ca__progress {
   position: absolute;
-  bottom: 12px; left: 50%;
+  bottom: 8px; left: 50%;
   transform: translateX(-50%);
-  display: flex; gap: 6px;
-  z-index: 3;
+  display: flex; gap: 5px;
+  z-index: 5;
 }
 .ca__pdot {
-  width: 6px; height: 6px;
+  width: 5px; height: 5px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.28);
+  background: rgba(255,255,255,0.30);
   transition: background var(--t-normal);
 }
 .ca__pdot--done { background: var(--brand-primary); }

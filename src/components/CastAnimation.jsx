@@ -2,31 +2,76 @@
 import { useState, useEffect, useRef } from 'react';
 import './CastAnimation.css';
 
-// Each phase: frames[] cycles at frameMs interval, single entry = static
+// ── Phase definitions ─────────────────────────────────────────
+// frames[] cycles at frameMs interval. Single entry = static.
+// Dock, water, and fishing-line are baked into every sprite —
+// CSS only provides sky, sun, clouds, trees, and water-bg extension.
 const PHASES = [
-  { key: 'casting', duration: 1500, label: 'Casting…',                   frames: ['fishing-se', 'cast'],      frameMs: 500  },
-  { key: 'splash',  duration:  800, label: '💦 Splash!',                  frames: ['line-out'],                frameMs: 0    },
-  { key: 'waiting', duration: 2500, label: '🎣 Waiting for a bite…',      frames: ['fishing-se', 'waiting'],   frameMs: 1000 },
-  { key: 'tension', duration:  800, label: "⚡ Something's on the line!", frames: ['fishing-se', 'bite'],      frameMs: 300  },
-  { key: 'hooked',  duration: 1000, label: '🐟 Fish on!',                 frames: ['fish-on', 'pulling'],     frameMs: 250  },
-  { key: 'reeling', duration:  700, label: '🏆 Reeling in!',              frames: ['reel-strong', 'showing'], frameMs: 350  },
+  {
+    key:      'casting',
+    duration: 1800,
+    label:    'Casting…',
+    frames:   ['cast-throw', 'cast-follow', 'watch', 'line-out'],
+    frameMs:  400,
+  },
+  {
+    key:      'splash',
+    duration: 600,
+    label:    '💦 Splash!',
+    frames:   ['line-out'],
+    frameMs:  0,
+  },
+  {
+    key:      'waiting',
+    duration: 2800,
+    label:    '🎣 Waiting for a bite…',
+    frames:   ['wait-a', 'wait-b', 'wait-c', 'watch', 'wait-b'],
+    frameMs:  640,
+  },
+  {
+    key:      'tension',
+    duration: 880,
+    label:    "⚡ Something's on the line!",
+    frames:   ['alert', 'bite', 'alert', 'bite'],
+    frameMs:  220,
+  },
+  {
+    key:      'hooked',
+    duration: 1200,
+    label:    '🐟 Fish on!',
+    frames:   ['fight-a', 'fight-b', 'fight-c', 'fight-d'],
+    frameMs:  200,
+  },
+  {
+    key:      'reeling',
+    duration: 900,
+    label:    '🏆 Reeling in!',
+    frames:   ['triumph-a', 'triumph-b', 'triumph-c'],
+    frameMs:  260,
+  },
+  {
+    key:      'catch',
+    duration: 1000,
+    label:    '🎉 What a catch!',
+    frames:   ['catch-a', 'catch-b'],
+    frameMs:  440,
+  },
 ];
 
 function spriteUrl(name) {
   return new URL(`../assets/sprites/${name}.png`, import.meta.url).href;
 }
 
-const SPRITE_URLS = {
-  'cast':        spriteUrl('cast'),
-  'line-out':    spriteUrl('line-out'),
-  'fishing-se':  spriteUrl('fishing-se'),
-  'waiting':     spriteUrl('waiting'),
-  'bite':        spriteUrl('bite'),
-  'fish-on':     spriteUrl('fish-on'),
-  'pulling':     spriteUrl('pulling'),
-  'reel-strong': spriteUrl('reel-strong'),
-  'showing':     spriteUrl('showing'),
-};
+const SPRITE_URLS = Object.fromEntries(
+  [
+    'wait-a', 'wait-b', 'wait-c', 'watch',
+    'cast-throw', 'cast-follow', 'line-out',
+    'alert', 'bite',
+    'fight-a', 'fight-b', 'fight-c', 'fight-d',
+    'triumph-a', 'triumph-b', 'triumph-c',
+    'catch-a', 'catch-b',
+  ].map(name => [name, spriteUrl(name)])
+);
 
 export default function CastAnimation({ onComplete }) {
   const [phaseIdx, setPhaseIdx] = useState(0);
@@ -34,7 +79,7 @@ export default function CastAnimation({ onComplete }) {
   const onCompleteRef = useRef(onComplete);
   useEffect(() => { onCompleteRef.current = onComplete; }, [onComplete]);
 
-  // Main phase timer chain
+  // ── Phase timer chain ─────────────────────────────────────────
   useEffect(() => {
     let elapsed = 0;
     const timers = PHASES.map((phase, i) => {
@@ -46,7 +91,7 @@ export default function CastAnimation({ onComplete }) {
     return () => { timers.forEach(clearTimeout); clearTimeout(done); };
   }, []);
 
-  // Frame cycling within the current phase
+  // ── Frame cycling within the current phase ────────────────────
   useEffect(() => {
     const phase = PHASES[phaseIdx];
     if (phase.frames.length <= 1 || !phase.frameMs) { setFrameIdx(0); return; }
@@ -64,64 +109,60 @@ export default function CastAnimation({ onComplete }) {
   return (
     <div className={`ca ca--${phase.key}`} aria-live="polite">
 
-      {/* Sky */}
+      {/* ── Sky backdrop (sun, clouds, trees) ─────────────────── */}
       <div className="ca__sky">
-        <div className="ca__sun" aria-hidden="true" />
+        <div className="ca__sun"            aria-hidden="true" />
         <div className="ca__cloud ca__cloud--1" aria-hidden="true" />
         <div className="ca__cloud ca__cloud--2" aria-hidden="true" />
-        <div className="ca__tree ca__tree--l" aria-hidden="true" />
-        <div className="ca__tree ca__tree--r" aria-hidden="true" />
+        <div className="ca__tree ca__tree--l"   aria-hidden="true" />
+        <div className="ca__tree ca__tree--r"   aria-hidden="true" />
       </div>
 
-      {/* Fisherman — fixed 184×184 box prevents pose-shift between frames */}
-      <div className="ca__fisherman" aria-label="Fisherman animation">
-        <div className="ca__fisherman-inner">
-          <img
-            key={spriteName}
-            src={SPRITE_URLS[spriteName]}
-            alt=""
-            className="ca__sprite"
-          />
-        </div>
-      </div>
+      {/* ── Scene: sprite + ripple overlays ───────────────────── */}
+      {/*   Dock and water are baked into the sprite images.      */}
+      {/*   water-bg extends the sprite's water edge-to-edge.     */}
+      <div className="ca__scene">
 
-      {/* Dock — wooden planks + posts, straddles the waterline */}
-      <div className="ca__dock" aria-hidden="true">
-        <div className="ca__dock-plank" />
-        <div className="ca__dock-legs">
-          <div className="ca__dock-leg" />
-          <div className="ca__dock-leg" />
-          <div className="ca__dock-leg" />
-        </div>
-      </div>
+        {/* Water background — extends sprite water to full width */}
+        <div className="ca__water-bg" aria-hidden="true" />
 
-      {/* Water */}
-      <div className="ca__water" aria-hidden="true">
-        <div className="ca__wave" />
-        <div className="ca__wave ca__wave--2" />
-        <div className="ca__bobber">
-          <div className="ca__bobber-top" />
-          <div className="ca__bobber-bot" />
+        {/* Fisherman — outer centers, inner animates per phase   */}
+        <div className="ca__fisherman" aria-label="Fisherman animation">
+          <div className="ca__fisherman-inner">
+            <img
+              key={spriteName}
+              src={SPRITE_URLS[spriteName]}
+              alt=""
+              className="ca__sprite"
+            />
+          </div>
         </div>
-        <div className="ca__ripple ca__ripple--1" />
-        <div className="ca__ripple ca__ripple--2" />
-        <div className="ca__ripple ca__ripple--3" />
-        <div className="ca__splash">
+
+        {/* Ripple rings at the line-water entry point */}
+        <div className="ca__ripple ca__ripple--1" aria-hidden="true" />
+        <div className="ca__ripple ca__ripple--2" aria-hidden="true" />
+        <div className="ca__ripple ca__ripple--3" aria-hidden="true" />
+
+        {/* Splash drops */}
+        <div className="ca__splash" aria-hidden="true">
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="ca__drop" style={{ '--i': i }} />
           ))}
         </div>
       </div>
 
-      {/* Phase label — top of sky, out of the way */}
+      {/* ── Phase label — floats in sky ──────────────────────── */}
       <div className="ca__label">
         <span key={phase.key} className="ca__label-text">{phase.label}</span>
       </div>
 
-      {/* Progress dots */}
+      {/* ── Progress dots ────────────────────────────────────── */}
       <div className="ca__progress" aria-hidden="true">
         {PHASES.map((p, i) => (
-          <div key={p.key} className={`ca__pdot ${i <= phaseIdx ? 'ca__pdot--done' : ''}`} />
+          <div
+            key={p.key}
+            className={`ca__pdot ${i <= phaseIdx ? 'ca__pdot--done' : ''}`}
+          />
         ))}
       </div>
     </div>
