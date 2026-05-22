@@ -1,0 +1,196 @@
+/* src/components/LandingScreen.css */
+.landing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 var(--space-5) var(--space-8);
+  gap: var(--space-4);
+  animation: fadeIn 0.4s ease;
+}
+
+/* ── Challenge banner ─────────────────────────────────── */
+.landing__challenge {
+  width: 100%;
+  margin-top: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: rgba(232,115,42,0.1);
+  border: 1px solid rgba(232,115,42,0.4);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  text-align: center;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+.landing__challenge-rarity--legendary { color: var(--rarity-legendary); }
+.landing__challenge-rarity--epic      { color: var(--rarity-epic); }
+.landing__challenge-rarity--rare      { color: var(--rarity-rare); }
+.landing__challenge-rarity--uncommon  { color: var(--rarity-uncommon); }
+.landing__challenge-rarity--common    { color: var(--rarity-common); }
+
+/* ── Scene ────────────────────────────────────────────── */
+.landing__scene {
+  width: 100%;
+  height: 180px;
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  margin-top: var(--space-2);
+}
+
+.landing__sky {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, #020814 0%, #0a1628 55%, #0d2040 100%);
+}
+
+.landing__star {
+  position: absolute;
+  left: var(--x); top: var(--y);
+  width: 2px; height: 2px;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle 2.5s ease-in-out var(--delay) infinite;
+}
+
+.landing__moon {
+  position: absolute;
+  top: 14px; right: 22px;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #f4e8a0, #d4c060);
+  box-shadow: 0 0 18px rgba(244,230,140,0.6);
+}
+
+.landing__water {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 70px;
+  background: linear-gradient(180deg, #0a2840 0%, #060e18 100%);
+  border-top: 1px solid rgba(42,90,140,0.5);
+}
+
+.landing__wave {
+  position: absolute;
+  top: -6px; left: -20px; right: -20px;
+  height: 12px;
+  background: rgba(42,90,140,0.3);
+  border-radius: 50%;
+  animation: waterWave 3.5s ease-in-out infinite;
+}
+.landing__wave--2 {
+  top: -3px;
+  animation-delay: 1.2s;
+  animation-duration: 4.2s;
+  opacity: 0.5;
+}
+
+.landing__bobber {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 18px; height: 24px;
+  animation: bobberFloat 2s ease-in-out infinite;
+}
+.landing__bobber-top {
+  width: 18px; height: 12px;
+  background: #e03030;
+  border-radius: 9px 9px 0 0;
+}
+.landing__bobber-bottom {
+  width: 18px; height: 12px;
+  background: #f0f0f0;
+  border-radius: 0 0 9px 9px;
+  border-top: 1px solid rgba(0,0,0,0.2);
+}
+
+.landing__ripple {
+  position: absolute;
+  top: 20px; left: 50%;
+  transform: translateX(-50%);
+  width: 30px; height: 10px;
+  border: 1px solid rgba(42,90,140,0.6);
+  border-radius: 50%;
+  animation: ripple 2.5s ease-out infinite;
+}
+.landing__ripple--2 { animation-delay: 1.2s; opacity: 0.6; }
+
+/* ── Brand ────────────────────────────────────────────── */
+.landing__brand { text-align: center; }
+
+.landing__title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--brand-accent);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.landing__daily {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  letter-spacing: 4px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-top: var(--space-1);
+}
+
+.landing__tagline {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin-top: var(--space-2);
+  font-style: italic;
+}
+
+/* ── Streak ───────────────────────────────────────────── */
+.landing__streak {
+  padding: var(--space-2) var(--space-5);
+  background: rgba(244,196,48,0.08);
+  border: 1px solid rgba(244,196,48,0.25);
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  color: var(--brand-accent);
+  letter-spacing: 0.5px;
+}
+
+/* ── FOMO leaderboard teaser ─────────────────────────── */
+.landing__fomo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  width: 100%;
+  font-size: 0.8rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.landing__fomo-label {
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  font-family: var(--font-display);
+}
+
+.landing__fomo-catch {
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* ── CTA + Legal ──────────────────────────────────────── */
+.landing__cta { width: 100%; max-width: 320px; }
+
+.landing__legal {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-align: center;
+  padding-bottom: var(--space-2);
+}
