@@ -50,10 +50,11 @@ export function verifyResult(result) {
   if (!RARITIES.includes(result.rarity)) return false;
 
   // 3. Date must not be in the future
-  const resultDate = new Date(result.date + 'T00:00:00');
+  // Both sides use UTC to match the UTC date produced by toISOString().split('T')[0]
+  const resultDate = new Date(result.date + 'T00:00:00Z');
   const tomorrow   = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  tomorrow.setHours(0, 0, 0, 0);
+  tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
+  tomorrow.setUTCHours(0, 0, 0, 0);
   if (resultDate >= tomorrow) return false;
 
   // 4. Points within valid range for rarity
