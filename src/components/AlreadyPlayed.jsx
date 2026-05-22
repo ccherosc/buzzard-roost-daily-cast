@@ -78,7 +78,7 @@ export default function AlreadyPlayed({ result, playerData }) {
           </div>
         </div>
 
-        <a className="btn btn--primary" href="https://buzzardroost.com/shop" target="_blank" rel="noopener noreferrer">
+        <a className="btn btn--primary" href="https://buzzardgear.com/" target="_blank" rel="noopener noreferrer">
           Shop Buzzard Roost →
         </a>
       </div>

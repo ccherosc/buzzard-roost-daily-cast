@@ -107,7 +107,7 @@ export default function ResultCard({ result, newBadges = [], buildChallengeUrl }
         <button type="button" className="btn btn--secondary" onClick={handleShare}>
           {shareStatus === 'copied' ? '✅ Copied to clipboard!' : '📤 Share My Catch'}
         </button>
-        <a className="btn btn--primary" href="https://buzzardroost.com/shop" target="_blank" rel="noopener noreferrer">
+        <a className="btn btn--primary" href="https://buzzardgear.com/" target="_blank" rel="noopener noreferrer">
           Shop Buzzard Roost →
         </a>
       </div>
