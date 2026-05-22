@@ -1,5 +1,5 @@
 // src/components/SelectionStep.jsx
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import './SelectionStep.css';
 
 const STEPS = ['Spot', 'Lure', 'Cast'];
@@ -7,13 +7,16 @@ const STEPS = ['Spot', 'Lure', 'Cast'];
 export default function SelectionStep({ step, title, subtitle, options, onSelect }) {
   const [selected,  setSelected]  = useState(null);
   const [advancing, setAdvancing] = useState(false);
+  const timerRef = useRef(null);
+
+  useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current); }, []);
 
   function handlePick(id) { setSelected(id); }
 
   function handleContinue() {
     if (!selected || advancing) return;
     setAdvancing(true);
-    setTimeout(() => onSelect(selected), 300);
+    timerRef.current = setTimeout(() => onSelect(selected), 300);
   }
 
   return (
@@ -39,6 +42,7 @@ export default function SelectionStep({ step, title, subtitle, options, onSelect
       <div className="sel__grid">
         {options.map((opt, idx) => (
           <button
+            type="button"
             key={opt.id}
             className={[
               'sel__card',
@@ -61,6 +65,7 @@ export default function SelectionStep({ step, title, subtitle, options, onSelect
 
       {selected && (
         <button
+          type="button"
           className={`btn btn--primary sel__continue ${advancing ? 'sel__continue--go' : ''}`}
           onClick={handleContinue}
         >

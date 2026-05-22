@@ -13,7 +13,7 @@ export default function LandingScreen({ playerData, challengeData, onStart }) {
       {challengeData && (
         <div className="landing__challenge">
           🎯 A friend hooked a <strong className={`landing__challenge-rarity landing__challenge-rarity--${challengeData.rarity}`}>{challengeData.rarity}</strong> catch
-          for <strong>{challengeData.points.toLocaleString()} pts</strong>. Can you top them?
+          for <strong>{(Number.isFinite(challengeData.points) ? challengeData.points : 0).toLocaleString()} pts</strong>. Can you top them?
         </div>
       )}
 
