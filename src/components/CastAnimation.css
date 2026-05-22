@@ -14,6 +14,7 @@
   background: linear-gradient(180deg, #020814 0%, #0a1628 60%, #0d2040 100%);
   position: relative;
   overflow: hidden;
+  min-height: 200px;
 }
 
 .ca__moon {
@@ -55,46 +56,49 @@
 .ca__tree--l { left: 10px; }
 .ca__tree--r { right: 10px; transform: scaleX(-1); }
 
-/* ── Dock + Rod ───────────────────────────────────────── */
-.ca__dock-wrap {
+/* ── Fisherman Sprite ─────────────────────────────────── */
+.ca__fisherman {
   position: absolute;
-  bottom: 90px;
-  left: 0;
-  width: 60%;
-  height: 30px;
+  bottom: 88px;   /* sits just above the water line */
+  left: -16px;    /* slightly off-left so chair edge bleeds naturally */
+  z-index: 2;
+  pointer-events: none;
 }
 
-.ca__dock {
-  position: absolute;
-  bottom: 0; left: 0;
-  width: 120px; height: 14px;
-  background: linear-gradient(180deg, #6b3a1f, #4a2210);
-  border-radius: 2px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-}
-.ca__dock::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 3px;
-  background: repeating-linear-gradient(90deg, #8b5e3c 0, #8b5e3c 18px, #6b3a1f 18px, #6b3a1f 22px);
+.ca__sprite {
+  height: 210px;
+  width: auto;
+  display: block;
+  animation: spriteSwap 0.15s ease;
+  image-rendering: auto;
 }
 
-.ca__rod {
-  position: absolute;
-  bottom: 10px; left: 20px;
-  width: 200px; height: 150px;
-  overflow: visible;
-  transition: transform 1.5s cubic-bezier(0.4,0,0.2,1);
+@keyframes spriteSwap {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1); }
 }
 
-/* Rod swings during casting phase */
-.ca--casting .ca__rod { transform: rotate(-20deg) translateY(-10px); }
-.ca--splash  .ca__rod { transform: rotate(5deg); }
+/* Subtle sway during waiting */
+.ca--waiting .ca__sprite {
+  animation: spriteSwap 0.15s ease, fishermanSway 3s ease-in-out 0.15s infinite;
+}
 
-/* Line flexes on bite */
-.ca--tension .ca__line,
-.ca--hooked  .ca__line { stroke: #ffee88; }
+@keyframes fishermanSway {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-3px); }
+}
+
+/* Shake on tension/hooked */
+.ca--tension .ca__sprite,
+.ca--hooked  .ca__sprite {
+  animation: spriteSwap 0.15s ease, fishermanShake 0.3s ease-in-out infinite;
+}
+
+@keyframes fishermanShake {
+  0%, 100% { transform: translateX(0); }
+  25%       { transform: translateX(-2px) rotate(-0.5deg); }
+  75%       { transform: translateX(2px)  rotate(0.5deg); }
+}
 
 /* ── Water ────────────────────────────────────────────── */
 .ca__water {
@@ -118,16 +122,16 @@
 /* ── Bobber ───────────────────────────────────────────── */
 .ca__bobber {
   position: absolute;
-  top: 10px; left: 52%;
+  top: 10px; left: 62%;
   width: 20px; height: 26px;
   animation: bobberFloat 2s ease-in-out infinite;
-  transition: left 1.5s ease;
+  transition: left 1.5s ease, opacity 0.5s ease;
 }
 .ca--waiting .ca__bobber { animation: bobberFloat 2s ease-in-out infinite; }
 .ca--tension .ca__bobber { animation: bobberBite 0.4s ease-in-out infinite; }
 .ca--hooked  .ca__bobber { opacity: 0; transform: translateY(40px); transition: all 0.3s; }
-.ca--casting .ca__bobber { left: 80%; opacity: 0; }
-.ca--splash  .ca__bobber { left: 52%; opacity: 1; }
+.ca--casting .ca__bobber { left: 90%; opacity: 0; }
+.ca--splash  .ca__bobber { left: 62%; opacity: 1; }
 
 .ca__bobber-top {
   width: 20px; height: 13px;
@@ -144,7 +148,7 @@
 /* ── Ripples ──────────────────────────────────────────── */
 .ca__ripple {
   position: absolute;
-  top: 20px; left: calc(52% + 10px);
+  top: 20px; left: calc(62% + 10px);
   transform: translateX(-50%);
   width: 40px; height: 12px;
   border: 1px solid rgba(42,90,160,0.5);
@@ -159,7 +163,7 @@
 .ca--hooked  .ca__ripple--1 { animation: ripple 0.5s ease-out 0s 3; width: 80px; height: 24px; }
 
 /* ── Splash drops ─────────────────────────────────────── */
-.ca__splash { position: absolute; top: 10px; left: 52%; }
+.ca__splash { position: absolute; top: 10px; left: 62%; }
 
 .ca__drop {
   position: absolute;
@@ -181,6 +185,7 @@
   bottom: 110px; left: 50%;
   transform: translateX(-50%);
   white-space: nowrap;
+  z-index: 3;
 }
 
 .ca__label-text {
@@ -206,6 +211,7 @@
   transform: translateX(-50%);
   display: flex;
   gap: 6px;
+  z-index: 3;
 }
 
 .ca__pdot {
