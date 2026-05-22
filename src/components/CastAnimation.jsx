@@ -2,13 +2,14 @@
 import { useState, useEffect, useRef } from 'react';
 import './CastAnimation.css';
 
+// Each phase: frames[] cycles at frameMs interval, single entry = static
 const PHASES = [
-  { key: 'casting', duration: 1500, label: 'Casting…',                    sprite: 'cast'       },
-  { key: 'splash',  duration:  800, label: '💦 Splash!',                   sprite: 'line-out'   },
-  { key: 'waiting', duration: 2500, label: '🎣 Waiting for a bite…',       sprite: 'fishing-se' },
-  { key: 'tension', duration:  800, label: "⚡ Something's on the line!",   sprite: 'bite'       },
-  { key: 'hooked',  duration: 1000, label: '🐟 Fish hooked!',               sprite: 'fish-on'    },
-  { key: 'reeling', duration:  700, label: 'Reeling in…',                   sprite: 'showing'    },
+  { key: 'casting', duration: 1500, label: 'Casting…',                  frames: ['fishing-se', 'cast'],          frameMs: 500  },
+  { key: 'splash',  duration:  800, label: '💦 Splash!',                 frames: ['line-out'],                    frameMs: 0    },
+  { key: 'waiting', duration: 2500, label: '🎣 Waiting for a bite…',     frames: ['fishing-se', 'waiting'],       frameMs: 1000 },
+  { key: 'tension', duration:  800, label: "⚡ Something's on the line!", frames: ['fishing-se', 'bite'],          frameMs: 300  },
+  { key: 'hooked',  duration: 1000, label: '🐟 Fish hooked!',             frames: ['fish-on', 'pulling'],          frameMs: 250  },
+  { key: 'reeling', duration:  700, label: 'Reeling in…',                frames: ['reel-strong', 'showing'],     frameMs: 350  },
 ];
 
 function spriteUrl(name) {
@@ -16,26 +17,28 @@ function spriteUrl(name) {
 }
 
 const SPRITE_URLS = {
-  'cast':       spriteUrl('cast'),
-  'line-out':   spriteUrl('line-out'),
-  'fishing-se': spriteUrl('fishing-se'),
-  'bite':       spriteUrl('bite'),
-  'fish-on':    spriteUrl('fish-on'),
-  'pulling':    spriteUrl('pulling'),
-  'showing':    spriteUrl('showing'),
+  'cast':        spriteUrl('cast'),
+  'line-out':    spriteUrl('line-out'),
+  'fishing-se':  spriteUrl('fishing-se'),
+  'waiting':     spriteUrl('waiting'),
+  'bite':        spriteUrl('bite'),
+  'fish-on':     spriteUrl('fish-on'),
+  'pulling':     spriteUrl('pulling'),
+  'reel-strong': spriteUrl('reel-strong'),
+  'showing':     spriteUrl('showing'),
 };
 
 export default function CastAnimation({ onComplete }) {
-  const [phaseIdx,   setPhaseIdx]   = useState(0);
-  const [altSprite,  setAltSprite]  = useState(false); // hooked phase: fish-on ↔ pulling
+  const [phaseIdx, setPhaseIdx] = useState(0);
+  const [frameIdx, setFrameIdx] = useState(0);
   const onCompleteRef = useRef(onComplete);
   useEffect(() => { onCompleteRef.current = onComplete; }, [onComplete]);
 
-  // Main phase chain
+  // Main phase timer chain
   useEffect(() => {
     let elapsed = 0;
     const timers = PHASES.map((phase, i) => {
-      const t = setTimeout(() => setPhaseIdx(i), elapsed);
+      const t = setTimeout(() => { setPhaseIdx(i); setFrameIdx(0); }, elapsed);
       elapsed += phase.duration;
       return t;
     });
@@ -43,15 +46,17 @@ export default function CastAnimation({ onComplete }) {
     return () => { timers.forEach(clearTimeout); clearTimeout(done); };
   }, []);
 
-  // Alternate sprites during hooked phase
+  // Frame cycling within the current phase
   useEffect(() => {
-    if (PHASES[phaseIdx].key !== 'hooked') { setAltSprite(false); return; }
-    const id = setInterval(() => setAltSprite(v => !v), 300);
+    const phase = PHASES[phaseIdx];
+    if (phase.frames.length <= 1 || !phase.frameMs) { setFrameIdx(0); return; }
+    setFrameIdx(0);
+    const id = setInterval(() => setFrameIdx(prev => (prev + 1) % phase.frames.length), phase.frameMs);
     return () => clearInterval(id);
   }, [phaseIdx]);
 
   const phase      = PHASES[phaseIdx];
-  const spriteName = (phase.key === 'hooked' && altSprite) ? 'pulling' : phase.sprite;
+  const spriteName = phase.frames[frameIdx] ?? phase.frames[0];
 
   return (
     <div className={`ca ca--${phase.key}`} aria-live="polite">
@@ -65,31 +70,30 @@ export default function CastAnimation({ onComplete }) {
         <div className="ca__tree ca__tree--r" aria-hidden="true" />
       </div>
 
-      {/* Fisherman sprite */}
+      {/* Fisherman — outer div handles centering, inner div handles phase animations */}
       <div className="ca__fisherman" aria-label="Fisherman animation">
-        <img
-          key={spriteName}
-          src={SPRITE_URLS[spriteName]}
-          alt=""
-          className="ca__sprite"
-        />
+        <div className="ca__fisherman-inner">
+          <img
+            key={spriteName}
+            src={SPRITE_URLS[spriteName]}
+            alt=""
+            className="ca__sprite"
+          />
+        </div>
       </div>
 
       {/* Water */}
       <div className="ca__water" aria-hidden="true">
         <div className="ca__wave" />
         <div className="ca__wave ca__wave--2" />
-
         <div className="ca__bobber">
           <div className="ca__bobber-top" />
           <div className="ca__bobber-bot" />
         </div>
-
         <div className="ca__ripple ca__ripple--1" />
         <div className="ca__ripple ca__ripple--2" />
         <div className="ca__ripple ca__ripple--3" />
-
-        <div className="ca__splash" aria-hidden="true">
+        <div className="ca__splash">
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="ca__drop" style={{ '--i': i }} />
           ))}

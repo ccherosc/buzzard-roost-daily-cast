@@ -2,25 +2,25 @@
 .ca {
   position: relative;
   width: 100%;
-  min-height: 400px;
+  min-height: 440px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
 }
 
-/* ── Sky — sunny day ──────────────────────────────────── */
+/* ── Sky ──────────────────────────────────────────────── */
 .ca__sky {
   flex: 1;
   background: linear-gradient(180deg, #1a6fbf 0%, #4ab0e8 55%, #87CEEB 100%);
   position: relative;
   overflow: hidden;
-  min-height: 220px;
+  min-height: 240px;
 }
 
 /* Sun */
 .ca__sun {
   position: absolute;
-  top: 18px; right: 32px;
+  top: 20px; right: 32px;
   width: 52px; height: 52px;
   border-radius: 50%;
   background: radial-gradient(circle at 38% 38%, #fff9c4, #FFD54F);
@@ -30,50 +30,46 @@
     0 0 50px rgba(255,200,0,0.5);
   animation: sunPulse 4s ease-in-out infinite;
 }
-
 @keyframes sunPulse {
   0%,100% { box-shadow: 0 0 0 10px rgba(255,213,79,0.18), 0 0 0 22px rgba(255,213,79,0.09), 0 0 50px rgba(255,200,0,0.5); }
-  50%      { box-shadow: 0 0 0 14px rgba(255,213,79,0.22), 0 0 0 28px rgba(255,213,79,0.11), 0 0 70px rgba(255,200,0,0.65); }
+  50%      { box-shadow: 0 0 0 15px rgba(255,213,79,0.22), 0 0 0 30px rgba(255,213,79,0.11), 0 0 70px rgba(255,200,0,0.7); }
 }
 
 /* Clouds */
 .ca__cloud {
   position: absolute;
-  background: rgba(255,255,255,0.85);
+  background: rgba(255,255,255,0.88);
   border-radius: 50px;
 }
 .ca__cloud::before, .ca__cloud::after {
   content: '';
   position: absolute;
-  background: rgba(255,255,255,0.85);
+  background: rgba(255,255,255,0.88);
   border-radius: 50%;
 }
 .ca__cloud--1 {
-  top: 28px; left: 18%;
-  width: 70px; height: 22px;
-  animation: cloudDrift 18s linear infinite;
+  top: 32px; left: 15%;
+  width: 72px; height: 22px;
+  animation: cloudDrift 20s linear infinite;
 }
-.ca__cloud--1::before { width: 34px; height: 34px; top: -16px; left: 10px; }
-.ca__cloud--1::after  { width: 24px; height: 24px; top: -10px; left: 34px; }
-
+.ca__cloud--1::before { width: 36px; height: 36px; top: -18px; left: 10px; }
+.ca__cloud--1::after  { width: 26px; height: 26px; top: -12px; left: 36px; }
 .ca__cloud--2 {
-  top: 52px; left: 48%;
-  width: 50px; height: 16px;
-  opacity: 0.7;
-  animation: cloudDrift 26s linear 4s infinite;
+  top: 58px; left: 50%;
+  width: 52px; height: 16px;
+  opacity: 0.72;
+  animation: cloudDrift 28s linear 6s infinite;
 }
-.ca__cloud--2::before { width: 24px; height: 24px; top: -12px; left: 8px; }
-.ca__cloud--2::after  { width: 18px; height: 18px; top: -8px;  left: 26px; }
-
+.ca__cloud--2::before { width: 26px; height: 26px; top: -13px; left: 8px; }
+.ca__cloud--2::after  { width: 18px; height: 18px; top: -9px;  left: 28px; }
 @keyframes cloudDrift {
-  from { transform: translateX(0); }
-  to   { transform: translateX(110%); }
+  from { transform: translateX(-120%); }
+  to   { transform: translateX(200%); }
 }
 
 /* Trees */
 .ca__tree {
-  position: absolute;
-  bottom: 0;
+  position: absolute; bottom: 0;
   width: 0; height: 0;
   border-left: 28px solid transparent;
   border-right: 28px solid transparent;
@@ -91,59 +87,105 @@
 .ca__tree--l { left: 10px; }
 .ca__tree--r { right: 10px; transform: scaleX(-1); }
 
-/* ── Fisherman Sprite ─────────────────────────────────── */
+/* ── Fisherman outer — handles position only ──────────── */
 .ca__fisherman {
   position: absolute;
-  /* Sit right above the water, fully within horizontal bounds */
-  bottom: 92px;
+  /* Sit exactly AT the waterline (water = 110px tall) */
+  bottom: 110px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 2;
   pointer-events: none;
-  /* Ensure sprite is never clipped — give breathing room */
-  width: 260px;
+  /* Wide enough that rod tip never clips */
+  width: min(90%, 360px);
   display: flex;
   justify-content: center;
+  align-items: flex-end;
 }
 
+/* ── Fisherman inner — handles phase animations ───────── */
+.ca__fisherman-inner {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  transform-origin: bottom center;
+}
+
+/* Sprite image */
 .ca__sprite {
-  height: 200px;
+  height: 230px;
   width: auto;
-  max-width: 260px;
+  max-width: 100%;
   object-fit: contain;
   display: block;
-  animation: spriteSwap 0.15s ease;
-  image-rendering: auto;
+  /* Smooth crossfade on every sprite swap (key change remounts) */
+  animation: spriteIn 0.25s ease;
+}
+@keyframes spriteIn {
+  from { opacity: 0; transform: scale(0.97) translateY(4px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0); }
 }
 
-@keyframes spriteSwap {
-  from { opacity: 0; transform: scale(0.96); }
-  to   { opacity: 1; transform: scale(1); }
+/* ── Phase animations on the INNER div ───────────────── */
+
+/* Casting: lean forward */
+.ca--casting .ca__fisherman-inner {
+  animation: castLean 0.8s ease-in-out infinite alternate;
+}
+@keyframes castLean {
+  from { transform: rotate(-2deg) translateX(-6px); }
+  to   { transform: rotate(1deg)  translateX(4px); }
 }
 
-/* Gentle sway while waiting */
-.ca--waiting .ca__sprite {
-  animation: spriteSwap 0.15s ease, fishermanSway 3s ease-in-out 0.15s infinite;
+/* Splash: settle back */
+.ca--splash .ca__fisherman-inner {
+  animation: settleBack 0.4s ease-out forwards;
 }
-@keyframes fishermanSway {
+@keyframes settleBack {
+  from { transform: rotate(1deg) translateX(4px); }
+  to   { transform: rotate(0deg) translateX(0); }
+}
+
+/* Waiting: gentle float */
+.ca--waiting .ca__fisherman-inner {
+  animation: gentleFloat 2.8s ease-in-out infinite;
+}
+@keyframes gentleFloat {
   0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(-4px); }
+  50%       { transform: translateY(-6px); }
 }
 
-/* Shake on tension / hooked */
-.ca--tension .ca__sprite,
-.ca--hooked  .ca__sprite {
-  animation: spriteSwap 0.15s ease, fishermanShake 0.25s ease-in-out infinite;
+/* Tension: quick anticipation bounce */
+.ca--tension .ca__fisherman-inner {
+  animation: tensionBounce 0.35s ease-in-out infinite;
 }
-@keyframes fishermanShake {
-  0%, 100% { transform: translateX(0); }
-  25%       { transform: translateX(-3px) rotate(-0.5deg); }
-  75%       { transform: translateX(3px)  rotate(0.5deg); }
+@keyframes tensionBounce {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%       { transform: translateY(-5px) rotate(-1.5deg); }
 }
 
-/* ── Water — bright sunny day ─────────────────────────── */
+/* Hooked: intense shake */
+.ca--hooked .ca__fisherman-inner {
+  animation: hookedShake 0.2s ease-in-out infinite;
+}
+@keyframes hookedShake {
+  0%, 100% { transform: translateX(0)   rotate(0deg) scale(1.02); }
+  33%       { transform: translateX(-5px) rotate(-2deg) scale(1.04); }
+  66%       { transform: translateX(5px)  rotate(2deg)  scale(1.02); }
+}
+
+/* Reeling: triumphant rise */
+.ca--reeling .ca__fisherman-inner {
+  animation: triumphRise 0.5s ease-out forwards;
+}
+@keyframes triumphRise {
+  from { transform: translateY(6px) scale(0.98); }
+  to   { transform: translateY(0)   scale(1.02); }
+}
+
+/* ── Water ────────────────────────────────────────────── */
 .ca__water {
-  height: 108px;
+  height: 110px;
   background: linear-gradient(180deg, #2196F3 0%, #1565C0 100%);
   border-top: 2px solid rgba(100,200,255,0.6);
   position: relative;
@@ -169,22 +211,13 @@
   transition: left 1.5s ease, opacity 0.5s ease;
 }
 .ca--waiting .ca__bobber { animation: bobberFloat 2s ease-in-out infinite; }
-.ca--tension .ca__bobber { animation: bobberBite 0.4s ease-in-out infinite; }
+.ca--tension .ca__bobber { animation: bobberBite  0.4s ease-in-out infinite; }
 .ca--hooked  .ca__bobber { opacity: 0; transform: translateY(40px); transition: all 0.3s; }
 .ca--casting .ca__bobber { left: 90%; opacity: 0; }
 .ca--splash  .ca__bobber { left: 65%; opacity: 1; }
 
-.ca__bobber-top {
-  width: 20px; height: 13px;
-  background: #e03030;
-  border-radius: 10px 10px 0 0;
-}
-.ca__bobber-bot {
-  width: 20px; height: 13px;
-  background: #f8f8f8;
-  border-radius: 0 0 10px 10px;
-  border-top: 1px solid rgba(0,0,0,0.15);
-}
+.ca__bobber-top { width: 20px; height: 13px; background: #e03030; border-radius: 10px 10px 0 0; }
+.ca__bobber-bot { width: 20px; height: 13px; background: #f8f8f8; border-radius: 0 0 10px 10px; border-top: 1px solid rgba(0,0,0,0.15); }
 
 /* ── Ripples ──────────────────────────────────────────── */
 .ca__ripple {
@@ -197,15 +230,14 @@
   opacity: 0;
 }
 .ca--splash  .ca__ripple--1 { animation: ripple 1.5s ease-out 0.1s forwards; }
-.ca--waiting .ca__ripple--1 { animation: ripple 2.5s ease-out 0s infinite; }
+.ca--waiting .ca__ripple--1 { animation: ripple 2.5s ease-out 0.0s infinite; }
 .ca--waiting .ca__ripple--2 { animation: ripple 2.5s ease-out 0.8s infinite; }
 .ca--waiting .ca__ripple--3 { animation: ripple 2.5s ease-out 1.6s infinite; }
-.ca--tension .ca__ripple--1 { animation: ripple 0.8s ease-out 0s infinite; }
+.ca--tension .ca__ripple--1 { animation: ripple 0.8s ease-out 0.0s infinite; }
 .ca--hooked  .ca__ripple--1 { animation: ripple 0.5s ease-out 0s 3; width: 80px; height: 24px; }
 
 /* ── Splash drops ─────────────────────────────────────── */
 .ca__splash { position: absolute; top: 12px; left: 65%; }
-
 .ca__drop {
   position: absolute;
   width: 4px; height: 4px;
@@ -216,19 +248,16 @@
   --dy: calc(sin(var(--i) * 60deg) * -20px);
 }
 .ca--splash .ca__drop,
-.ca--hooked .ca__drop {
-  animation: splashDrop 0.6s ease-out calc(var(--i) * 0.05s) forwards;
-}
+.ca--hooked .ca__drop { animation: splashDrop 0.6s ease-out calc(var(--i) * 0.05s) forwards; }
 
-/* ── Label ────────────────────────────────────────────── */
+/* ── Phase label ──────────────────────────────────────── */
 .ca__label {
   position: absolute;
-  bottom: 118px; left: 50%;
+  bottom: 120px; left: 50%;
   transform: translateX(-50%);
   white-space: nowrap;
   z-index: 3;
 }
-
 .ca__label-text {
   display: block;
   font-family: var(--font-display);
@@ -248,13 +277,11 @@
 /* ── Progress dots ────────────────────────────────────── */
 .ca__progress {
   position: absolute;
-  bottom: 12px; left: 50%;
+  bottom: 14px; left: 50%;
   transform: translateX(-50%);
-  display: flex;
-  gap: 6px;
+  display: flex; gap: 6px;
   z-index: 3;
 }
-
 .ca__pdot {
   width: 6px; height: 6px;
   border-radius: 50%;
