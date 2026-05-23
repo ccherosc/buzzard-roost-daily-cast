@@ -3,109 +3,138 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: var(--space-5);
-  padding: var(--space-8) var(--space-5);
+  min-height: calc(100dvh - 120px);
+  padding: var(--space-6) var(--space-4);
   cursor: pointer;
   user-select: none;
-  animation: fadeIn 0.3s ease;
-  min-height: 260px;
-  justify-content: center;
+  -webkit-user-select: none;
 }
 
-/* ── Scene ────────────────────────────────────────────── */
+/* ── Scene ── */
 .bt__scene {
   position: relative;
-  width: 160px;
-  height: 100px;
-  background: linear-gradient(180deg, #020c1e 0%, #071628 50%, #0a2040 100%);
+  width: 100%;
+  max-width: 340px;
+  height: 180px;
+  background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-card) 100%);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  border: 1px solid rgba(42,90,140,0.4);
+  border: 1px solid var(--border-card);
 }
 
 .bt__water {
   position: absolute;
   bottom: 0; left: 0; right: 0;
-  height: 45px;
-  background: linear-gradient(180deg, #0d2845 0%, #050e18 100%);
-  border-top: 1px solid rgba(30,70,120,0.6);
+  height: 80px;
+  background: linear-gradient(to bottom, rgba(26,44,26,0.7), rgba(15,26,13,0.95));
+  border-top: 1px solid rgba(74,124,47,0.3);
 }
 
 .bt__wave {
   position: absolute;
   top: -4px; left: -10px; right: -10px;
-  height: 7px;
-  background: rgba(30,70,130,0.25);
+  height: 10px;
+  background: rgba(74,124,47,0.18);
   border-radius: 50%;
   animation: waterWave 3s ease-in-out infinite;
 }
-.bt__wave--2    { top: -2px; opacity: 0.4; animation-delay: 1.2s; }
-.bt__wave--fast { animation-duration: 0.8s; background: rgba(50,120,200,0.35); }
+.bt__wave--2    { top: -2px; opacity: 0.5; animation-delay: 1.5s; }
+.bt__wave--fast { animation-duration: 0.8s; background: rgba(74,124,47,0.3); }
 
 .bt__bobber {
   position: absolute;
-  top: 32px;
-  left: 50%;
+  left: 50%; bottom: 68px;
   transform: translateX(-50%);
-  animation: bobberFloat 2s ease-in-out infinite;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: bobberFloat 2.5s ease-in-out infinite;
 }
-.bt__bobber--down { animation: bobberBite 0.5s ease-in-out forwards; }
+.bt__bobber--down { animation: bobberBite 0.4s ease-in forwards; }
 
 .bt__line {
-  position: absolute;
-  bottom: 100%; left: 50%;
-  transform: translateX(-50%);
-  width: 1px; height: 30px;
-  background: linear-gradient(to bottom, transparent, rgba(160,185,220,0.4));
+  width: 2px; height: 60px;
+  background: var(--text-muted);
+  opacity: 0.5;
 }
-.bt__bob-top { width: 14px; height: 3px; background: #c8282a; border-radius: 7px 7px 0 0; }
-.bt__bob-bot { width: 14px; height: 9px; background: linear-gradient(180deg, #e0e0e0, #c0c0c0); border-radius: 0 0 7px 7px; }
+.bt__bob-top {
+  width: 16px; height: 22px;
+  background: var(--brand-accent);
+  border-radius: 50% 50% 40% 40%;
+}
+.bt__bob-bot {
+  width: 16px; height: 18px;
+  background: #c8282a;
+  border-radius: 40% 40% 50% 50%;
+}
 
 .bt__splash {
   position: absolute;
-  top: 28px; left: 50%;
+  left: 50%; bottom: 68px;
   transform: translateX(-50%);
-  width: 30px; height: 10px;
-  border: 2px solid rgba(80,160,240,0.7);
+  width: 40px; height: 40px;
+  border: 3px solid var(--brand-accent);
   border-radius: 50%;
-  animation: rippleOut 0.5s ease-out forwards;
+  animation: ripple 0.6s ease-out forwards;
 }
 
-/* Bite state — pulse the border */
-.bt--bite .bt__scene { box-shadow: 0 0 0 2px rgba(34,197,94,0.7), 0 0 20px rgba(34,197,94,0.3); }
+/* Pre-bite precision cue ring */
+.bt__precue {
+  position: absolute;
+  left: 50%; bottom: 80px;
+  transform: translateX(-50%);
+  width: 30px; height: 30px;
+  border: 2px solid rgba(232,168,76,0.5);
+  border-radius: 50%;
+  animation: pulseRing 0.5s ease-out infinite;
+}
 
-/* ── Prompts ──────────────────────────────────────────── */
+/* Bite state — green border flash */
+.bt--bite .bt__scene {
+  box-shadow: 0 0 0 2px rgba(232,168,76,0.6), 0 0 24px rgba(232,168,76,0.25);
+}
+
+/* ── Prompts ── */
 .bt__prompt {
   font-family: var(--font-display);
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: var(--text-primary);
+  font-size: 1.6rem;
   letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-primary);
   text-align: center;
 }
 
 .bt__prompt--now {
-  color: #22c55e;
-  animation: glowPulse 0.4s ease-in-out infinite;
-  font-size: 1.8rem;
+  color: var(--brand-accent);
+  font-size: 2rem;
+  animation: countdownPulse 0.3s ease-in-out infinite;
 }
 
 .bt__sub {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  margin-top: calc(-1 * var(--space-3));
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-top: -12px;
   text-align: center;
 }
 
-/* ── Feedback ─────────────────────────────────────────── */
+.bt__hint {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* ── Feedback ── */
 .bt__feedback {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--space-3);
-  animation: popIn 0.35s ease;
+  animation: popIn 0.4s ease forwards;
 }
 .bt__icon { font-size: 3rem; }
-.bt__feedback--hit  .bt__prompt { color: #22c55e; }
+.bt__feedback--hit  .bt__prompt { color: var(--brand-accent); }
 .bt__feedback--miss .bt__prompt { color: #ef4444; }
-.bt__feedback--late .bt__prompt { color: var(--brand-accent); }
+.bt__feedback--late .bt__prompt { color: var(--text-muted); }

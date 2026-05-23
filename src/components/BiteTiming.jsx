@@ -1,50 +1,65 @@
 // src/components/BiteTiming.jsx
 // Wait for the bite, then tap at the right moment to hook it.
 // hooksetQuality = 0–1 based on how quickly you tapped after the bite cue.
+// config: { WAIT_MIN_MS, WAIT_MAX_MS, WINDOW_MS, showPreBiteCue, noPreBiteWarning }
 import { useRef, useEffect, useState, useCallback } from 'react';
 import './BiteTiming.css';
 
-const WAIT_MIN_MS  = 1500;  // shortest wait before bite
-const WAIT_MAX_MS  = 4000;  // longest wait before bite
-const WINDOW_MS    = 800;   // how long the bite window is open
-const PERFECT_MS   = 250;   // reactions within this = close to perfect
+const DEFAULTS = {
+  WAIT_MIN_MS: 1500, WAIT_MAX_MS: 4000, WINDOW_MS: 800,
+  showPreBiteCue: false, noPreBiteWarning: false,
+};
+const PERFECT_MS   = 250;
+const PRE_BITE_CUE = 400; // ms before bite that the precision cue shows
 
-export default function BiteTiming({ onComplete }) {
-  const [phase, setPhase]     = useState('waiting'); // waiting | bite | hit | miss | late
+export default function BiteTiming({ config, onComplete }) {
+  const { WAIT_MIN_MS, WAIT_MAX_MS, WINDOW_MS, showPreBiteCue, noPreBiteWarning } =
+    { ...DEFAULTS, ...config };
+
+  const [phase,   setPhase]   = useState('waiting');
   const [quality, setQuality] = useState(null);
-  const biteTimeRef           = useRef(null);
-  const timerRef              = useRef(null);
+  const [showCue, setShowCue] = useState(false);
+  const biteTimeRef  = useRef(null);
+  const timerRef     = useRef(null);
+  const cueTimerRef  = useRef(null);
 
   const triggerBite = useCallback(() => {
+    setShowCue(false);
     setPhase('bite');
     biteTimeRef.current = performance.now();
-
     timerRef.current = setTimeout(() => {
       setPhase('miss');
       setTimeout(() => onComplete(0), 900);
     }, WINDOW_MS);
-  }, [onComplete]);
+  }, [onComplete, WINDOW_MS]);
 
   useEffect(() => {
     const delay = WAIT_MIN_MS + Math.random() * (WAIT_MAX_MS - WAIT_MIN_MS);
+
+    // Precision cue: show ripple 400ms before bite (skip if risky or delay too short)
+    if (showPreBiteCue && !noPreBiteWarning && delay > PRE_BITE_CUE + 200) {
+      cueTimerRef.current = setTimeout(() => setShowCue(true), delay - PRE_BITE_CUE);
+    }
+
     timerRef.current = setTimeout(triggerBite, delay);
-    return () => clearTimeout(timerRef.current);
-  }, [triggerBite]);
+    return () => {
+      clearTimeout(timerRef.current);
+      clearTimeout(cueTimerRef.current);
+    };
+  }, [triggerBite, WAIT_MIN_MS, WAIT_MAX_MS, showPreBiteCue, noPreBiteWarning]);
 
   function handleHookset() {
     if (phase === 'waiting') {
-      // Tapped too early
       clearTimeout(timerRef.current);
+      clearTimeout(cueTimerRef.current);
       setPhase('late');
       setTimeout(() => onComplete(0.1), 900);
       return;
     }
     if (phase !== 'bite') return;
-
     clearTimeout(timerRef.current);
     const reaction = performance.now() - biteTimeRef.current;
     const q = Math.max(0, 1 - (reaction / WINDOW_MS));
-    // Boost: reactions under PERFECT_MS get a bonus
     const boosted = reaction < PERFECT_MS ? Math.min(1, q * 1.3) : q;
     setQuality(boosted);
     setPhase('hit');
@@ -61,15 +76,19 @@ export default function BiteTiming({ onComplete }) {
     >
       {phase === 'waiting' && (
         <>
-          <div className="bt__scene">
-            <div className="bt__water"><div className="bt__wave" /><div className="bt__wave bt__wave--2" /></div>
+          <div className={`bt__scene ${showCue ? 'bt__scene--cue' : ''}`}>
+            <div className="bt__water">
+              <div className="bt__wave" /><div className="bt__wave bt__wave--2" />
+            </div>
             <div className="bt__bobber">
               <div className="bt__line" />
               <div className="bt__bob-top" /><div className="bt__bob-bot" />
             </div>
+            {showCue && <div className="bt__precue" aria-hidden="true" />}
           </div>
           <p className="bt__prompt">🎣 Watching the bobber…</p>
           <p className="bt__sub">Tap the moment it dips!</p>
+          <p className="bt__hint">Tap · Click · Space · Enter</p>
         </>
       )}
 
