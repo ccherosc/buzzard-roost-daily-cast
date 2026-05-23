@@ -97,6 +97,16 @@
 
 .rc__emoji { font-size: 5rem; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5)); }
 
+/* Fish photo — replaces emoji when the real artwork is available */
+.rc__fish-img {
+  max-width: 200px;
+  max-height: 110px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 18px rgba(0,0,0,0.55));
+}
+
 .rc__name {
   font-family: var(--font-display);
   font-size: 1.2rem;

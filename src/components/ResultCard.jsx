@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import './ResultCard.css';
 import { SCARCITY_COPY } from '../config/gameConfig.js';
+import { getFishImage } from '../utils/fishImages.js';
 
 const RARITY_LABELS = {
   common: 'Common', uncommon: 'Uncommon', rare: 'Rare',
@@ -57,7 +58,10 @@ export default function ResultCard({ result, newBadges = [], buildChallengeUrl }
             <span className={`rc__rarity-badge rc__rarity-badge--${result.rarity}`}>
               ★ {RARITY_LABELS[result.rarity].toUpperCase()}
             </span>
-            <span className="rc__emoji" role="img" aria-label={result.fishName}>{result.emoji}</span>
+            {getFishImage(result.fishId)
+              ? <img className="rc__fish-img" src={getFishImage(result.fishId)} alt={result.fishName} />
+              : <span className="rc__emoji" role="img" aria-label={result.fishName}>{result.emoji}</span>
+            }
             <h3 className="rc__name">{result.fishName}</h3>
             <p  className="rc__flavor"><em>{result.flavor}</em></p>
             <div className="rc__stats">

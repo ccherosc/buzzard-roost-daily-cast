@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import './AlreadyPlayed.css';
 import { streakEmoji } from '../config/gameConfig.js';
+import { getFishImage } from '../utils/fishImages.js';
 
 function msUntilMidnight() {
   const now = new Date();
@@ -57,7 +58,10 @@ export default function AlreadyPlayed({ result, playerData }) {
           <span className={`rarity-badge rarity-badge--${result.rarity}`}>
             ★ {result.rarity.toUpperCase()}
           </span>
-          <span className="ap__catch-emoji" role="img" aria-label={result.fishName}>{result.emoji}</span>
+          {getFishImage(result.fishId)
+            ? <img className="ap__catch-fish-img" src={getFishImage(result.fishId)} alt={result.fishName} />
+            : <span className="ap__catch-emoji" role="img" aria-label={result.fishName}>{result.emoji}</span>
+          }
           <span className="ap__catch-name">{result.fishName}</span>
           <span className="ap__catch-stats">{result.weight} lbs · {result.points.toLocaleString()} pts</span>
           <div className="ap__catch-coupon">

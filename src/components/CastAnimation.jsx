@@ -1,6 +1,7 @@
 // src/components/CastAnimation.jsx
 import { useState, useEffect, useRef } from 'react';
 import './CastAnimation.css';
+import { getFishImage } from '../utils/fishImages.js';
 
 // ── Phase definitions ─────────────────────────────────────────
 // frames[] cycles at frameMs interval. Single entry = static.
@@ -122,8 +123,9 @@ export default function CastAnimation({ onComplete, result }) {
   const spriteName    = activeFrames[frameIdx] ?? activeFrames[0];
 
   // Dynamic label: catch phase shows the actual fish name + weight
+  // Use emoji prefix only when no custom artwork is available
   const phaseLabel = (phase.key === 'catch' && result)
-    ? `${result.emoji} ${result.fishName} — ${result.weight} lbs!`
+    ? (getFishImage(result.fishId) ? `🎣 ${result.fishName} — ${result.weight} lbs!` : `${result.emoji} ${result.fishName} — ${result.weight} lbs!`)
     : phase.label;
 
   return (
@@ -182,9 +184,16 @@ export default function CastAnimation({ onComplete, result }) {
             aria-label={`Caught: ${result.fishName}`}
           >
             <span className="ca__catch-glow" aria-hidden="true" />
-            <span className="ca__catch-emoji" role="img" aria-hidden="true">
-              {result.emoji}
-            </span>
+            {getFishImage(result.fishId)
+              ? <img
+                  className="ca__catch-fish-img"
+                  src={getFishImage(result.fishId)}
+                  alt={result.fishName}
+                />
+              : <span className="ca__catch-emoji" role="img" aria-hidden="true">
+                  {result.emoji}
+                </span>
+            }
             <span className="ca__catch-name">{result.fishName}</span>
             <span className="ca__catch-weight">{result.weight} lbs</span>
           </div>
