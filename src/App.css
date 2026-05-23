@@ -4,8 +4,8 @@
   min-height: 100dvh;
   background: var(--bg-dark);
   background-image:
-    radial-gradient(ellipse at 20% 50%, rgba(10,40,80,0.3) 0%, transparent 70%),
-    radial-gradient(ellipse at 80% 20%, rgba(10,20,50,0.4) 0%, transparent 60%);
+    radial-gradient(ellipse at 20% 50%, rgba(20,60,10,0.4) 0%, transparent 70%),
+    radial-gradient(ellipse at 80% 20%, rgba(45,31,14,0.3) 0%, transparent 60%);
   display: flex;
   align-items: flex-start;
   justify-content: center;
