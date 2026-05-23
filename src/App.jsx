@@ -1,21 +1,18 @@
-// src/App.jsx  – V2 (3-casts-per-day)
-// Phase flow:
-//   landing → spot → lure → cast[style]
-//   → game[cast #N: CastMeter→BiteTiming→FightMeter→CatchReveal]
-//   → (repeat for each remaining cast, or → played if limit hit)
-//   → result  (after all casts done, shows best + leaderboard + stats)
+// src/App.jsx  – V2 retool (3-casts-per-day)
+// Phase flow: landing → setup → game → (setup partial → game)* → result
+// Spot + lure persist across all 3 casts; cast style re-picks each cast.
 import { useState, useEffect } from 'react';
 import './App.css';
 import Header        from './components/Header.jsx';
 import LandingScreen from './components/LandingScreen.jsx';
-import SelectionStep from './components/SelectionStep.jsx';
+import SetupScreen   from './components/SetupScreen.jsx';
 import DailyCastGame from './components/DailyCastGame.jsx';
 import ResultCard    from './components/ResultCard.jsx';
 import Leaderboard   from './components/Leaderboard.jsx';
 import PlayerStats   from './components/PlayerStats.jsx';
 import AlreadyPlayed from './components/AlreadyPlayed.jsx';
-import { SPOTS, LURES, CAST_STYLES } from './data/gameData.js';
-import { buildResult } from './utils/gameLogic.js';
+import { buildResult }        from './utils/gameLogic.js';
+import { buildGameParams }    from './utils/gameParams.js';
 import { DEV_DISABLE_DAILY_LIMIT, DAILY_CAST_LIMIT } from './config/gameConfig.js';
 import {
   hasUsedAllCastsToday, loadTodayResult, loadTodayCatches, loadPlayerData,
@@ -23,86 +20,58 @@ import {
 } from './utils/storageManager.js';
 
 export default function App() {
-  // ── Route state ──────────────────────────────────────────
-  const [phase,         setPhase]         = useState('landing');
-  // Selection choices (persist across multiple casts in a session)
-  const [spot,          setSpot]          = useState(null);
-  const [lure,          setLure]          = useState(null);
-  const [castStyle,     setCastStyle]     = useState(null);
-
-  // Per-cast working state
-  const [currentCastN,  setCurrentCastN]  = useState(1);   // which cast we're on (1-based)
-  const [baseResult,    setBaseResult]    = useState(null); // rolled before gameplay
-
-  // Session results
-  const [sessionCatches, setSessionCatches] = useState([]); // all results this session
+  const [phase,          setPhase]          = useState('landing');
+  const [spot,           setSpot]           = useState(null);  // persists across 3 casts
+  const [lure,           setLure]           = useState(null);  // persists across 3 casts
+  const [currentCastN,   setCurrentCastN]   = useState(1);
+  const [baseResult,     setBaseResult]     = useState(null);
+  const [gameParams,     setGameParams]     = useState(null);
+  const [sessionCatches, setSessionCatches] = useState([]);
   const [bestResult,     setBestResult]     = useState(null);
   const [newBadges,      setNewBadges]      = useState([]);
   const [challengeData,  setChallengeData]  = useState(null);
+  const [playerData,     setPlayerData]     = useState(null);
 
-  // Player data from storage
-  const [playerData,    setPlayerData]    = useState(null);
-
-  // ── On mount ─────────────────────────────────────────────
   useEffect(() => {
-    // Parse ?challenge= from URL
     const params    = new URLSearchParams(window.location.search);
     const challenge = params.get('challenge');
     if (challenge) {
       const [fishId, rarity, pts] = challenge.split('|');
-      if (fishId && rarity && pts) {
-        setChallengeData({ fishId, rarity, points: parseInt(pts, 10) });
-      }
+      if (fishId && rarity && pts) setChallengeData({ fishId, rarity, points: parseInt(pts, 10) });
     }
-
     const data = loadPlayerData();
     setPlayerData(data);
-
-    // If all casts used, go straight to played screen
     if (!DEV_DISABLE_DAILY_LIMIT && hasUsedAllCastsToday()) {
       const todayResult  = loadTodayResult();
       const todayCatches = loadTodayCatches();
-      if (todayResult || todayCatches.length > 0) {
-        setPhase('played');
-      }
-      // If integrity check wiped the result, player can cast again
+      if (todayResult || todayCatches.length > 0) setPhase('played');
     } else if (!DEV_DISABLE_DAILY_LIMIT) {
-      // Partially used: some casts remain — start at the correct cast number
       setCurrentCastN(data.castsUsedToday + 1);
     }
   }, []);
 
-  // ── Selection handlers ────────────────────────────────────
-  function handleSelectSpot(spotId) {
-    setSpot(spotId);
-    setPhase('lure');
-  }
+  // ── Called when SetupScreen completes ─────────────────────────────────────
+  function handleSetupComplete({ spotId, lureId, castStyleId }) {
+    // Persist spot + lure (set on cast 1; already set on casts 2+)
+    if (!spot) setSpot(spotId);
+    if (!lure) setLure(lureId);
 
-  function handleSelectLure(lureId) {
-    setLure(lureId);
-    setPhase('cast');
-  }
-
-  function handleSelectCast(castId) {
-    setCastStyle(castId);
-    // Build the base result NOW so gameplay bonuses can be applied on top.
-    const preBuilt = buildResult(spot, lure, castId);
+    const preBuilt = buildResult(spotId, lureId, castStyleId);
+    const params   = buildGameParams(spotId, lureId, castStyleId, preBuilt.rarity);
     setBaseResult(preBuilt);
+    setGameParams(params);
     setPhase('game');
   }
 
-  // ── Called after each cast's gameplay phases complete ─────
+  // ── Called after each cast's gameplay phases complete ─────────────────────
   function handleCastComplete(finalResult) {
-    // Save to storage
     const streak = updateStreak();
     const { newBadges: fresh } = checkAndUnlockBadges(finalResult, streak);
     recordCastResult(finalResult);
 
-    // Accumulate session catches
     const updatedCatches = [...sessionCatches, finalResult];
     setSessionCatches(updatedCatches);
 
-    // Track best
     const best = updatedCatches.reduce((b, c) => (!b || c.points > b.points) ? c : b, null);
     setBestResult(best);
     setNewBadges(prev => {
@@ -111,7 +80,6 @@ export default function App() {
     });
     setPlayerData(loadPlayerData());
 
-    // Advance to next cast or results
     const castsUsed = updatedCatches.length;
     const canCastAgain = DEV_DISABLE_DAILY_LIMIT
       ? castsUsed < DAILY_CAST_LIMIT
@@ -119,30 +87,26 @@ export default function App() {
 
     if (canCastAgain) {
       setCurrentCastN(castsUsed + 1);
-      // Stay on selection → re-pick cast style for next cast
       setBaseResult(null);
-      setPhase('cast');
+      setGameParams(null);
+      setPhase('setup');  // back to setup — spot+lure locked, only cast re-picks
     } else {
       setPhase('result');
     }
   }
 
-  // ── Challenge URL builder ─────────────────────────────────
   function buildChallengeUrl(res) {
     const base = window.location.origin + window.location.pathname;
     return `${base}?challenge=${res.fishId}|${res.rarity}|${res.points}`;
   }
-
-  // ── Render ────────────────────────────────────────────────
-  const castsRemaining = playerData?.castsRemaining ?? DAILY_CAST_LIMIT;
 
   return (
     <div className="app-shell">
       <div className="app-card">
         <Header playerData={playerData} />
 
-        {/* Casts remaining bar (shown during active play, not landing/result/played) */}
-        {['spot','lure','cast','game'].includes(phase) && (
+        {/* Cast progress bar — shown during setup + game */}
+        {['setup', 'game'].includes(phase) && (
           <div className="app-casts-bar">
             {Array.from({ length: DAILY_CAST_LIMIT }).map((_, i) => (
               <div
@@ -150,9 +114,7 @@ export default function App() {
                 className={`app-cast-pip ${i < currentCastN - 1 ? 'app-cast-pip--used' : i === currentCastN - 1 ? 'app-cast-pip--active' : ''}`}
               />
             ))}
-            <span className="app-casts-label">
-              Cast {currentCastN} of {DAILY_CAST_LIMIT}
-            </span>
+            <span className="app-casts-label">Cast {currentCastN} of {DAILY_CAST_LIMIT}</span>
           </div>
         )}
 
@@ -162,48 +124,26 @@ export default function App() {
               <LandingScreen
                 playerData={playerData}
                 challengeData={challengeData}
-                onStart={() => setPhase('spot')}
+                onStart={() => setPhase('setup')}
               />
             </div>
           )}
 
-          {phase === 'spot' && (
+          {phase === 'setup' && (
             <div className="phase-enter">
-              <SelectionStep
-                step={1} title="Choose Your Spot"
-                subtitle="Where will you cast today?"
-                options={SPOTS}
-                onSelect={handleSelectSpot}
+              <SetupScreen
+                castNumber={currentCastN}
+                lockedSpot={currentCastN > 1 ? spot : null}
+                lockedLure={currentCastN > 1 ? lure : null}
+                onComplete={handleSetupComplete}
               />
             </div>
           )}
 
-          {phase === 'lure' && (
-            <div className="phase-enter">
-              <SelectionStep
-                step={2} title="Pick Your Lure"
-                subtitle="What's on the end of your line?"
-                options={LURES}
-                onSelect={handleSelectLure}
-              />
-            </div>
-          )}
-
-          {phase === 'cast' && (
-            <div className="phase-enter">
-              <SelectionStep
-                step={3}
-                title={currentCastN > 1 ? `Cast #${currentCastN} — Choose Style` : 'Choose Your Cast'}
-                subtitle="How are you throwing today?"
-                options={CAST_STYLES}
-                onSelect={handleSelectCast}
-              />
-            </div>
-          )}
-
-          {phase === 'game' && baseResult && (
+          {phase === 'game' && baseResult && gameParams && (
             <DailyCastGame
               baseResult={baseResult}
+              gameParams={gameParams}
               castNumber={currentCastN}
               totalCasts={DAILY_CAST_LIMIT}
               onCastComplete={handleCastComplete}
