@@ -181,6 +181,13 @@
 }
 
 /* ── Fisherman ────────────────────────────────────────────────── */
+/* Per-phase translateX compensates for the character leaning      */
+/* forward/backward in different pose groups. The 0.2s transition  */
+/* smoothly interpolates between phases so there's no visual jump. */
+/* Offsets measured from spritesheet centroid analysis:            */
+/*   idle baseline centroid ≈ 76px                                 */
+/*   casting/bite poses centroid ≈ 64-65px → +11px compensation    */
+/*   fight poses centroid ≈ 71-74px → +6px compensation            */
 .ca__fisherman {
   position: relative;
   width: 260px;
@@ -188,7 +195,24 @@
   z-index: 2;
   pointer-events: none;
   flex-shrink: 0;
+  /* Smooth character-position correction at every phase boundary */
+  transition: transform 0.18s ease-out;
 }
+
+/* Default (idle / reeling / catch): no offset needed */
+.ca--waiting  .ca__fisherman,
+.ca--splash   .ca__fisherman,
+.ca--reeling  .ca__fisherman,
+.ca--catch    .ca__fisherman { transform: translateX(0px); }
+
+/* Casting: fisherman leans ~11px forward — shift right to correct */
+.ca--casting  .ca__fisherman { transform: translateX(11px); }
+
+/* Tension (alert/bite alternate): avg lean ~11px */
+.ca--tension  .ca__fisherman { transform: translateX(11px); }
+
+/* Hooked (fight-d has the big lean): avg ~6px */
+.ca--hooked   .ca__fisherman { transform: translateX(6px);  }
 
 /* Inner: phase animations. position:relative contains the       */
 /* absolute-stacked sprite imgs.                                  */
