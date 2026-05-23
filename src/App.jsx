@@ -75,16 +75,16 @@ export default function App() {
   }
 
   // ── Cast complete: result already built, just save + advance ─
+  // IMPORTANT: `result` was pre-built in handleSelectCast so the
+  // animation could show the real fish. Don't call buildResult again.
+  // Don't put side effects inside a setState updater — React Strict Mode
+  // calls updaters twice, which would double the streak increment.
   function handleCastComplete() {
-    // `result` is already set from handleSelectCast — no re-roll.
-    setResult(prev => {
-      const streak = updateStreak();
-      const { newBadges: fresh } = checkAndUnlockBadges(prev, streak);
-      saveResult(prev);
-      setNewBadges(fresh);
-      setPlayerData(loadPlayerData());
-      return prev;
-    });
+    const streak = updateStreak();
+    const { newBadges: fresh } = checkAndUnlockBadges(result, streak);
+    saveResult(result);
+    setNewBadges(fresh);
+    setPlayerData(loadPlayerData());
     setPhase('result');
   }
 
