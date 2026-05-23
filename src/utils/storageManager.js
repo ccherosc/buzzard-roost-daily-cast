@@ -23,7 +23,6 @@ export const BADGE_DEFS = {
   dedicated:  { emoji: '💎', label: 'Dedicated Angler'   },
   legend:     { emoji: '👑', label: 'Legend'             },
   first_rare: { emoji: '⭐', label: 'First Rare+'        },
-  top_10:     { emoji: '🏆', label: 'Top 10'             },
   monster:    { emoji: '🦈', label: 'Monster Hunter'     },
 };
 
