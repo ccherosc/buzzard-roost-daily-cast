@@ -1,0 +1,144 @@
+/* ============================================================
+   Buzzard Roost Daily Cast — Global Design System
+   ============================================================ */
+
+:root {
+  /* Brand */
+  --brand-primary: #e8732a;
+  --brand-primary-hover: #d4621a;
+  --brand-accent: #f4c430;
+
+  /* Backgrounds */
+  --bg-dark: #060c18;
+  --bg-card: #0d1f35;
+  --bg-card-raised: #122540;
+  --bg-card-hover: #173060;
+
+  /* Text */
+  --text-primary: #e8f0f8;
+  --text-secondary: #a0b8d0;
+  --text-muted: #4a6a8a;
+
+  /* Borders */
+  --border-subtle: rgba(255,255,255,0.06);
+  --border-card: rgba(42,90,140,0.4);
+
+  /* Rarity */
+  --rarity-common: #9ca3af;
+  --rarity-uncommon: #22c55e;
+  --rarity-rare: #3b82f6;
+  --rarity-epic: #a855f7;
+  --rarity-legendary: #f59e0b;
+
+  /* Rarity Glows */
+  --glow-common:    0 0 12px rgba(156,163,175,0.4);
+  --glow-uncommon:  0 0 16px rgba(34,197,94,0.5);
+  --glow-rare:      0 0 20px rgba(59,130,246,0.6);
+  --glow-epic:      0 0 28px rgba(168,85,247,0.7);
+  --glow-legendary: 0 0 40px rgba(245,158,11,0.9), 0 0 80px rgba(245,158,11,0.3);
+
+  /* Spacing */
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
+  --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
+
+  /* Radius */
+  --radius-sm: 6px; --radius-md: 12px; --radius-lg: 18px;
+  --radius-xl: 24px; --radius-full: 9999px;
+
+  /* Transitions */
+  --t-fast: 0.15s ease; --t-normal: 0.3s ease; --t-slow: 0.5s ease;
+
+  /* Fonts */
+  --font-display: 'Oswald', 'Impact', sans-serif;
+  --font-body: 'Nunito', 'Segoe UI', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-dark);
+  color: var(--text-primary);
+  min-height: 100vh;
+  min-height: 100dvh;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+a { color: inherit; text-decoration: none; }
+
+/* ── Buttons ─────────────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: var(--space-2); padding: 14px 28px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-display); font-size: 1rem;
+  font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;
+  transition: all var(--t-fast); cursor: pointer;
+}
+.btn--primary {
+  background: var(--brand-primary); color: white;
+  box-shadow: 0 4px 20px rgba(232,115,42,0.4);
+}
+.btn--primary:hover {
+  background: var(--brand-primary-hover);
+  box-shadow: 0 6px 28px rgba(232,115,42,0.6);
+  transform: translateY(-1px);
+}
+.btn--primary:active { transform: translateY(0); }
+.btn--secondary {
+  background: transparent; color: var(--text-secondary);
+  border: 1px solid var(--border-card);
+}
+.btn--secondary:hover { border-color: var(--brand-primary); color: var(--brand-primary); }
+.btn--large { padding: 18px 40px; font-size: 1.1rem; letter-spacing: 1px; }
+
+/* ── Rarity Badges ───────────────────────────────────────── */
+.rarity-badge {
+  display: inline-block; padding: 2px 10px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-display); font-size: 0.7rem;
+  font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+  border: 1px solid;
+}
+.rarity-badge--common    { color: var(--rarity-common);    border-color: rgba(156,163,175,0.4); background: rgba(156,163,175,0.1); }
+.rarity-badge--uncommon  { color: var(--rarity-uncommon);  border-color: rgba(34,197,94,0.4);   background: rgba(34,197,94,0.1); }
+.rarity-badge--rare      { color: var(--rarity-rare);      border-color: rgba(59,130,246,0.4);  background: rgba(59,130,246,0.1); }
+.rarity-badge--epic      { color: var(--rarity-epic);      border-color: rgba(168,85,247,0.4);  background: rgba(168,85,247,0.1); }
+.rarity-badge--legendary { color: var(--rarity-legendary); border-color: rgba(245,158,11,0.4);  background: rgba(245,158,11,0.1); }
+
+/* ── Keyframes ───────────────────────────────────────────── */
+@keyframes fadeIn      { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+@keyframes slideUp     { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+@keyframes bobble      { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
+@keyframes ripple      { 0%{transform:scale(0.5);opacity:0.8;} 100%{transform:scale(3);opacity:0;} }
+@keyframes waterWave   { 0%,100%{transform:translateX(0) scaleY(1);} 50%{transform:translateX(-15px) scaleY(1.02);} }
+@keyframes twinkle     { 0%,100%{opacity:0.2;transform:scale(0.8);} 50%{opacity:1;transform:scale(1.2);} }
+@keyframes glowPulse   { 0%,100%{opacity:0.7;} 50%{opacity:1;} }
+@keyframes bobberFloat { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-8px);} }
+@keyframes bobberBite  { 0%{transform:translateY(0);} 25%{transform:translateY(14px);} 50%{transform:translateY(-4px);} 75%{transform:translateY(20px);} 100%{transform:translateY(28px);} }
+@keyframes splashDrop  { 0%{transform:scale(0) translate(0,0);opacity:1;} 100%{transform:scale(1) translate(var(--dx),var(--dy));opacity:0;} }
+@keyframes shimmer     { 0%{background-position:-200% center;} 100%{background-position:200% center;} }
+@keyframes countdownPulse { 0%,100%{color:var(--brand-accent);} 50%{color:var(--text-primary);} }
+@keyframes popIn       { 0%{transform:scale(0.8);opacity:0;} 60%{transform:scale(1.05);} 100%{transform:scale(1);opacity:1;} }
+@keyframes cardFlip    { from{transform:rotateY(0deg);} to{transform:rotateY(180deg);} }
+@keyframes meterSweep  { from{width:0%;} to{width:100%;} }
+@keyframes pulseRing   { 0%{transform:scale(1);opacity:1;} 100%{transform:scale(1.6);opacity:0;} }
+@keyframes catchFloat  { 0%,100%{transform:translateY(0) scale(1);} 50%{transform:translateY(-12px) scale(1.04);} }
+
+/* ── Accessibility ───────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--brand-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

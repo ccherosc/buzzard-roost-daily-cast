@@ -1,0 +1,142 @@
+/* src/components/CatchReveal.css */
+.cr {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  padding: var(--space-8) var(--space-5);
+  overflow: hidden;
+}
+
+/* ── Rarity glow backdrop ─────────────────────────────── */
+.cr__glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transition: background 0.5s ease;
+}
+.cr--common    .cr__glow { background: radial-gradient(ellipse at 50% 40%, rgba(156,163,175,0.08) 0%, transparent 65%); }
+.cr--uncommon  .cr__glow { background: radial-gradient(ellipse at 50% 40%, rgba(34,197,94,0.12) 0%, transparent 65%); }
+.cr--rare      .cr__glow { background: radial-gradient(ellipse at 50% 40%, rgba(59,130,246,0.15) 0%, transparent 65%); }
+.cr--epic      .cr__glow { background: radial-gradient(ellipse at 50% 40%, rgba(168,85,247,0.18) 0%, transparent 65%); }
+.cr--legendary .cr__glow { background: radial-gradient(ellipse at 50% 40%, rgba(245,158,11,0.25) 0%, transparent 60%); animation: glowPulse 1.5s ease-in-out infinite; }
+
+/* ── Splash ───────────────────────────────────────────── */
+.cr__splash {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  animation: popIn 0.4s ease;
+}
+.cr__splash-icon { font-size: 4rem; }
+.cr__splash-text {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  letter-spacing: 4px;
+  color: var(--brand-accent);
+  text-transform: uppercase;
+}
+
+/* ── Card ─────────────────────────────────────────────── */
+.cr__card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  animation: slideUp 0.5s ease;
+  width: 100%;
+  max-width: 360px;
+}
+
+.cr__cast-counter {
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  letter-spacing: 2.5px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.cr__rarity-badge {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  padding: 4px 14px;
+  border-radius: var(--radius-full);
+  border: 1px solid;
+}
+.cr__rarity-badge--common    { color: var(--rarity-common);    border-color: rgba(156,163,175,0.5); }
+.cr__rarity-badge--uncommon  { color: var(--rarity-uncommon);  border-color: rgba(34,197,94,0.5); }
+.cr__rarity-badge--rare      { color: var(--rarity-rare);      border-color: rgba(59,130,246,0.5); }
+.cr__rarity-badge--epic      { color: var(--rarity-epic);      border-color: rgba(168,85,247,0.5); }
+.cr__rarity-badge--legendary { color: var(--rarity-legendary); border-color: rgba(245,158,11,0.5); background: rgba(245,158,11,0.08); }
+
+/* ── Fish art wrapper ─────────────────────────────────── */
+.cr__fish-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 220px; height: 130px;
+  border-radius: var(--radius-lg);
+  background: rgba(0,0,0,0.25);
+  animation: catchFloat 1.8s ease-in-out infinite;
+}
+.cr__fish-wrap--legendary { box-shadow: var(--glow-legendary); }
+.cr__fish-wrap--epic      { box-shadow: var(--glow-epic); }
+.cr__fish-wrap--rare      { box-shadow: var(--glow-rare); }
+.cr__fish-wrap--uncommon  { box-shadow: var(--glow-uncommon); }
+
+.cr__fish-img {
+  max-width: 200px;
+  max-height: 115px;
+  width: auto; height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 20px rgba(0,0,0,0.6));
+}
+.cr__fish-emoji { font-size: 5rem; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5)); }
+
+/* ── Name ─────────────────────────────────────────────── */
+.cr__name {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-align: center;
+  animation: popIn 0.35s ease;
+}
+
+/* ── Stats ────────────────────────────────────────────── */
+.cr__details {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  animation: slideUp 0.3s ease;
+}
+.cr__stat { text-align: center; }
+.cr__stat-label { display: block; font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-family: var(--font-display); }
+.cr__stat-value { display: block; font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; color: var(--text-primary); }
+.cr__stat-value--bonus { color: #22c55e; }
+.cr__stat-divider { width: 1px; height: 32px; background: var(--border-subtle); }
+
+/* ── Actions ──────────────────────────────────────────── */
+.cr__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  animation: slideUp 0.3s ease 0.1s both;
+}
+.cr__btn { width: 100%; max-width: 280px; }
+.cr__flavor {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.4;
+  font-style: italic;
+}

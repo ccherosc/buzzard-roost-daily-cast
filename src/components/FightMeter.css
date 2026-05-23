@@ -1,0 +1,116 @@
+/* src/components/FightMeter.css */
+.fm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-8) var(--space-5);
+  cursor: pointer;
+  user-select: none;
+  animation: fadeIn 0.3s ease;
+  min-height: 280px;
+  justify-content: center;
+}
+
+.fm__label {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--brand-accent);
+  letter-spacing: 2px;
+  animation: glowPulse 0.8s ease-in-out infinite;
+}
+
+.fm__sub {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-top: calc(-1 * var(--space-2));
+  text-align: center;
+}
+
+/* ── Time bar ─────────────────────────────────────────── */
+.fm__time-bar {
+  width: 100%;
+  max-width: 340px;
+  height: 6px;
+  background: var(--border-card);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+.fm__time-fill {
+  height: 100%;
+  background: var(--brand-primary);
+  border-radius: var(--radius-full);
+  transition: width 0.1s linear;
+}
+
+/* ── Tension bar ──────────────────────────────────────── */
+.fm__tension-track {
+  position: relative;
+  width: 100%;
+  max-width: 340px;
+  height: 40px;
+  background: var(--bg-card-raised);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.fm__safe-zone {
+  position: absolute;
+  top: 0; bottom: 0;
+  left: 0;
+  width: 65%;                   /* SAFE_MAX * 100 */
+  background: rgba(34,197,94,0.07);
+}
+
+.fm__tension-fill {
+  position: absolute;
+  top: 4px; bottom: 4px; left: 0;
+  border-radius: var(--radius-sm);
+  transition: width 0.08s linear, background 0.12s ease;
+}
+.fm__tension-fill--danger { box-shadow: 0 0 12px rgba(239,68,68,0.6); }
+
+.fm__safe-line {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 2px;
+  background: rgba(34,197,94,0.5);
+  transform: translateX(-1px);
+}
+
+/* ── Status ───────────────────────────────────────────── */
+.fm__status {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+.fm__status--safe   { color: #22c55e; }
+.fm__status--danger { color: #ef4444; animation: glowPulse 0.5s ease-in-out infinite; }
+
+.fm__hint {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-family: var(--font-display);
+}
+
+/* ── Feedback ─────────────────────────────────────────── */
+.fm__feedback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  animation: popIn 0.35s ease;
+}
+.fm__icon   { font-size: 3rem; }
+.fm__result {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.fm__feedback--won   .fm__result { color: #22c55e; }
+.fm__feedback--broke .fm__result { color: #ef4444; }

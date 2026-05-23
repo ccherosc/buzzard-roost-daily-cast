@@ -1,0 +1,90 @@
+/* src/components/AlreadyPlayed.css */
+.ap { position: relative; min-height: 100%; display: flex; flex-direction: column; }
+
+.ap__scene { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.ap__sky   { position: absolute; inset: 0; background: linear-gradient(180deg, #020814 0%, #0a1628 55%, #0d2040 100%); }
+.ap__water { position: absolute; bottom: 0; left: 0; right: 0; height: 80px; background: linear-gradient(180deg, #0a2840, #050e18); border-top: 1px solid rgba(42,90,140,0.5); }
+.ap__wave  { position: absolute; top: -6px; left: -20px; right: -20px; height: 10px; background: rgba(42,90,140,0.2); border-radius: 50%; animation: waterWave 3.5s ease-in-out infinite; }
+.ap__wave--2 { top: -3px; animation-delay: 1.4s; opacity: 0.5; }
+.ap__bobber { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 16px; height: 22px; animation: bobberFloat 2s ease-in-out infinite; }
+.ap__bobber-top { width: 16px; height: 11px; background: #e03030; border-radius: 8px 8px 0 0; }
+.ap__bobber-bot { width: 16px; height: 11px; background: #f0f0f0; border-radius: 0 0 8px 8px; }
+
+.ap__content {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; align-items: center;
+  padding: var(--space-8) var(--space-5) var(--space-10);
+  gap: var(--space-5);
+}
+
+.ap__heading {
+  font-family: var(--font-display); font-size: 1.5rem; font-weight: 700;
+  color: var(--text-primary); text-transform: uppercase; letter-spacing: 2px; text-align: center;
+}
+
+.ap__streak {
+  padding: var(--space-2) var(--space-5);
+  background: rgba(244,196,48,0.08); border: 1px solid rgba(244,196,48,0.25);
+  border-radius: var(--radius-full);
+  font-family: var(--font-display); font-size: 0.9rem; color: var(--brand-accent);
+}
+
+/* ── Catch cards ──────────────────────────────────────── */
+.ap__catches {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.ap__catch {
+  width: 100%; padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  display: flex; flex-direction: column; align-items: center; gap: var(--space-2);
+  background: var(--bg-card-raised); border: 1px solid var(--border-card);
+  position: relative;
+}
+.ap__catch--legendary { border-color: rgba(245,158,11,0.4); box-shadow: var(--glow-legendary); }
+.ap__catch--epic      { border-color: rgba(168,85,247,0.4); box-shadow: var(--glow-epic); }
+.ap__catch--rare      { border-color: rgba(59,130,246,0.4);  box-shadow: var(--glow-rare); }
+.ap__catch--uncommon  { border-color: rgba(34,197,94,0.4); }
+.ap__catch--best      { ring: 2px solid var(--brand-accent); }
+
+.ap__catch-best-label {
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--brand-accent);
+  background: rgba(244,196,48,0.1);
+  border: 1px solid rgba(244,196,48,0.3);
+  padding: 2px 10px;
+  border-radius: var(--radius-full);
+}
+
+.ap__catch-emoji { font-size: 2.8rem; margin: var(--space-1) 0; }
+
+.ap__catch-fish-img {
+  max-width: 150px;
+  max-height: 70px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 10px rgba(0,0,0,0.5));
+  margin: var(--space-1) 0;
+}
+.ap__catch-name  { font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--text-primary); text-transform: uppercase; letter-spacing: 1px; }
+.ap__catch-stats { font-size: 0.8rem; color: var(--text-secondary); }
+
+.ap__catch-coupon { margin-top: var(--space-1); text-align: center; }
+.ap__coupon-label { display: block; font-size: 0.7rem; color: var(--text-muted); font-family: var(--font-display); letter-spacing: 1px; text-transform: uppercase; }
+.ap__coupon-code  { font-family: 'Courier New', monospace; font-size: 0.9rem; color: var(--brand-primary); letter-spacing: 2px; user-select: all; }
+
+/* ── Countdown ────────────────────────────────────────── */
+.ap__countdown { text-align: center; }
+.ap__countdown-label { font-size: 0.8rem; color: var(--text-muted); font-family: var(--font-display); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: var(--space-3); }
+.ap__countdown-clock { display: flex; align-items: center; gap: var(--space-3); }
+.ap__unit { display: flex; flex-direction: column; align-items: center; }
+.ap__num  { font-family: var(--font-display); font-size: 2.2rem; font-weight: 700; color: var(--brand-accent); line-height: 1; animation: countdownPulse 1s ease-in-out infinite; }
+.ap__unit-label { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; font-family: var(--font-display); }
+.ap__colon { font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: var(--text-muted); line-height: 1; margin-bottom: 8px; }

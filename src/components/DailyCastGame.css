@@ -1,0 +1,32 @@
+/* src/components/DailyCastGame.css */
+.dcg {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* ── Phase progress dots ──────────────────────────────── */
+.dcg__phases {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: var(--space-3) 0 var(--space-2);
+  flex-shrink: 0;
+}
+
+.dcg__phase-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--border-card);
+  transition: all var(--t-normal);
+}
+.dcg__phase-dot--done   { background: var(--brand-primary); transform: scale(0.8); }
+.dcg__phase-dot--active { background: var(--brand-accent); transform: scale(1.3); box-shadow: 0 0 8px rgba(244,196,48,0.7); }
+
+/* ── Content area ─────────────────────────────────────── */
+.dcg__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
