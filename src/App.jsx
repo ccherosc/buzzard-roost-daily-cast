@@ -67,18 +67,24 @@ export default function App() {
 
   function handleSelectCast(castId) {
     setCastStyle(castId);
+    // Pre-build the result NOW so CastAnimation can show the real
+    // fish during the catch phase — not a generic placeholder.
+    const preBuilt = buildResult(spot, lure, castId);
+    setResult(preBuilt);
     setTimeout(() => setPhase('animation'), 300);
   }
 
-  // ── Cast complete: build result, save, update state ──────
+  // ── Cast complete: result already built, just save + advance ─
   function handleCastComplete() {
-    const builtResult = buildResult(spot, lure, castStyle);
-    const streak      = updateStreak();
-    const { newBadges: fresh } = checkAndUnlockBadges(builtResult, streak);
-    saveResult(builtResult);
-    setResult(builtResult);
-    setNewBadges(fresh);
-    setPlayerData(loadPlayerData());
+    // `result` is already set from handleSelectCast — no re-roll.
+    setResult(prev => {
+      const streak = updateStreak();
+      const { newBadges: fresh } = checkAndUnlockBadges(prev, streak);
+      saveResult(prev);
+      setNewBadges(fresh);
+      setPlayerData(loadPlayerData());
+      return prev;
+    });
     setPhase('result');
   }
 
@@ -140,6 +146,7 @@ export default function App() {
           {phase === 'animation' && (
             <CastAnimation
               spot={spot} lure={lure} castStyle={castStyle}
+              result={result}
               onComplete={handleCastComplete}
             />
           )}

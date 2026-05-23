@@ -73,7 +73,16 @@ const SPRITE_URLS = Object.fromEntries(
   ].map(name => [name, spriteUrl(name)])
 );
 
-export default function CastAnimation({ onComplete }) {
+// Rarity → how many catch-b "big fish" frames to show at the end
+const CATCH_FRAMES_BY_RARITY = {
+  common:    ['catch-a', 'catch-a', 'catch-b'],
+  uncommon:  ['catch-a', 'catch-b', 'catch-b'],
+  rare:      ['catch-b', 'catch-b', 'catch-b'],
+  epic:      ['catch-b', 'catch-b', 'catch-b'],
+  legendary: ['catch-b', 'catch-b', 'catch-b'],
+};
+
+export default function CastAnimation({ onComplete, result }) {
   const [phaseIdx, setPhaseIdx] = useState(0);
   const [frameIdx, setFrameIdx] = useState(0);
   const onCompleteRef = useRef(onComplete);
@@ -103,8 +112,19 @@ export default function CastAnimation({ onComplete }) {
     return () => clearInterval(id);
   }, [phaseIdx]);
 
-  const phase      = PHASES[phaseIdx];
-  const spriteName = phase.frames[frameIdx] ?? phase.frames[0];
+  const phase = PHASES[phaseIdx];
+
+  // During the catch phase, swap in rarity-appropriate frames if result is ready
+  const catchFrames = result
+    ? (CATCH_FRAMES_BY_RARITY[result.rarity] ?? CATCH_FRAMES_BY_RARITY.common)
+    : phase.frames;
+  const activeFrames  = phase.key === 'catch' ? catchFrames : phase.frames;
+  const spriteName    = activeFrames[frameIdx] ?? activeFrames[0];
+
+  // Dynamic label: catch phase shows the actual fish name + weight
+  const phaseLabel = (phase.key === 'catch' && result)
+    ? `${result.emoji} ${result.fishName} — ${result.weight} lbs!`
+    : phase.label;
 
   return (
     <div className={`ca ca--${phase.key}`} aria-live="polite">
@@ -154,11 +174,28 @@ export default function CastAnimation({ onComplete }) {
             <div key={i} className="ca__drop" style={{ '--i': i }} />
           ))}
         </div>
+
+        {/* ── Catch reveal: shows the ACTUAL fish during catch phase ── */}
+        {phase.key === 'catch' && result && (
+          <div
+            className={`ca__catch-reveal ca__catch-reveal--${result.rarity}`}
+            aria-label={`Caught: ${result.fishName}`}
+          >
+            <span className="ca__catch-glow" aria-hidden="true" />
+            <span className="ca__catch-emoji" role="img" aria-hidden="true">
+              {result.emoji}
+            </span>
+            <span className="ca__catch-name">{result.fishName}</span>
+            <span className="ca__catch-weight">{result.weight} lbs</span>
+          </div>
+        )}
       </div>
 
       {/* ── Phase label — floats in sky ──────────────────────── */}
       <div className="ca__label">
-        <span key={phase.key} className="ca__label-text">{phase.label}</span>
+        <span key={phase.key + (result?.fishId ?? '')} className="ca__label-text">
+          {phaseLabel}
+        </span>
       </div>
 
       {/* ── Progress dots ────────────────────────────────────── */}
