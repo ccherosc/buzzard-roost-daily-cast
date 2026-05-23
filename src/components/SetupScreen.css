@@ -1,0 +1,237 @@
+/* src/components/SetupScreen.css */
+.ss {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  padding-bottom: var(--space-8);
+}
+
+/* ── Section ── */
+.ss__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.ss__section-label {
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ── Scene strip (spots) ── */
+.ss__scene-strip {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.ss__spot {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: var(--space-2) var(--space-1);
+  border-radius: var(--radius-md);
+  border: 2px solid transparent;
+  background: var(--bg-card-raised);
+  transition: all var(--t-fast);
+  cursor: pointer;
+  min-height: 60px;
+}
+
+.ss__spot:hover:not(:disabled) {
+  border-color: var(--text-muted);
+  background: var(--bg-card-hover);
+}
+
+.ss__spot--selected {
+  border-color: var(--brand-accent) !important;
+  background: var(--bg-card-hover) !important;
+  box-shadow: 0 0 10px rgba(232,168,76,0.3);
+}
+
+.ss__spot--locked {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+
+.ss__spot-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.ss__spot-name {
+  font-family: var(--font-display);
+  font-size: 0.55rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--brand-accent);
+  white-space: nowrap;
+}
+
+/* ── Chip rows (lure + cast style) ── */
+.ss__chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.ss__chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  border: 2px solid var(--border-subtle);
+  background: var(--bg-card-raised);
+  transition: all var(--t-fast);
+  cursor: pointer;
+  min-height: 60px;
+  min-width: 58px;
+  flex: 1;
+}
+
+.ss__chip:hover:not(:disabled) {
+  border-color: var(--text-muted);
+  background: var(--bg-card-hover);
+}
+
+.ss__chip--selected {
+  border-color: var(--brand-accent) !important;
+  background: var(--bg-card-hover) !important;
+  box-shadow: 0 0 10px rgba(232,168,76,0.3);
+}
+
+.ss__chip--locked {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+
+.ss__chip-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.ss__chip-name {
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* ── Live odds ── */
+.ss__odds-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--bg-card-raised);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.ss__odds-bar {
+  display: flex;
+  height: 20px;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  gap: 2px;
+}
+
+.ss__odds-seg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  transition: flex 0.4s ease;
+}
+
+.ss__odds-seg--common { background: var(--rarity-common);    opacity: 0.75; }
+.ss__odds-seg--rare   { background: var(--rarity-rare);      opacity: 0.75; }
+.ss__odds-seg--epic   { background: var(--rarity-legendary); opacity: 0.75; }
+
+.ss__odds-pct {
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  color: rgba(0,0,0,0.75);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ss__odds-legend {
+  display: flex;
+  gap: var(--space-4);
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ss__dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+.ss__dot--common { background: var(--rarity-common); }
+.ss__dot--rare   { background: var(--rarity-rare); }
+.ss__dot--epic   { background: var(--rarity-legendary); }
+
+/* ── Risk meter ── */
+.ss__risk-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.ss__risk-label {
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.ss__risk-track {
+  flex: 1;
+  height: 6px;
+  background: var(--border-subtle);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.ss__risk-fill {
+  height: 100%;
+  background: linear-gradient(to right, var(--brand-accent), #ef4444);
+  border-radius: var(--radius-full);
+  transition: width 0.4s ease;
+}
+
+/* ── CTA ── */
+.ss__cta-wrap {
+  padding-top: var(--space-2);
+}
+
+.ss__cta {
+  width: 100%;
+}
+
+.ss__cta:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
