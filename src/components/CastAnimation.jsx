@@ -114,6 +114,7 @@ export default function CastAnimation({ onComplete }) {
         <div className="ca__sun"            aria-hidden="true" />
         <div className="ca__cloud ca__cloud--1" aria-hidden="true" />
         <div className="ca__cloud ca__cloud--2" aria-hidden="true" />
+        <div className="ca__cloud ca__cloud--3" aria-hidden="true" />
         <div className="ca__tree ca__tree--l"   aria-hidden="true" />
         <div className="ca__tree ca__tree--r"   aria-hidden="true" />
       </div>
@@ -127,14 +128,18 @@ export default function CastAnimation({ onComplete }) {
         <div className="ca__water-bg" aria-hidden="true" />
 
         {/* Fisherman — outer centers, inner animates per phase   */}
+        {/* All sprites stay mounted; only active one is visible.  */}
+        {/* This eliminates the DOM-remount flicker caused by key. */}
         <div className="ca__fisherman" aria-label="Fisherman animation">
           <div className="ca__fisherman-inner">
-            <img
-              key={spriteName}
-              src={SPRITE_URLS[spriteName]}
-              alt=""
-              className="ca__sprite"
-            />
+            {Object.keys(SPRITE_URLS).map(name => (
+              <img
+                key={name}
+                src={SPRITE_URLS[name]}
+                alt=""
+                className={`ca__sprite${name === spriteName ? ' ca__sprite--active' : ''}`}
+              />
+            ))}
           </div>
         </div>
 
