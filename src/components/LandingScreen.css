@@ -36,8 +36,8 @@
   overflow: hidden;
   border-radius: var(--radius-lg);
   margin-top: var(--space-2);
-  box-shadow: 0 0 0 1px rgba(42,90,140,0.3),
-              inset 0 0 40px rgba(2,8,20,0.6);
+  box-shadow: 0 0 0 1px rgba(74,124,47,0.3),
+              inset 0 0 40px rgba(15,26,13,0.6);
 }
 
 /* ── Sky ──────────────────────────────────────────────────── */
