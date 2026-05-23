@@ -1,20 +1,20 @@
 // src/data/fishData.js
-// 22 fish across 5 rarity tiers.
-// weightMin / weightMax are in pounds.
-// Emoji rules: each emoji is unique and directly represents either
-//   (a) the fish's body shape/colour, or
-//   (b) its single most recognisable characteristic.
-// Cross-rarity duplicates are acceptable (context differs); same-rarity
-// duplicates are avoided so the result card is always visually distinct.
+// 22 fish across 5 rarity tiers.  weightMin/weightMax in pounds.
+//
+// EMOJI NOTE: Unicode has exactly 5 fish-shaped emoji:
+//   🐟 (generic fish)  🐠 (tropical/striped fish)  🐡 (round puffer)
+//   🦈 (shark/large predator)  🎏 (koi/carp)
+// With 22 species, cross-tier and some within-tier duplicates are
+// unavoidable.  Replace emoji values with image paths once custom
+// fish artwork is ready (see docs for integration guide).
 
 export const FISH_DATABASE = {
   // ── Common ───────────────────────────────────────────────────────
-  // Small, familiar panfish — all visually distinct from each other.
   common: [
     {
       id: 'bluegill',
       name: 'Bluegill',
-      emoji: '🐟',           // generic small fish — the classic "first catch"
+      emoji: '🐟',   // small generic fish silhouette
       rarity: 'common',
       weightMin: 0.2, weightMax: 1.5,
       flavor: "Scrappy little fighter. Every angler's first catch.",
@@ -22,7 +22,7 @@ export const FISH_DATABASE = {
     {
       id: 'sunfish',
       name: 'Sunfish',
-      emoji: '🌞',           // named for the sun — round, golden, sun-themed
+      emoji: '🐡',   // round disc-shaped body — closest to sunfish's deep profile
       rarity: 'common',
       weightMin: 0.1, weightMax: 1.2,
       flavor: 'Flash of gold in shallow water. Classic.',
@@ -30,7 +30,7 @@ export const FISH_DATABASE = {
     {
       id: 'yellow_perch',
       name: 'Yellow Perch',
-      emoji: '🐠',           // colourful striped body — tropical fish emoji matches
+      emoji: '🐠',   // colourful striped body — matches perch's yellow bars
       rarity: 'common',
       weightMin: 0.3, weightMax: 2.0,
       flavor: "Schooling fish. Where there's one, there's more.",
@@ -38,7 +38,7 @@ export const FISH_DATABASE = {
     {
       id: 'crappie',
       name: 'Crappie',
-      emoji: '🐡',           // deep, round body shape matches the puffer silhouette
+      emoji: '🐟',   // panfish silhouette (same tier as bluegill — custom art needed)
       rarity: 'common',
       weightMin: 0.2, weightMax: 2.5,
       flavor: 'Light bite, great table fare.',
@@ -46,7 +46,7 @@ export const FISH_DATABASE = {
     {
       id: 'rock_bass',
       name: 'Rock Bass',
-      emoji: '🪨',           // lives in rocky structure — instantly distinct
+      emoji: '🐟',   // bass silhouette (custom art will differentiate)
       rarity: 'common',
       weightMin: 0.2, weightMax: 1.8,
       flavor: 'Tough as nails and full of attitude.',
@@ -54,12 +54,11 @@ export const FISH_DATABASE = {
   ],
 
   // ── Uncommon ─────────────────────────────────────────────────────
-  // Sought-after sport fish — each has a signature trait for its emoji.
   uncommon: [
     {
       id: 'largemouth_bass',
       name: 'Largemouth Bass',
-      emoji: '🐟',           // the quintessential bass silhouette
+      emoji: '🐟',   // classic American bass
       rarity: 'uncommon',
       weightMin: 1.5, weightMax: 8.0,
       flavor: 'The bread and butter of bass fishing.',
@@ -67,7 +66,7 @@ export const FISH_DATABASE = {
     {
       id: 'smallmouth_bass',
       name: 'Smallmouth Bass',
-      emoji: '🐡',           // compact, deep-bodied — rounder than largemouth
+      emoji: '🐠',   // similar bass, use colourful fish to distinguish from largemouth
       rarity: 'uncommon',
       weightMin: 1.0, weightMax: 6.0,
       flavor: 'Pound for pound the hardest fighter in freshwater.',
@@ -75,7 +74,7 @@ export const FISH_DATABASE = {
     {
       id: 'walleye',
       name: 'Walleye',
-      emoji: '👁️',           // famous for glassy, reflective "wall" eyes
+      emoji: '🐟',   // long lean fish silhouette
       rarity: 'uncommon',
       weightMin: 1.5, weightMax: 10.0,
       flavor: 'Ghost of the deep. Marble-eyed predator.',
@@ -83,7 +82,7 @@ export const FISH_DATABASE = {
     {
       id: 'channel_catfish',
       name: 'Channel Catfish',
-      emoji: '🐱',           // catFISH — whiskers like a cat, iconic association
+      emoji: '🐡',   // round/deep body shape (catfish are thick-bodied); distinguishes from bass
       rarity: 'uncommon',
       weightMin: 2.0, weightMax: 12.0,
       flavor: "Bottom feeder. No shame in that game.",
@@ -91,7 +90,7 @@ export const FISH_DATABASE = {
     {
       id: 'carp',
       name: 'Carp',
-      emoji: '🎏',           // koi/carp streamer — literally depicts a carp
+      emoji: '🎏',   // koi/carp streamer — literally depicts a carp; only unique in game
       rarity: 'uncommon',
       weightMin: 3.0, weightMax: 15.0,
       flavor: 'Underrated. Fights like a freight train.',
@@ -99,12 +98,11 @@ export const FISH_DATABASE = {
   ],
 
   // ── Rare ─────────────────────────────────────────────────────────
-  // Trophy-grade fish — distinct shapes and legendary status.
   rare: [
     {
       id: 'rainbow_trout',
       name: 'Rainbow Trout',
-      emoji: '🌈',           // named for the rainbow stripe along its side
+      emoji: '🐠',   // colourful fish — trout's vivid pink stripe maps well
       rarity: 'rare',
       weightMin: 5.0, weightMax: 20.0,
       flavor: 'A streak of color in cold water. Breathtaking.',
@@ -112,7 +110,7 @@ export const FISH_DATABASE = {
     {
       id: 'striped_bass',
       name: 'Striped Bass',
-      emoji: '🐠',           // bold horizontal stripes — matches the tropical fish silhouette
+      emoji: '🐟',   // large fish silhouette
       rarity: 'rare',
       weightMin: 8.0, weightMax: 25.0,
       flavor: 'The silver king of rivers. A serious trophy.',
@@ -120,7 +118,7 @@ export const FISH_DATABASE = {
     {
       id: 'northern_pike',
       name: 'Northern Pike',
-      emoji: '🗡️',           // "pike" is also a long spear — fast, lance-like body
+      emoji: '🦈',   // elongated apex predator — closest fish shape to pike
       rarity: 'rare',
       weightMin: 5.0, weightMax: 22.0,
       flavor: 'Ambush predator. Strikes like lightning.',
@@ -128,7 +126,7 @@ export const FISH_DATABASE = {
     {
       id: 'muskie',
       name: 'Muskie',
-      emoji: '🦈',           // apex freshwater predator — shark-level aggression
+      emoji: '🦈',   // large freshwater predator; shark silhouette suits it
       rarity: 'rare',
       weightMin: 10.0, weightMax: 30.0,
       flavor: 'The fish of ten thousand casts.',
@@ -136,12 +134,11 @@ export const FISH_DATABASE = {
   ],
 
   // ── Epic ─────────────────────────────────────────────────────────
-  // Monster fish — each has an unmistakable defining feature.
   epic: [
     {
       id: 'trophy_bass',
       name: 'Trophy Bass',
-      emoji: '🏆',           // wall-worthy — you will literally hang this on a wall
+      emoji: '🐟',   // enormous bass
       rarity: 'epic',
       weightMin: 20.0, weightMax: 45.0,
       flavor: "Wall-worthy. You'll be telling this story for years.",
@@ -149,7 +146,7 @@ export const FISH_DATABASE = {
     {
       id: 'giant_catfish',
       name: 'Giant Catfish',
-      emoji: '😾',           // giant catfish face — heavy whiskers, grumpy ancient expression
+      emoji: '🐡',   // massive round-bodied catfish; rounder emoji distinguishes from bass
       rarity: 'epic',
       weightMin: 25.0, weightMax: 60.0,
       flavor: "Ancient bottom dweller. Older than your grandpa.",
@@ -157,7 +154,7 @@ export const FISH_DATABASE = {
     {
       id: 'tiger_muskie',
       name: 'Tiger Muskie',
-      emoji: '🐯',           // named for tiger-stripe markings — unmistakable
+      emoji: '🦈',   // predator silhouette; custom art adds tiger stripes
       rarity: 'epic',
       weightMin: 18.0, weightMax: 50.0,
       flavor: 'Hybrid predator. Rare and ravenous.',
@@ -165,7 +162,7 @@ export const FISH_DATABASE = {
     {
       id: 'alligator_gar',
       name: 'Alligator Gar',
-      emoji: '🐊',           // named for its alligator-like armoured snout — perfect match
+      emoji: '🦈',   // elongated armoured predator — shark is closest emoji
       rarity: 'epic',
       weightMin: 30.0, weightMax: 60.0,
       flavor: 'Living fossil. Over 100 million years in the making.',
@@ -173,12 +170,11 @@ export const FISH_DATABASE = {
   ],
 
   // ── Legendary ────────────────────────────────────────────────────
-  // Once-in-a-lifetime catches — mythic status, unique visual identity.
   legendary: [
     {
       id: 'golden_trout',
       name: 'Golden Trout',
-      emoji: '✨',           // pure gold shimmer — rarer than gold itself
+      emoji: '🐠',   // bright colourful fish — gold/orange trout
       rarity: 'legendary',
       weightMin: 50.0, weightMax: 120.0,
       flavor: 'A fish of pure legend. Anglers spend lifetimes chasing this ghost.',
@@ -186,7 +182,7 @@ export const FISH_DATABASE = {
     {
       id: 'ancient_sturgeon',
       name: 'Ancient Sturgeon',
-      emoji: '🦕',           // sturgeon predate the dinosaurs — bony, prehistoric body
+      emoji: '🐟',   // large fish; custom art shows bony armoured plates
       rarity: 'legendary',
       weightMin: 80.0, weightMax: 180.0,
       flavor: 'Prehistoric. It was here before humans were. Show some respect.',
@@ -194,7 +190,7 @@ export const FISH_DATABASE = {
     {
       id: 'albino_catfish',
       name: 'Albino Catfish',
-      emoji: '👻',           // chalk-white, translucent — ghostly and legendary
+      emoji: '🐡',   // round/deep body; custom art will be pure white
       rarity: 'legendary',
       weightMin: 60.0, weightMax: 140.0,
       flavor: "White as bone. Eyes like rubies. Zero people will believe you.",
@@ -202,7 +198,7 @@ export const FISH_DATABASE = {
     {
       id: 'buzzard_monster',
       name: 'The Buzzard Monster',
-      emoji: '🦅',           // the buzzard eagle — the creature the lake is named for
+      emoji: '🦈',   // massive apex predator; custom art makes it legendary
       rarity: 'legendary',
       weightMin: 100.0, weightMax: 200.0,
       flavor: 'The one the locals whisper about. Caught only once. Now twice.',
