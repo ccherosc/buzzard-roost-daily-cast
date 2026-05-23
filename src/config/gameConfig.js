@@ -13,38 +13,39 @@ export const DAILY_CAST_LIMIT = 3;
 export const RARITIES = ['common', 'uncommon', 'rare', 'epic', 'legendary'];
 
 // ── Base rarity weights (before modifiers) ───────────────────
+// Epic/legendary are floats so modifiers can push them to near-zero on safe setups.
 export const BASE_WEIGHTS = {
-  common:    50,
-  uncommon:  25,
-  rare:      15,
-  epic:       7,
-  legendary:  3,
+  common:    65,
+  uncommon:  26,
+  rare:       7,
+  epic:       1.5,
+  legendary:  0.2,
 };
 
 // ── Spot modifiers ───────────────────────────────────────────
 export const SPOT_MODIFIERS = {
-  dock:        { common:  8, uncommon:  4, rare: -2, epic: -5, legendary: -5 },
-  reeds:       { common:  3, uncommon:  6, rare:  3, epic: -3, legendary: -2 },
-  fallenTree:  { common: -3, uncommon:  2, rare:  6, epic:  2, legendary:  0 },
-  deepWater:   { common:-10, uncommon: -3, rare:  2, epic:  7, legendary:  4 },
-  rockyBank:   { common: -3, uncommon:  0, rare:  4, epic:  2, legendary:  1 },
+  dock:        { common:  8, uncommon:  4, rare: -2, epic: -1.5, legendary: -0.2 },
+  reeds:       { common:  3, uncommon:  6, rare:  3, epic: -0.5, legendary: -0.1 },
+  fallenTree:  { common: -3, uncommon:  2, rare:  6, epic:  0.5, legendary:  0.3 },
+  deepWater:   { common:-10, uncommon: -3, rare:  2, epic:  1.5, legendary:  1.0 },
+  rockyBank:   { common: -3, uncommon:  0, rare:  4, epic:  0.5, legendary:  0.3 },
 };
 
 // ── Lure modifiers ───────────────────────────────────────────
 export const LURE_MODIFIERS = {
-  worm:        { common:  8, uncommon:  4, rare: -2, epic: -4, legendary: -4 },
-  spinner:     { common:  0, uncommon:  5, rare:  3, epic: -1, legendary: -1 },
-  frog:        { common: -2, uncommon:  2, rare:  5, epic:  3, legendary:  0 },
-  jig:         { common:  0, uncommon:  2, rare:  3, epic:  3, legendary: -1 },
-  mysteryLure: { common:-12, uncommon: -4, rare:  2, epic:  7, legendary:  7 },
+  worm:        { common:  8, uncommon:  4, rare: -2, epic: -1.5, legendary: -0.2 },
+  spinner:     { common:  0, uncommon:  5, rare:  3, epic: -0.3, legendary: -0.1 },
+  frog:        { common: -2, uncommon:  2, rare:  5, epic:  1.0, legendary:  0.5 },
+  jig:         { common:  0, uncommon:  2, rare:  3, epic:  0.8, legendary:  0.4 },
+  mysteryLure: { common:-12, uncommon: -4, rare:  2, epic:  2.0, legendary:  1.2 },
 };
 
 // ── Cast style modifiers (used for rarity weighting) ─────────
 export const CAST_MODIFIERS = {
-  safeCast:      { common: 10, uncommon:  3, rare: -3, epic: -5, legendary: -5 },
-  precisionCast: { common: -2, uncommon:  3, rare:  5, epic:  1, legendary: -1 },
-  powerCast:     { common: -5, uncommon: -2, rare:  3, epic:  5, legendary:  2 },
-  riskyCast:     { common:-15, uncommon: -5, rare:  3, epic:  7, legendary: 10 },
+  safeCast:      { common: 10, uncommon:  3, rare: -3, epic: -1.5, legendary: -0.2 },
+  precisionCast: { common: -2, uncommon:  3, rare:  5, epic:  0.2, legendary:  0.1 },
+  powerCast:     { common: -5, uncommon: -2, rare:  3, epic:  1.0, legendary:  0.5 },
+  riskyCast:     { common:-15, uncommon: -5, rare:  3, epic:  2.0, legendary:  0.8 },
 };
 
 // ── Points per rarity (base + random 0..variance) ────────────
@@ -75,8 +76,8 @@ export const COUPON_RULES = {
 
 // ── Scarcity copy shown on Epic/Legendary cards ──────────────
 export const SCARCITY_COPY = {
-  epic:      'Only 7% of anglers ever land a catch like this.',
-  legendary: 'Only 3% of anglers ever hook a legend like this.',
+  epic:      'Very few anglers ever land something like this. Today is your day.',
+  legendary: 'Almost no one ever sees one of these. This is a once-in-a-decade fish.',
 };
 
 // ── Streak badge thresholds ───────────────────────────────────

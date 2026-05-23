@@ -18,6 +18,8 @@ import {
   hasUsedAllCastsToday, loadTodayResult, loadTodayCatches, loadPlayerData,
   recordCastResult, updateStreak, checkAndUnlockBadges,
 } from './utils/storageManager.js';
+import MascotQuip            from './components/MascotQuip.jsx';
+import { getSnowballResultLine } from './utils/mascotLines.js';
 
 export default function App() {
   const [phase,          setPhase]          = useState('landing');
@@ -159,6 +161,12 @@ export default function App() {
               />
               <Leaderboard playerResult={bestResult} />
               <PlayerStats playerData={playerData} />
+              {/* Snowball wrap-up — always visible at session end */}
+              <MascotQuip
+                mascot="snowball"
+                line={getSnowballResultLine(playerData?.streak?.count ?? 0, sessionCatches)}
+                size={110}
+              />
             </div>
           )}
 

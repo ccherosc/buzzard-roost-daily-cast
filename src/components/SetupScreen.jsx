@@ -1,18 +1,27 @@
 // src/components/SetupScreen.jsx
-// One-screen setup: spot (scene strip) + lure (icon row) + cast style (icon row)
-// + live odds bar + risk meter + TModel2 quip + CTA button.
+// One-screen setup: spot + lure + cast style + live odds + risk meter + TModel2.
+// TModel2 fills the screen bottom and gives progressive commentary as each
+// selection is made (spot → spot+lure → full combo).
 //
 // Props:
 //   castNumber  — 1-based cast number
-//   lockedSpot  — spotId string if already chosen (casts 2+), null on cast 1
-//   lockedLure  — lureId string if already chosen (casts 2+), null on cast 1
+//   lockedSpot  — spotId if already chosen (casts 2+), null on cast 1
+//   lockedLure  — lureId if already chosen (casts 2+), null on cast 1
 //   onComplete  — ({spotId, lureId, castStyleId}) => void
 import { useState, useMemo } from 'react';
 import './SetupScreen.css';
 import { SPOTS, LURES, CAST_STYLES } from '../data/gameData.js';
 import { computeWeights } from '../utils/gameLogic.js';
-import { getSetupQuip } from '../utils/mascotLines.js';
-import MascotQuip from './MascotQuip.jsx';
+import { getSpotQuip, getSpotLureQuip, getSetupQuip } from '../utils/mascotLines.js';
+import tmodel2Src from '../../assets/reference/Mascot_TModel2.png';
+
+// Risk level label based on epic+legendary fraction of the odds
+function riskLabel(riskFrac) {
+  if (riskFrac >= 0.12) return { label: 'HIGH STAKES',   color: '#ef4444' };
+  if (riskFrac >= 0.05) return { label: 'RISKY',         color: '#f97316' };
+  if (riskFrac >= 0.01) return { label: 'MODERATE',      color: '#f59e0b' };
+  return                       { label: 'SAFE',           color: '#22c55e' };
+}
 
 export default function SetupScreen({ castNumber, lockedSpot, lockedLure, onComplete }) {
   const [selectedSpot, setSelectedSpot] = useState(lockedSpot ?? null);
@@ -21,23 +30,35 @@ export default function SetupScreen({ castNumber, lockedSpot, lockedLure, onComp
 
   const canProceed = !!(selectedSpot && selectedLure && selectedCast);
 
-  // Live odds — only compute when all three are picked
+  // Live odds — computed when all three are picked
   const { odds, totalWeight } = useMemo(() => {
     if (!selectedSpot || !selectedLure || !selectedCast) return { odds: null, totalWeight: 0 };
     const w = computeWeights(selectedSpot, selectedLure, selectedCast);
     return { odds: w, totalWeight: Object.values(w).reduce((a, b) => a + b, 0) };
   }, [selectedSpot, selectedLure, selectedCast]);
 
-  const commonPct = odds ? Math.round(odds.common / totalWeight * 100) : null;
-  const rarePct   = odds ? Math.round((odds.uncommon + odds.rare) / totalWeight * 100) : null;
-  const epicPct   = odds ? (100 - commonPct - rarePct) : null;
-  const riskFrac  = odds ? (odds.epic + odds.legendary) / totalWeight : 0;
+  const commonPct   = odds ? Math.round(odds.common / totalWeight * 100)                       : null;
+  const rarePct     = odds ? Math.round((odds.uncommon + odds.rare) / totalWeight * 100)        : null;
+  const epicPct     = odds ? (100 - commonPct - rarePct)                                        : null;
+  const riskFrac    = odds ? (odds.epic + odds.legendary) / totalWeight                         : 0;
+  const risk        = odds ? riskLabel(riskFrac) : null;
 
-  const quip = (selectedSpot && selectedLure && selectedCast)
-    ? getSetupQuip(selectedSpot, selectedLure, selectedCast)
-    : castNumber > 1
-      ? "Same spot, same lure. Pick your cast style."
-      : "Choose your spot, lure, and cast style.";
+  // Progressive quip — updates with each selection
+  const quip = useMemo(() => {
+    if (selectedSpot && selectedLure && selectedCast) {
+      return getSetupQuip(selectedSpot, selectedLure, selectedCast);
+    }
+    if (selectedSpot && selectedLure) {
+      return getSpotLureQuip(selectedSpot, selectedLure)
+        ?? getSpotQuip(selectedSpot);
+    }
+    if (selectedSpot) {
+      return getSpotQuip(selectedSpot);
+    }
+    return castNumber > 1
+      ? "Same spot, same lure — just pick your cast style."
+      : "Where you casting today?";
+  }, [selectedSpot, selectedLure, selectedCast, castNumber]);
 
   function handleComplete() {
     if (!canProceed) return;
@@ -70,7 +91,7 @@ export default function SetupScreen({ castNumber, lockedSpot, lockedLure, onComp
         </div>
       </section>
 
-      {/* ── Lure: icon row ── */}
+      {/* ── Lure: chip row ── */}
       <section className="ss__section">
         <h3 className="ss__section-label">LURE</h3>
         <div className="ss__chip-row">
@@ -94,7 +115,7 @@ export default function SetupScreen({ castNumber, lockedSpot, lockedLure, onComp
         </div>
       </section>
 
-      {/* ── Cast style: icon row ── */}
+      {/* ── Cast style: chip row ── */}
       <section className="ss__section">
         <h3 className="ss__section-label">CAST STYLE</h3>
         <div className="ss__chip-row">
@@ -119,6 +140,12 @@ export default function SetupScreen({ castNumber, lockedSpot, lockedLure, onComp
       {/* ── Live odds + risk (only when all three picked) ── */}
       {odds && (
         <div className="ss__odds-wrap">
+          <div className="ss__odds-header">
+            <span className="ss__odds-title">CATCH ODDS</span>
+            <span className="ss__risk-badge" style={{ color: risk.color, borderColor: risk.color }}>
+              {risk.label}
+            </span>
+          </div>
           <div className="ss__odds-bar">
             <div className="ss__odds-seg ss__odds-seg--common" style={{ flex: odds.common }}>
               <span className="ss__odds-pct">{commonPct}%</span>
@@ -126,28 +153,17 @@ export default function SetupScreen({ castNumber, lockedSpot, lockedLure, onComp
             <div className="ss__odds-seg ss__odds-seg--rare" style={{ flex: odds.uncommon + odds.rare }}>
               <span className="ss__odds-pct">{rarePct}%</span>
             </div>
-            <div className="ss__odds-seg ss__odds-seg--epic" style={{ flex: odds.epic + odds.legendary }}>
-              {epicPct > 4 && <span className="ss__odds-pct">{epicPct}%</span>}
+            <div className="ss__odds-seg ss__odds-seg--epic" style={{ flex: Math.max(0.5, odds.epic + odds.legendary) }}>
+              {epicPct > 2 && <span className="ss__odds-pct">{epicPct}%</span>}
             </div>
           </div>
           <div className="ss__odds-legend">
-            <span><span className="ss__dot ss__dot--common" />Common</span>
+            <span><span className="ss__dot ss__dot--common" />Common/Uncommon</span>
             <span><span className="ss__dot ss__dot--rare"   />Rare</span>
-            <span><span className="ss__dot ss__dot--epic"   />Epic+</span>
-          </div>
-
-          <div className="ss__risk-row">
-            <span className="ss__risk-label">Safe</span>
-            <div className="ss__risk-track">
-              <div className="ss__risk-fill" style={{ width: `${Math.round(riskFrac * 100)}%` }} />
-            </div>
-            <span className="ss__risk-label">Risky</span>
+            <span><span className="ss__dot ss__dot--epic"   />Epic/Legendary</span>
           </div>
         </div>
       )}
-
-      {/* ── TModel2 quip ── */}
-      <MascotQuip mascot="tmodel2" line={quip} size={80} />
 
       {/* ── CTA ── */}
       <div className="ss__cta-wrap">
@@ -158,6 +174,21 @@ export default function SetupScreen({ castNumber, lockedSpot, lockedLure, onComp
         >
           🎣 CAST #{castNumber}
         </button>
+      </div>
+
+      {/* ── TModel2 — fills the bottom of the screen ── */}
+      <div className="ss__mascot-section">
+        <div className="ss__mascot-bubble">
+          <p className="ss__mascot-text">{quip}</p>
+          <div className="ss__mascot-tail" />
+        </div>
+        <div className="ss__mascot-wrap">
+          <img
+            className="ss__mascot-sprite"
+            src={tmodel2Src}
+            alt="T-Model2"
+          />
+        </div>
       </div>
     </div>
   );

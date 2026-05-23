@@ -13,9 +13,10 @@ describe('computeWeights', () => {
     expect(Object.keys(w)).toEqual(RARITIES);
   });
 
-  it('all weights are at least 1', () => {
+  it('all weights are positive (floor is 0.01)', () => {
+    // Floor changed from 1 → 0.01 so safe setups can suppress epic/legendary to near-zero
     const w = computeWeights('deepWater', 'mysteryLure', 'riskyCast');
-    for (const r of RARITIES) expect(w[r]).toBeGreaterThanOrEqual(1);
+    for (const r of RARITIES) expect(w[r]).toBeGreaterThan(0);
   });
 
   it('safe combo weights common higher than legendary', () => {
@@ -23,14 +24,23 @@ describe('computeWeights', () => {
     expect(w.common).toBeGreaterThan(w.legendary);
   });
 
-  it('risky combo weights legendary higher than common', () => {
-    const w = computeWeights('deepWater', 'mysteryLure', 'riskyCast');
-    expect(w.legendary).toBeGreaterThan(w.common);
+  it('risky combo legendary is significantly boosted vs safe combo', () => {
+    // Legendary is still < common (by design — it should be very rare even at max risk),
+    // but risky setup should give legendary many times more weight than a safe setup.
+    const risky = computeWeights('deepWater', 'mysteryLure', 'riskyCast');
+    const safe  = computeWeights('dock',       'worm',        'safeCast');
+    expect(risky.legendary).toBeGreaterThan(safe.legendary * 10);
   });
 
-  it('handles unknown ids gracefully (uses base weights)', () => {
+  it('safe combo suppresses epic/legendary to near-zero', () => {
+    const w = computeWeights('dock', 'worm', 'safeCast');
+    // Epic + legendary combined should be far less than common
+    expect(w.common).toBeGreaterThan((w.epic + w.legendary) * 100);
+  });
+
+  it('handles unknown ids gracefully (uses base weights, all positive)', () => {
     const w = computeWeights('unknown', 'unknown', 'unknown');
-    for (const r of RARITIES) expect(w[r]).toBeGreaterThanOrEqual(1);
+    for (const r of RARITIES) expect(w[r]).toBeGreaterThan(0);
   });
 });
 

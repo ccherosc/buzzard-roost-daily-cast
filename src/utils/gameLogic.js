@@ -18,7 +18,9 @@ export function computeWeights(spotId, lureId, castStyleId) {
       (spotMod[rarity]      ?? 0) +
       (lureMod[rarity]      ?? 0) +
       (castMod[rarity]      ?? 0);
-    weights[rarity] = Math.max(1, raw);
+    // Floor at 0.01 so weights can approach zero (epic/legendary suppressed on safe setups)
+    // but never reach exactly 0 (rollRarity needs a non-zero total).
+    weights[rarity] = Math.max(0.01, raw);
   }
   return weights;
 }
