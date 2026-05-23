@@ -1,9 +1,10 @@
 // src/components/AlreadyPlayed.jsx
-// V2: shows all of today's catches (up to 3), plus countdown to midnight reset.
+// V2: shows all of today's catches (up to 3) + Snowball mascot + countdown to midnight.
 import { useState, useEffect } from 'react';
 import './AlreadyPlayed.css';
 import { streakEmoji } from '../config/gameConfig.js';
 import { getFishImage } from '../utils/fishImages.js';
+import MascotQuip from './MascotQuip.jsx';
 
 function msUntilMidnight() {
   const now = new Date();
@@ -31,9 +32,12 @@ export default function AlreadyPlayed({ result, todayCatches = [], playerData })
 
   const { h, m, s } = formatCountdown(timeLeft);
 
-  // Show all catches; highlight the best (highest points)
-  const catches = todayCatches.length > 0 ? todayCatches : (result ? [result] : []);
+  const catches    = todayCatches.length > 0 ? todayCatches : (result ? [result] : []);
   const bestPoints = catches.reduce((max, c) => Math.max(max, c.points ?? 0), 0);
+
+  const snowballLine = streak > 0
+    ? `${streak}-day streak. Come back tomorrow and don't break it.`
+    : "All three casts done. See you tomorrow.";
 
   return (
     <div className="ap">
@@ -41,8 +45,7 @@ export default function AlreadyPlayed({ result, todayCatches = [], playerData })
       <div className="ap__scene" aria-hidden="true">
         <div className="ap__sky" />
         <div className="ap__water">
-          <div className="ap__wave" />
-          <div className="ap__wave ap__wave--2" />
+          <div className="ap__wave" /><div className="ap__wave ap__wave--2" />
           <div className="ap__bobber">
             <div className="ap__bobber-top" /><div className="ap__bobber-bot" />
           </div>
@@ -52,16 +55,16 @@ export default function AlreadyPlayed({ result, todayCatches = [], playerData })
       <div className="ap__content">
         <h2 className="ap__heading">All Casts Done!</h2>
 
-        {streak > 0 && (
-          <div className="ap__streak">
-            {streakEmoji(streak)} {streak}-day streak — keep it going!
-          </div>
-        )}
+        {/* Snowball mascot with streak-aware line */}
+        <MascotQuip mascot="snowball" line={snowballLine} size={100} />
 
         {/* All today's catches */}
         <div className="ap__catches">
           {catches.map((c, i) => (
-            <div key={i} className={`ap__catch ap__catch--${c.rarity} ${c.points === bestPoints && catches.length > 1 ? 'ap__catch--best' : ''}`}>
+            <div
+              key={i}
+              className={`ap__catch ap__catch--${c.rarity} ${c.points === bestPoints && catches.length > 1 ? 'ap__catch--best' : ''}`}
+            >
               {c.points === bestPoints && catches.length > 1 && (
                 <span className="ap__catch-best-label">⭐ Best Catch</span>
               )}
