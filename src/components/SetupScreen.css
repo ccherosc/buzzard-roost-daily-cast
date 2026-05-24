@@ -279,25 +279,36 @@
   display: block;
 }
 
-/* Commercial speech bubble */
+/* Commercial speech bubble — filter:drop-shadow wraps the whole shape + tail */
 .ss__quip-bubble {
   flex: 1;
   position: relative;
-  background: #f7f0e0;
-  border-radius: 18px;
-  padding: 13px 16px 13px 15px;
-  /* drop-shadow applies to the whole shape including the ::before tail */
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.45));
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 14px 18px;
+  filter:
+    drop-shadow(0 6px 18px rgba(0, 0, 0, 0.38))
+    drop-shadow(0 1px 4px rgba(0, 0, 0, 0.22));
   min-width: 0;
 }
 
+/* Tail — CSS triangle; drop-shadow above wraps it automatically */
+.ss__quip-bubble::before {
+  content: '';
+  position: absolute;
+  left: -14px;
+  top: 18px;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-right: 15px solid #ffffff;
+}
 
 .ss__quip-text {
   font-family: var(--font-body);
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   font-style: italic;
-  font-weight: 500;
-  color: #1c1408;
+  font-weight: 600;
+  color: #1a1208;
   line-height: 1.55;
   margin: 0;
 }
