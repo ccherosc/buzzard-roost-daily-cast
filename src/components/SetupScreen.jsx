@@ -91,7 +91,7 @@ export default function SetupScreen({ castNumber, lockedSpot, lockedLure, onComp
                 aria-label={spot.name}
               >
                 <span className="ss__spot-icon">{spot.emoji}</span>
-                {selected && <span className="ss__spot-name">{spot.name}</span>}
+                <span className="ss__spot-name">{spot.name}</span>
               </button>
             );
           })}

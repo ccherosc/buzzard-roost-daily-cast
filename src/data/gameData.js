@@ -3,19 +3,17 @@
 // IDs must match the keys in src/config/gameConfig.js modifiers.
 
 export const SPOTS = [
-  { id: 'dock',       name: 'Dock',         emoji: '🪵', description: 'Calm waters, reliable bites. Good for beginners.' },
-  { id: 'reeds',      name: 'Reeds',        emoji: '🌿', description: 'Bass love to lurk in the thick grass.' },
-  { id: 'rockyBank',  name: 'Rocky Bank',   emoji: '🪨', description: 'Strong current. Strong fish.' },
-  { id: 'fallenTree', name: 'Fallen Tree',  emoji: '🌲', description: 'Trophy fish hide in the shadowy structure.' },
-  { id: 'deepWater',  name: 'Deep Water',   emoji: '🌊', description: 'Monsters dwell where the light doesn\'t reach.' },
+  { id: 'dock',       name: 'Dock',        emoji: '🪵', description: 'Calm waters, reliable bites. Good for beginners.' },
+  { id: 'reeds',      name: 'Reeds',       emoji: '🌿', description: 'Bass love to lurk in the thick grass.' },
+  { id: 'fallenTree', name: 'Fallen Tree', emoji: '🌲', description: 'Trophy fish hide in the shadowy structure.' },
+  { id: 'deepWater',  name: 'Deep Water',  emoji: '🌊', description: 'Monsters dwell where the light doesn\'t reach.' },
 ];
 
 export const LURES = [
-  { id: 'worm',        name: 'Worm',         emoji: '🪱', description: 'Classic and reliable. Never lets you down.' },
-  { id: 'spinner',     name: 'Spinner',      emoji: '✨', description: 'Flash and vibration attract mid-range fish.' },
-  { id: 'jig',         name: 'Jig',          emoji: '🎣', description: 'Versatile. Works in any depth, any season.' },
-  { id: 'frog',        name: 'Frog',         emoji: '🐸', description: 'Topwater action. Big fish love big targets.' },
-  { id: 'mysteryLure', name: 'Mystery Lure', emoji: '❓', description: 'Nobody knows what this is. High risk, high reward.' },
+  { id: 'worm',    name: 'Worm',    emoji: '🪱', description: 'Classic and reliable. Never lets you down.' },
+  { id: 'spinner', name: 'Spinner', emoji: '✨', description: 'Flash and vibration attract mid-range fish.' },
+  { id: 'jig',     name: 'Jig',     emoji: '🎣', description: 'Versatile. Works in any depth, any season.' },
+  { id: 'frog',    name: 'Frog',    emoji: '🐸', description: 'Topwater action. Big fish love big targets.' },
 ];
 
 export const CAST_STYLES = [
