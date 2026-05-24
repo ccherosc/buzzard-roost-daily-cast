@@ -14,9 +14,13 @@
 // • hard   → narrow band, jumps right on each fish surge
 //
 // ── Mobile notes ─────────────────────────────────────────────────────────────
-// Cursor position is driven by DIRECT DOM mutation (cursorRef.current.style.transform)
+// Cursor position is driven by DIRECT DOM mutation (cursorRef.current.style.left)
 // rather than React state, so animation is always 60fps on mobile regardless of
 // React's render batching.  dt is capped at 100ms to survive RAF pauses.
+//
+// We use style.left (not transform:translate) because left:N% on a position:absolute
+// element is ALWAYS relative to the parent — guaranteed by CSS spec, no measurement
+// needed.  CSS translate(N%) is relative to the ELEMENT itself, which breaks on mobile.
 import { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import './FightMeter.css';
 
@@ -37,7 +41,6 @@ const CLUSTER = {
 };
 
 const BAND_CENTER_START = 0.40;   // indicator + band center start here
-const CURSOR_HALF_PX    = 11;     // half of .fm__cursor width (22px / 2)
 
 export default function FightMeter({
   config,
@@ -100,15 +103,11 @@ export default function FightMeter({
   const comboTimeoutRef   = useRef(null);
 
   // ── DOM helpers (bypasses React render for 60fps on mobile) ───────────────
-  // Parent width is measured once at mount so we can use absolute pixels in
-  // translate3d (CSS % inside translate() is relative to the ELEMENT, not parent).
-  const parentWidthRef = useRef(0);
-
+  // style.left on a position:absolute element is always parent-relative (CSS spec).
+  // No measurement needed — works on desktop Chrome, iOS Safari, and Android Chrome.
   const moveCursor = useCallback((value) => {
-    if (!cursorRef.current || !parentWidthRef.current) return;
-    const px = Math.max(0, Math.min(parentWidthRef.current, value * parentWidthRef.current))
-               - CURSOR_HALF_PX;
-    cursorRef.current.style.transform = `translate3d(${px.toFixed(1)}px, -50%, 0)`;
+    if (!cursorRef.current) return;
+    cursorRef.current.style.left = `${Math.max(0, Math.min(100, value * 100)).toFixed(2)}%`;
   }, []);
 
   const setTimeFill = useCallback((fraction) => {
@@ -184,12 +183,6 @@ export default function FightMeter({
 
   // ── Game loop ─────────────────────────────────────────────────────────────
   useEffect(() => {
-    // Measure parent width once — must happen after DOM paint so offsetWidth is real.
-    // We use pixels in translate3d because CSS % in translate() is element-relative,
-    // not parent-relative, which breaks cross-browser (especially mobile Safari).
-    if (cursorRef.current?.parentElement) {
-      parentWidthRef.current = cursorRef.current.parentElement.offsetWidth;
-    }
     moveCursor(BAND_CENTER_START);
 
     function tick(ts) {
