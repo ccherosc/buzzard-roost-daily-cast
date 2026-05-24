@@ -18,6 +18,7 @@ import {
   hasUsedAllCastsToday, loadTodayResult, loadTodayCatches, loadPlayerData,
   recordCastResult, updateStreak, checkAndUnlockBadges,
 } from './utils/storageManager.js';
+import { submitCatch } from './utils/leaderboardApi.js';
 import MascotQuip            from './components/MascotQuip.jsx';
 import { getSnowballResultLine } from './utils/mascotLines.js';
 
@@ -70,6 +71,7 @@ export default function App() {
     const streak = updateStreak();
     const { newBadges: fresh } = checkAndUnlockBadges(finalResult, streak);
     recordCastResult(finalResult);
+    submitCatch(finalResult);   // fire-and-forget: localStorage already saved above
 
     const updatedCatches = [...sessionCatches, finalResult];
     setSessionCatches(updatedCatches);
@@ -159,7 +161,7 @@ export default function App() {
                 newBadges={newBadges}
                 buildChallengeUrl={buildChallengeUrl}
               />
-              <Leaderboard playerResult={bestResult} />
+              <Leaderboard playerResult={bestResult} playerId={playerData?.playerId} />
               <PlayerStats playerData={playerData} />
               {/* Snowball wrap-up — always visible at session end */}
               <MascotQuip
