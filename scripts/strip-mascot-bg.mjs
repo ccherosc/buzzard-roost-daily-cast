@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url';
 const __dir = dirname(fileURLToPath(import.meta.url));
 const ASSETS = join(__dir, '..', 'assets', 'reference');
 
-const THRESHOLD = 235; // 0-255: pixels >= this in all channels are "background"
+const THRESHOLD = 210; // 0-255: pixels >= this in all channels are "background"
 
 async function stripBg(filename) {
   const filePath = join(ASSETS, filename);
@@ -19,8 +19,16 @@ async function stripBg(filename) {
 
   const visited = new Uint8Array(width * height);
 
-  // Flood fill — queue holds flat pixel indices
-  const queue = [0, width - 1, width * (height - 1), width * height - 1];
+  // Seed from ALL edge pixels (not just 4 corners) so nothing gets missed
+  const queue = [];
+  for (let x = 0; x < width; x++) {
+    queue.push(x);                        // top edge
+    queue.push(width * (height - 1) + x); // bottom edge
+  }
+  for (let y = 1; y < height - 1; y++) {
+    queue.push(y * width);               // left edge
+    queue.push(y * width + width - 1);   // right edge
+  }
 
   while (queue.length > 0) {
     const idx = queue.pop();
