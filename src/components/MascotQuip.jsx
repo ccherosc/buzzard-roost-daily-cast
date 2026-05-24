@@ -10,10 +10,11 @@ import snowballSrc from '../../assets/reference/mascot-snowball.png';
 const SPRITES = { tmodel2: tmodel2Src, snowball: snowballSrc };
 const ALT     = { tmodel2: 'TModel2', snowball: 'Snowball' };
 
-export default function MascotQuip({ mascot = 'tmodel2', line, size = 80 }) {
+// side: 'left' (sprite left, bubble right) | 'right' (bubble left, sprite right)
+export default function MascotQuip({ mascot = 'tmodel2', line, size = 80, side = 'left' }) {
   if (!line) return null;
   return (
-    <div className="mq">
+    <div className={`mq${side === 'right' ? ' mq--right' : ''}`}>
       <img
         className="mq__sprite"
         src={SPRITES[mascot]}

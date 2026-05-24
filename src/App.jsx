@@ -185,7 +185,8 @@ export default function App() {
               <MascotQuip
                 mascot="snowball"
                 line={getSnowballResultLine(playerData?.streak?.count ?? 0, sessionCatches.filter(Boolean))}
-                size={110}
+                size={120}
+                side="right"
               />
             </div>
           )}

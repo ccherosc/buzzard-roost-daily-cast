@@ -29,7 +29,7 @@
   font-style: italic;
 }
 
-/* Tail pointing left toward sprite */
+/* Tail pointing left (default — sprite on left) */
 .mq__tail {
   position: absolute;
   left: -8px;
@@ -50,4 +50,28 @@
   border-top: 5px solid transparent;
   border-bottom: 5px solid transparent;
   border-right: 7px solid var(--bg-surface);
+}
+
+/* ── Right variant: sprite on right, bubble on left ────────────────────── */
+.mq--right {
+  flex-direction: row-reverse;
+}
+
+/* Bubble fills available space — no cap needed when sprite is on the right */
+.mq--right .mq__bubble {
+  max-width: none;
+}
+
+/* Tail pointing right (toward sprite on right) */
+.mq--right .mq__tail {
+  left: auto;
+  right: -8px;
+  border-right: none;
+  border-left: 8px solid var(--border-card);
+}
+.mq--right .mq__tail::after {
+  left: auto;
+  right: 2px;
+  border-right: none;
+  border-left: 7px solid var(--bg-surface);
 }
