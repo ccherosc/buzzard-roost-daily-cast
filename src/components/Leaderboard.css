@@ -51,3 +51,128 @@
 .lb__pts  { text-align: right; font-family: var(--font-display); font-weight: 700; color: var(--brand-accent); font-size: 0.85rem; }
 
 .lb__ellipsis { text-align: center; color: var(--text-muted); font-size: 1rem; padding: var(--space-1); letter-spacing: 4px; }
+
+/* Tabs */
+.lb__tabs {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.lb__tab {
+  padding: var(--space-2) var(--space-3);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color var(--t-fast), border-color var(--t-fast);
+}
+
+.lb__tab:hover {
+  color: var(--text-secondary);
+}
+
+.lb__tab--active {
+  color: var(--brand-primary);
+  border-bottom-color: var(--brand-primary);
+}
+
+/* Empty state */
+.lb__empty {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  padding: var(--space-4) var(--space-2);
+}
+
+.lb__empty--error {
+  color: var(--text-critical);
+}
+
+/* Skeleton loading */
+.lb__row--skeleton {
+  pointer-events: none;
+}
+
+.lb__skel {
+  background: linear-gradient(90deg, var(--bg-elevated) 25%, var(--bg-card-raised) 50%, var(--bg-elevated) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+
+.lb__skel--rank {
+  width: 24px;
+  height: 1rem;
+}
+
+.lb__skel--name {
+  height: 1rem;
+}
+
+.lb__skel--fish {
+  width: 100px;
+  height: 1rem;
+}
+
+.lb__skel--pts {
+  width: 60px;
+  height: 1rem;
+  justify-self: end;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Inline rename */
+.lb__name-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.lb__pencil {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 0;
+  opacity: 0.6;
+  transition: opacity var(--t-fast);
+}
+
+.lb__pencil:hover {
+  opacity: 1;
+}
+
+.lb__rename-input {
+  flex: 1;
+  min-width: 0;
+  padding: 2px 4px;
+  border: 1px solid var(--brand-primary);
+  border-radius: var(--radius-xs);
+  font-family: inherit;
+  font-size: 0.8rem;
+  color: var(--text-primary);
+  background: var(--bg-card-raised);
+}
+
+.lb__rename-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(232,115,42,0.2);
+}
+
+.lb__weight {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
