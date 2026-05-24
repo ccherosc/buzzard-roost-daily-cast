@@ -100,11 +100,15 @@ export default function FightMeter({
   const comboTimeoutRef   = useRef(null);
 
   // ── DOM helpers (bypasses React render for 60fps on mobile) ───────────────
+  // Parent width is measured once at mount so we can use absolute pixels in
+  // translate3d (CSS % inside translate() is relative to the ELEMENT, not parent).
+  const parentWidthRef = useRef(0);
+
   const moveCursor = useCallback((value) => {
-    if (!cursorRef.current) return;
-    const p = Math.max(0, Math.min(100, value * 100));
-    cursorRef.current.style.transform =
-      `translate3d(calc(${p.toFixed(2)}% - ${CURSOR_HALF_PX}px), -50%, 0)`;
+    if (!cursorRef.current || !parentWidthRef.current) return;
+    const px = Math.max(0, Math.min(parentWidthRef.current, value * parentWidthRef.current))
+               - CURSOR_HALF_PX;
+    cursorRef.current.style.transform = `translate3d(${px.toFixed(1)}px, -50%, 0)`;
   }, []);
 
   const setTimeFill = useCallback((fraction) => {
@@ -180,7 +184,12 @@ export default function FightMeter({
 
   // ── Game loop ─────────────────────────────────────────────────────────────
   useEffect(() => {
-    // Set initial cursor position without waiting for a render
+    // Measure parent width once — must happen after DOM paint so offsetWidth is real.
+    // We use pixels in translate3d because CSS % in translate() is element-relative,
+    // not parent-relative, which breaks cross-browser (especially mobile Safari).
+    if (cursorRef.current?.parentElement) {
+      parentWidthRef.current = cursorRef.current.parentElement.offsetWidth;
+    }
     moveCursor(BAND_CENTER_START);
 
     function tick(ts) {

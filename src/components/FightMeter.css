@@ -150,13 +150,15 @@
 }
 
 /* Cursor dot — position driven via direct DOM mutation (ref.style.transform).
-   NO CSS transition — the RAF loop provides smooth 60fps animation on mobile. */
+   JS sets: translate3d(Npx, -50%, 0) using PIXEL values (parent width × fraction).
+   CSS % in translate() is element-relative, NOT parent-relative — pixel math is
+   the only cross-browser safe approach.  No CSS transition needed; RAF does it. */
 .fm__cursor {
   position: absolute;
   left: 0;
   top: 50%;
-  /* X position set via JS: translate3d(calc(N% - 11px), -50%, 0) */
-  transform: translate3d(calc(40% - 11px), -50%, 0);  /* initial = BAND_CENTER_START */
+  /* Initial transform — JS overrides this immediately on mount */
+  transform: translate3d(0, -50%, 0);
   width: 22px;
   height: 22px;
   border-radius: 50%;
