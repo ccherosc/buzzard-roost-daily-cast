@@ -3,31 +3,46 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: var(--space-5);
   min-height: calc(100dvh - 120px);
-  padding: var(--space-6) var(--space-4);
+  padding: var(--space-2) 0 var(--space-6);
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
 }
 
-/* ── Scene ── */
+/* ── Scene wrapper — fills middle space ── */
+.bt__scene-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0 var(--space-4);
+  box-sizing: border-box;
+}
+
+/* ── Bobber scene ── */
 .bt__scene {
   position: relative;
   width: 100%;
-  max-width: 340px;
-  height: 180px;
+  max-width: 320px;
+  height: 160px;
   background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-card) 100%);
   border-radius: var(--radius-lg);
   overflow: hidden;
   border: 1px solid var(--border-card);
+  transition: box-shadow 0.15s ease;
 }
 
+.bt__scene--bite {
+  box-shadow: 0 0 0 2px rgba(232,168,76,0.6), 0 0 24px rgba(232,168,76,0.25);
+}
+
+/* ── Water ── */
 .bt__water {
   position: absolute;
   bottom: 0; left: 0; right: 0;
-  height: 80px;
+  height: 72px;
   background: linear-gradient(to bottom, rgba(26,44,26,0.7), rgba(15,26,13,0.95));
   border-top: 1px solid rgba(74,124,47,0.3);
 }
@@ -41,72 +56,127 @@
   animation: waterWave 3s ease-in-out infinite;
 }
 .bt__wave--2    { top: -2px; opacity: 0.5; animation-delay: 1.5s; }
-.bt__wave--fast { animation-duration: 0.8s; background: rgba(74,124,47,0.3); }
+.bt__wave--fast { animation-duration: 0.8s; background: rgba(74,124,47,0.30); }
 
-.bt__bobber {
+/* ── Bobber rig: fishing line + proper float ── */
+/* Positioned so waterline (72px from bottom) bisects the float */
+.bt__rig {
   position: absolute;
-  left: 50%; bottom: 68px;
+  left: 50%;
+  bottom: 60px;    /* float bottom sits 12px below waterline → partially submerged */
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
   animation: bobberFloat 2.5s ease-in-out infinite;
 }
-.bt__bobber--down { animation: bobberBite 0.4s ease-in forwards; }
 
+.bt__rig--down {
+  animation: bobberBite 0.35s ease-in forwards;
+}
+
+/* Subtle glow when precision cue is active */
+.bt__rig--cue .bt__float {
+  box-shadow: 0 0 10px rgba(232,168,76,0.7), 0 2px 4px rgba(0,0,0,0.4);
+}
+
+/* Fishing line — tapers slightly */
 .bt__line {
-  width: 2px; height: 60px;
-  background: var(--text-muted);
-  opacity: 0.5;
-}
-.bt__bob-top {
-  width: 16px; height: 22px;
-  background: var(--brand-accent);
-  border-radius: 50% 50% 40% 40%;
-}
-.bt__bob-bot {
-  width: 16px; height: 18px;
-  background: #c8282a;
-  border-radius: 40% 40% 50% 50%;
+  width: 2px;
+  height: 52px;
+  background: linear-gradient(
+    to bottom,
+    rgba(210,200,170,0.80) 0%,
+    rgba(210,200,170,0.45) 100%
+  );
 }
 
+/* Bobber float — single oval, red top / cream bottom split at waterline */
+.bt__float {
+  width: 20px;
+  height: 34px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1.5px solid rgba(0,0,0,0.35);
+  box-shadow: 1px 2px 5px rgba(0,0,0,0.45);
+}
+
+.bt__float-top {
+  height: 50%;
+  background: linear-gradient(135deg, #ff5555 0%, #cc1111 100%);
+}
+
+.bt__float-bot {
+  height: 50%;
+  background: linear-gradient(135deg, #f2ece0 0%, #d8c99a 100%);
+}
+
+/* ── Bite splash ripple ── */
 .bt__splash {
   position: absolute;
-  left: 50%; bottom: 68px;
+  left: 50%;
+  bottom: 72px;
   transform: translateX(-50%);
-  width: 40px; height: 40px;
+  width: 44px; height: 44px;
   border: 3px solid var(--brand-accent);
   border-radius: 50%;
   animation: ripple 0.6s ease-out forwards;
 }
 
-/* Pre-bite precision cue ring */
-.bt__precue {
-  position: absolute;
-  left: 50%; bottom: 80px;
-  transform: translateX(-50%);
-  width: 30px; height: 30px;
-  border: 2px solid rgba(232,168,76,0.5);
-  border-radius: 50%;
-  animation: pulseRing 0.5s ease-out infinite;
+/* ── Outcome feedback (hit / miss / late) ── */
+.bt__feedback {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  animation: popIn 0.4s ease forwards;
 }
+.bt__icon { font-size: 3.2rem; }
 
-/* Bite state — green border flash */
-.bt--bite .bt__scene {
-  box-shadow: 0 0 0 2px rgba(232,168,76,0.6), 0 0 24px rgba(232,168,76,0.25);
-}
-
-/* ── Prompts ── */
 .bt__prompt {
   font-family: var(--font-display);
-  font-size: 1.6rem;
+  font-size: 1.8rem;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: var(--text-primary);
+  text-align: center;
+  margin: 0;
+}
+.bt__feedback--hit  .bt__prompt { color: var(--brand-accent); }
+.bt__feedback--miss .bt__prompt { color: #ef4444; }
+.bt__feedback--late .bt__prompt { color: var(--text-muted); }
+
+/* ── Bottom instructions ── */
+.bt__footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-4) 0;
   text-align: center;
 }
 
-.bt__prompt--now {
+.bt__watching {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* "TAP THE MOMENT IT DIPS!" — the main call-to-action */
+.bt__cta {
+  font-family: var(--font-display);
+  font-size: 1.65rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.bt__cta--now {
   color: var(--brand-accent);
   font-size: 2rem;
   animation: countdownPulse 0.3s ease-in-out infinite;
@@ -116,25 +186,13 @@
   font-family: var(--font-body);
   font-size: 1.1rem;
   color: var(--text-primary);
-  margin-top: -8px;
+  margin: 0;
   text-align: center;
 }
 
 .bt__hint {
   font-family: var(--font-body);
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   color: var(--text-muted);
+  margin: 0;
 }
-
-/* ── Feedback ── */
-.bt__feedback {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-3);
-  animation: popIn 0.4s ease forwards;
-}
-.bt__icon { font-size: 3rem; }
-.bt__feedback--hit  .bt__prompt { color: var(--brand-accent); }
-.bt__feedback--miss .bt__prompt { color: #ef4444; }
-.bt__feedback--late .bt__prompt { color: var(--text-muted); }

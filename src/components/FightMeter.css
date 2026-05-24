@@ -3,10 +3,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: var(--space-4);
   min-height: calc(100dvh - 120px);
-  padding: var(--space-6) var(--space-4);
+  padding: var(--space-2) 0 var(--space-6);
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
@@ -24,26 +22,22 @@
   90%        { transform: translateX(2px);  }
 }
 
-/* ── Proximity panic — pulsing red inset glow (cursor in warn zone) ──────── */
 @keyframes panicGlow {
   0%, 100% { box-shadow: inset 0 0  0px rgba(239,68,68,0.00); }
   50%       { box-shadow: inset 0 0 45px rgba(239,68,68,0.22); }
 }
 
-/* ── Message pop-in ──────────────────────────────────────────────────────── */
 @keyframes msgPop {
   0%   { transform: scale(0.6) translateY(4px); opacity: 0; }
   65%  { transform: scale(1.1) translateY(0);   opacity: 1; }
   100% { transform: scale(1)   translateY(0);   opacity: 1; }
 }
 
-/* ── Surge: red tint + screen shake ─────────────────────────────────────── */
 .fm--surge {
   background: rgba(239,68,68,0.06);
   animation: fmShake 0.45s ease-in-out;
 }
 
-/* ── Panic: pulsing inset glow (cursor in warning zone) ─────────────────── */
 .fm--panic {
   animation: panicGlow 0.55s ease-in-out infinite;
 }
@@ -53,21 +47,13 @@
   animation: fmShake 0.45s ease-in-out, panicGlow 0.55s ease-in-out infinite;
 }
 
-/* ── Main label ──────────────────────────────────────────────────────────── */
-.fm__label {
-  font-family: var(--font-display);
-  font-size: 2.2rem;
-  letter-spacing: 2px;
-  color: var(--brand-accent);
-  text-transform: uppercase;
-}
-
-/* ── Message area ────────────────────────────────────────────────────────── */
+/* ── Message area (event flashes only) ──────────────────────────────────── */
 .fm__messages {
   min-height: 1.6rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0 var(--space-4);
 }
 
 .fm__msg {
@@ -87,16 +73,9 @@
 .fm__msg--warn-l  { color: #ef4444; }
 .fm__msg--warn-r  { color: #f97316; }
 
-.fm__sub {
-  font-family: var(--font-body);
-  font-size: 1.05rem;
-  color: var(--text-primary);
-  text-align: center;
-}
-
 /* ── Time bar ────────────────────────────────────────────────────────────── */
 .fm__time-bar {
-  width: 100%;
+  width: calc(100% - var(--space-8));
   height: 6px;
   background: var(--bg-card-raised);
   border-radius: var(--radius-full);
@@ -104,65 +83,68 @@
 }
 .fm__time-fill {
   height: 100%;
-  width: 100%;   /* initial; updated directly via ref */
+  width: 100%;
   background: var(--brand-accent);
   border-radius: var(--radius-full);
   will-change: width;
 }
 
+/* ── Game area: band (left, flex-1) + depth track (right, fixed width) ── */
+.fm__game-area {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-3);
+  width: calc(100% - var(--space-8));
+  margin-top: var(--space-2);
+}
+
+.fm__band-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
 /* ── Band track ──────────────────────────────────────────────────────────── */
-/* Outer wrapper: position:relative so cursor can overlay without clipping */
 .fm__band-outer {
   position: relative;
   width: 100%;
-  height: 40px;
+  height: 44px;
 }
 
-/* Inner track: overflow:hidden clips the zone colors to the rounded shape */
 .fm__band-track {
   position: absolute;
   inset: 0;
-  background: rgba(239,68,68,0.12);   /* base danger tint */
+  background: rgba(239,68,68,0.12);
   border: 2px solid var(--border-card);
   border-radius: var(--radius-full);
   overflow: hidden;
 }
 
-/* Individual zones */
 .fm__bz {
   position: absolute;
   top: 0; bottom: 0;
   transition: left 0.18s ease, width 0.18s ease;
 }
 
-.fm__bz--warn {
-  background: rgba(245,158,11,0.28);
-}
+.fm__bz--warn { background: rgba(245,158,11,0.28); }
 
 .fm__bz--safe {
-  background: linear-gradient(
-    to bottom,
-    rgba(34,197,94,0.40),
-    rgba(34,197,94,0.22)
-  );
+  background: linear-gradient(to bottom, rgba(34,197,94,0.40), rgba(34,197,94,0.22));
   border-left:  2px solid rgba(34,197,94,0.65);
   border-right: 2px solid rgba(34,197,94,0.65);
 }
 
-/* Cursor dot — position driven via direct DOM mutation (ref.style.left = N%).
-   Using style.left (not transform) because left:N% on position:absolute is
-   ALWAYS parent-relative per CSS spec — no measurement required, works on
-   iOS Safari, Android Chrome, and desktop alike.
-   margin-left/margin-top center the dot without any translate().
-   translateZ(0) creates a GPU compositor layer for smooth RAF updates. */
+/* Cursor dot — style.left set by JS (always parent-relative for position:absolute) */
 .fm__cursor {
   position: absolute;
   top: 50%;
-  left: 40%;              /* matches BAND_CENTER_START; JS overrides immediately */
-  margin-left: -11px;     /* center: half of 22px width */
-  margin-top:  -11px;     /* center: half of 22px height */
-  transform: translateZ(0);  /* GPU compositor layer — no X/Y shift needed */
-  will-change: left;      /* hint for browser compositing */
+  left: 40%;
+  margin-left: -11px;
+  margin-top:  -11px;
+  transform: translateZ(0);
+  will-change: left;
   width: 22px;
   height: 22px;
   border-radius: 50%;
@@ -190,58 +172,91 @@
 .fm__bh-c { color: var(--text-secondary); }
 .fm__bh-r { color: #f97316; }
 
-/* ── Fish depth bar ──────────────────────────────────────────────────────── */
-.fm__depth-bar {
-  width: 100%;
+/* ── Vertical fish depth track ───────────────────────────────────────────── */
+/* Fish rises toward surface (top) as you reel correctly; sinks when losing  */
+.fm__depth-v {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-1);
+  width: 32px;
+  flex-shrink: 0;
 }
 
-.fm__depth-label {
-  font-family: var(--font-display);
-  font-size: 0.6rem;
-  letter-spacing: 1.5px;
+.fm__dv-lbl {
+  font-size: 0.75rem;
   color: var(--text-muted);
-  text-transform: uppercase;
-  white-space: nowrap;
+  line-height: 1;
+  text-align: center;
 }
 
-.fm__depth-track {
+.fm__dv-track {
   flex: 1;
-  height: 22px;
+  width: 28px;
+  min-height: 80px;
   background: linear-gradient(
-    to right,
-    rgba(30,120,200,0.25) 0%,
-    rgba(5,15,50,0.80)   100%
+    to top,
+    rgba(5,15,50,0.85)    0%,   /* deep — dark navy */
+    rgba(20,60,160,0.45)  50%,
+    rgba(40,140,220,0.25) 100%  /* surface — lighter blue */
   );
-  border: 1px solid rgba(30,100,200,0.25);
+  border: 1px solid rgba(30,100,200,0.30);
   border-radius: var(--radius-full);
   position: relative;
 }
 
-.fm__depth-fish {
+.fm__dv-fish {
   position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 0.85rem;
-  transition: left 0.3s ease;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 5%;   /* JS sets this */
+  font-size: 0.95rem;
   line-height: 1;
-  filter: drop-shadow(0 0 3px rgba(100,180,255,0.5));
+  filter: drop-shadow(0 0 4px rgba(100,180,255,0.7));
+  transition: bottom 0.4s ease;
 }
 
-/* ── Hint ────────────────────────────────────────────────────────────────── */
+/* ── Bottom instructions ─────────────────────────────────────────────────── */
+.fm__footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4) 0;
+  text-align: center;
+}
+
+.fm__label {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  letter-spacing: 2px;
+  color: var(--brand-accent);
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.fm__sub {
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  color: var(--text-primary);
+  text-align: center;
+  margin: 0;
+}
+
 .fm__hint {
   font-family: var(--font-body);
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   color: var(--text-muted);
+  margin: 0;
 }
 
 /* ── Won / broke / escaped feedback ─────────────────────────────────────── */
 .fm__feedback {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: var(--space-3);
   animation: popIn 0.4s ease forwards;
 }
@@ -251,6 +266,7 @@
   font-size: 1.8rem;
   letter-spacing: 2px;
   text-transform: uppercase;
+  margin: 0;
 }
 .fm__feedback--won     .fm__result { color: var(--brand-accent); }
 .fm__feedback--broke   .fm__result { color: #ef4444; }
