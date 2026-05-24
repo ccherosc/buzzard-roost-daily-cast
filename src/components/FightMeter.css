@@ -104,9 +104,10 @@
 }
 .fm__time-fill {
   height: 100%;
+  width: 100%;   /* initial; updated directly via ref */
   background: var(--brand-accent);
   border-radius: var(--radius-full);
-  transition: width 0.1s linear;
+  will-change: width;
 }
 
 /* ── Band track ──────────────────────────────────────────────────────────── */
@@ -148,11 +149,14 @@
   border-right: 2px solid rgba(34,197,94,0.65);
 }
 
-/* Cursor dot — sits above the track, not clipped */
+/* Cursor dot — position driven via direct DOM mutation (ref.style.transform).
+   NO CSS transition — the RAF loop provides smooth 60fps animation on mobile. */
 .fm__cursor {
   position: absolute;
+  left: 0;
   top: 50%;
-  transform: translate(-50%, -50%);
+  /* X position set via JS: translate3d(calc(N% - 11px), -50%, 0) */
+  transform: translate3d(calc(40% - 11px), -50%, 0);  /* initial = BAND_CENTER_START */
   width: 22px;
   height: 22px;
   border-radius: 50%;
@@ -162,7 +166,7 @@
     0 2px 8px rgba(0,0,0,0.45);
   pointer-events: none;
   z-index: 2;
-  transition: left 0.05s linear;
+  will-change: transform;   /* GPU layer hint — critical for mobile smoothness */
 }
 
 /* ── Zone hint labels ────────────────────────────────────────────────────── */

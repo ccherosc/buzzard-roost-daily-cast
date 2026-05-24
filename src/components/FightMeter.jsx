@@ -13,10 +13,10 @@
 // • medium → medium band, drifts right slowly during the fight
 // • hard   → narrow band, jumps right on each fish surge
 //
-// ── Tap bonuses (retained from V1) ───────────────────────────────────────────
-// • Combo   (≥3 taps / 800 ms)   → 1.5× reel power
-// • Perfect (tap 1–350 ms after surge) → 1.8× reel power
-// • Counter (tap ≤200 ms after surge while cursor in right-warn zone) → 2.5×
+// ── Mobile notes ─────────────────────────────────────────────────────────────
+// Cursor position is driven by DIRECT DOM mutation (cursorRef.current.style.transform)
+// rather than React state, so animation is always 60fps on mobile regardless of
+// React's render batching.  dt is capped at 100ms to survive RAF pauses.
 import { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import './FightMeter.css';
 
@@ -37,6 +37,7 @@ const CLUSTER = {
 };
 
 const BAND_CENTER_START = 0.40;   // indicator + band center start here
+const CURSOR_HALF_PX    = 11;     // half of .fm__cursor width (22px / 2)
 
 export default function FightMeter({
   config,
@@ -49,7 +50,7 @@ export default function FightMeter({
   const cfg = { ...DEFAULTS, ...config };
 
   // ── Difficulty → band parameters ─────────────────────────────────────────
-  const { BAND_HALF, BUFFER, TIER, BAND_DRIFT_RATE, BAND_JUMP } = useMemo(() => {
+  const { BAND_HALF, BUFFER, BAND_DRIFT_RATE, BAND_JUMP } = useMemo(() => {
     const S = {
       spot:   { dock:0, reeds:1, rockyBank:2, fallenTree:2, deepWater:3 },
       lure:   { worm:0, spinner:1, jig:2, frog:2, mysteryLure:3 },
@@ -64,13 +65,14 @@ export default function FightMeter({
     return {
       BAND_HALF:       Math.max(0.075, 0.175 - diffN * 0.100),  // 0.175 → 0.075
       BUFFER:          Math.max(0.150, 0.220 - diffN * 0.070),  // 0.220 → 0.150
-      TIER:            tier,
       BAND_DRIFT_RATE: tier === 'medium' ? 0.000018 : 0,
       BAND_JUMP:       tier === 'hard'   ? 0.08     : 0,
     };
   }, [spotId, lureId, castStyleId, rarity]);
 
-  // ── State ─────────────────────────────────────────────────────────────────
+  // ── State (React renders) ─────────────────────────────────────────────────
+  // indicator + bandCenter are ALSO kept as refs for real-time cursor DOM updates.
+  // React state is only used for derived warning-zone classes + band zone widths.
   const [indicator,    setIndicator]    = useState(BAND_CENTER_START);
   const [bandCenter,   setBandCenter]   = useState(BAND_CENTER_START);
   const [timeLeft,     setTimeLeft]     = useState(1);
@@ -82,6 +84,8 @@ export default function FightMeter({
   const [fishDepth,    setFishDepth]    = useState(BAND_CENTER_START);
 
   // ── Refs ──────────────────────────────────────────────────────────────────
+  const cursorRef         = useRef(null);     // direct DOM handle for cursor
+  const timeFillRef       = useRef(null);     // direct DOM handle for time bar fill
   const indicatorRef      = useRef(BAND_CENTER_START);
   const bandCenterRef     = useRef(BAND_CENTER_START);
   const lastTickRef       = useRef(null);
@@ -94,6 +98,20 @@ export default function FightMeter({
   const surgeTimestampRef = useRef(-Infinity);
   const tapTimestampsRef  = useRef([]);
   const comboTimeoutRef   = useRef(null);
+
+  // ── DOM helpers (bypasses React render for 60fps on mobile) ───────────────
+  const moveCursor = useCallback((value) => {
+    if (!cursorRef.current) return;
+    const p = Math.max(0, Math.min(100, value * 100));
+    cursorRef.current.style.transform =
+      `translate3d(calc(${p.toFixed(2)}% - ${CURSOR_HALF_PX}px), -50%, 0)`;
+  }, []);
+
+  const setTimeFill = useCallback((fraction) => {
+    if (timeFillRef.current) {
+      timeFillRef.current.style.width = `${(fraction * 100).toFixed(1)}%`;
+    }
+  }, []);
 
   // ── Finish ────────────────────────────────────────────────────────────────
   const finish = useCallback((outcome) => {
@@ -112,8 +130,8 @@ export default function FightMeter({
   // ── Fire a surge ─────────────────────────────────────────────────────────
   const fireSurge = useCallback((amount) => {
     if (doneRef.current) return;
-    // Push cursor right
     indicatorRef.current = Math.min(1, indicatorRef.current + amount);
+    moveCursor(indicatorRef.current);
     setIndicator(indicatorRef.current);
     setFishDepth(Math.min(1, indicatorRef.current * 1.2));
     surgeTimestampRef.current = Date.now();
@@ -134,6 +152,7 @@ export default function FightMeter({
       setTimeout(() => {
         if (doneRef.current) return;
         indicatorRef.current = Math.min(1, indicatorRef.current + amount * 0.65);
+        moveCursor(indicatorRef.current);
         setIndicator(indicatorRef.current);
         setFishDepth(Math.min(1, indicatorRef.current * 1.2));
         surgeTimestampRef.current = Date.now();
@@ -146,7 +165,7 @@ export default function FightMeter({
         }
       }, delay);
     }
-  }, [BAND_JUMP, BAND_HALF, BUFFER, rarity]);
+  }, [BAND_JUMP, BAND_HALF, BUFFER, rarity, moveCursor]);
 
   // ── Surge scheduler ───────────────────────────────────────────────────────
   const scheduleSurge = useCallback(() => {
@@ -161,18 +180,27 @@ export default function FightMeter({
 
   // ── Game loop ─────────────────────────────────────────────────────────────
   useEffect(() => {
+    // Set initial cursor position without waiting for a render
+    moveCursor(BAND_CENTER_START);
+
     function tick(ts) {
       if (!startRef.current) { startRef.current = ts; lastTickRef.current = ts; }
-      const dt = ts - lastTickRef.current;
+      // Cap dt at 100ms — prevents huge jumps if RAF was paused (notification, tab switch)
+      const dt = Math.min(ts - lastTickRef.current, 100);
       lastTickRef.current = ts;
       totalTimeRef.current += dt;
 
       const elapsed   = ts - startRef.current;
       const remaining = Math.max(0, cfg.FIGHT_DURATION_MS - elapsed) / cfg.FIGHT_DURATION_MS;
-      setTimeLeft(remaining);
 
-      // Cursor drifts right (fish pulling)
+      // Time bar — direct DOM update
+      setTimeFill(remaining);
+      setTimeLeft(remaining);  // React state for phase-done check
+
+      // Cursor drifts right (fish pulling) — direct DOM update + ref
       indicatorRef.current = Math.min(1, indicatorRef.current + cfg.DRIFT_RATE * dt);
+      moveCursor(indicatorRef.current);
+      // Update React state less aggressively (only for warning zone classes)
       setIndicator(indicatorRef.current);
       setFishDepth(Math.min(1, indicatorRef.current * 1.2));
 
@@ -183,18 +211,16 @@ export default function FightMeter({
         setBandCenter(bandCenterRef.current);
       }
 
-      // Compute zone edges
+      // Zone edges
       const bandLeft  = bandCenterRef.current - BAND_HALF;
       const bandRight = bandCenterRef.current + BAND_HALF;
       const breakAt   = bandLeft  - BUFFER;
       const escapeAt  = bandRight + BUFFER;
 
-      // Track safe time
       if (indicatorRef.current >= bandLeft && indicatorRef.current <= bandRight) {
         safeTimeRef.current += dt;
       }
 
-      // Failure checks
       if (indicatorRef.current <= breakAt)  { finish('broke');   return; }
       if (indicatorRef.current >= escapeAt) { finish('escaped'); return; }
       if (remaining <= 0)                   { finish('won');     return; }
@@ -207,14 +233,14 @@ export default function FightMeter({
       cancelAnimationFrame(rafRef.current);
       clearTimeout(surgeRef.current);
     };
-  }, [finish, scheduleSurge, cfg.FIGHT_DURATION_MS, cfg.DRIFT_RATE, BAND_HALF, BUFFER, BAND_DRIFT_RATE]);
+  }, [finish, scheduleSurge, moveCursor, setTimeFill,
+      cfg.FIGHT_DURATION_MS, cfg.DRIFT_RATE, BAND_HALF, BUFFER, BAND_DRIFT_RATE]);
 
   // ── Tap handler ───────────────────────────────────────────────────────────
   function handleReel() {
     if (doneRef.current || phase !== 'fighting') return;
     const now = Date.now();
 
-    // Combo: ≥3 taps within 800 ms → 1.5× reel power
     tapTimestampsRef.current = tapTimestampsRef.current.filter(t => now - t < 800);
     tapTimestampsRef.current.push(now);
     const isCombo = tapTimestampsRef.current.length >= 3;
@@ -225,11 +251,10 @@ export default function FightMeter({
       tapTimestampsRef.current = [];
     }, 1200);
 
-    // Timing windows vs last surge
-    const msSinceSurge  = now - surgeTimestampRef.current;
-    const inRightWarn   = indicatorRef.current > bandCenterRef.current + BAND_HALF;
-    const isCounter     = msSinceSurge >= 0 && msSinceSurge <= 200 && inRightWarn;
-    const isPerfect     = !isCounter && msSinceSurge > 0 && msSinceSurge <= 350;
+    const msSinceSurge = now - surgeTimestampRef.current;
+    const inRightWarn  = indicatorRef.current > bandCenterRef.current + BAND_HALF;
+    const isCounter    = msSinceSurge >= 0 && msSinceSurge <= 200 && inRightWarn;
+    const isPerfect    = !isCounter && msSinceSurge > 0 && msSinceSurge <= 350;
 
     let power = cfg.REEL_POWER;
     if (isCombo)   power *= 1.5;
@@ -237,7 +262,8 @@ export default function FightMeter({
     if (isCounter) power *= 2.5;
 
     indicatorRef.current = Math.max(0, indicatorRef.current - power);
-    setIndicator(indicatorRef.current);
+    moveCursor(indicatorRef.current);   // direct DOM update — immediate on mobile
+    setIndicator(indicatorRef.current); // React state for warning zone classes
 
     if (isPerfect) { setPerfectFlash(true); setTimeout(() => setPerfectFlash(false), 600); }
     if (isCounter) { setCounterFlash(true); setTimeout(() => setCounterFlash(false), 750); }
@@ -255,15 +281,14 @@ export default function FightMeter({
 
   const pct = (v) => `${Math.max(0, Math.min(100, v * 100)).toFixed(2)}%`;
 
-  // Priority message
   const msg = counterFlash
-    ? { text: '💥 COUNTER!',            cls: 'fm__msg--counter' }
+    ? { text: '💥 COUNTER!',             cls: 'fm__msg--counter' }
     : perfectFlash
-      ? { text: '⚡ PERFECT!',          cls: 'fm__msg--perfect' }
+      ? { text: '⚡ PERFECT!',           cls: 'fm__msg--perfect' }
       : surging
-        ? { text: '🐟 Fish surging!',   cls: 'fm__msg--surge'   }
+        ? { text: '🐟 Fish surging!',    cls: 'fm__msg--surge'   }
         : comboActive
-          ? { text: '🔥 COMBO ×1.5',   cls: 'fm__msg--combo'   }
+          ? { text: '🔥 COMBO ×1.5',    cls: 'fm__msg--combo'   }
           : leftWarn
             ? { text: '⬆️ Ease off! Too tight!',    cls: 'fm__msg--warn-l' }
             : rightWarn
@@ -274,6 +299,7 @@ export default function FightMeter({
     <div
       className={`fm fm--${phase}${surging ? ' fm--surge' : ''}${panicMode ? ' fm--panic' : ''}`}
       onClick={handleReel}
+      onTouchStart={(e) => { e.preventDefault(); handleReel(); }}
       role="button" tabIndex={0}
       onKeyDown={e => (e.key === ' ' || e.key === 'Enter') && handleReel()}
       aria-label="Fight meter — tap to reel!"
@@ -282,20 +308,19 @@ export default function FightMeter({
         <>
           <p className="fm__label">⚡ TAP TO REEL!</p>
 
-          {/* Status message */}
           <div className="fm__messages">
             <p className={`fm__msg ${msg.cls}`}>{msg.text}</p>
           </div>
 
-          {/* Time countdown */}
+          {/* Time countdown — fill driven directly via ref */}
           <div className="fm__time-bar">
-            <div className="fm__time-fill" style={{ width: `${timeLeft * 100}%` }} />
+            <div className="fm__time-fill" ref={timeFillRef} />
           </div>
 
           {/* Band track */}
           <div className="fm__band-outer">
             <div className="fm__band-track">
-              {/* Left warn zone (between break line and band left edge) */}
+              {/* Left warn zone */}
               <div className="fm__bz fm__bz--warn" style={{
                 left:  pct(breakAt),
                 width: pct(bandLeft - breakAt),
@@ -305,24 +330,22 @@ export default function FightMeter({
                 left:  pct(bandLeft),
                 width: pct(BAND_HALF * 2),
               }} />
-              {/* Right warn zone (between band right edge and escape line) */}
+              {/* Right warn zone */}
               <div className="fm__bz fm__bz--warn" style={{
                 left:  pct(bandRight),
                 width: pct(escapeAt - bandRight),
               }} />
             </div>
-            {/* Cursor sits on top of track (not clipped) */}
-            <div className="fm__cursor" style={{ left: pct(indicator) }} />
+            {/* Cursor — position driven via direct DOM mutation, not React style prop */}
+            <div className="fm__cursor" ref={cursorRef} />
           </div>
 
-          {/* Zone hint labels */}
           <div className="fm__band-hint">
             <span className="fm__bh-l">← SNAP</span>
             <span className="fm__bh-c">HOLD THE ZONE</span>
             <span className="fm__bh-r">ESCAPE →</span>
           </div>
 
-          {/* Fish depth */}
           <div className="fm__depth-bar">
             <span className="fm__depth-label">DEPTH</span>
             <div className="fm__depth-track">
