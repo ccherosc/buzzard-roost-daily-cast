@@ -63,10 +63,10 @@ export async function submitCatch(result) {
 export async function fetchLeaderboard(period) {
   try {
     const { data, error } = await supabase.rpc('get_leaderboard', { period });
-    if (error) return [];
-    return data ?? [];
+    if (error) return null;   // null = fetch failed
+    return data ?? [];        // [] = successful fetch, no data
   } catch {
-    return [];
+    return null;              // null = network failure
   }
 }
 

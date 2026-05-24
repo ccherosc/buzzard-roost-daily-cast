@@ -125,16 +125,16 @@ describe('fetchLeaderboard', () => {
     expect(supabase.rpc).toHaveBeenCalledWith('get_leaderboard', { period: 'alltime' });
   });
 
-  it('returns [] when RPC returns an error', async () => {
+  it('returns null when RPC returns an error', async () => {
     supabase.rpc.mockResolvedValue({ data: null, error: { message: 'function not found' } });
     const result = await fetchLeaderboard('today');
-    expect(result).toEqual([]);
+    expect(result).toBeNull();
   });
 
-  it('returns [] when RPC throws (network failure)', async () => {
+  it('returns null when RPC throws (network failure)', async () => {
     supabase.rpc.mockRejectedValue(new Error('offline'));
     const result = await fetchLeaderboard('today');
-    expect(result).toEqual([]);
+    expect(result).toBeNull();
   });
 
   it('returns [] when data is null with no error', async () => {

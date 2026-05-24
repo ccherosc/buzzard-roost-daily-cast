@@ -24,7 +24,7 @@ function SkeletonRow({ nameWidth }) {
   );
 }
 
-export default function Leaderboard({ playerResult, playerId }) {
+export default function Leaderboard({ playerId }) {
   const [activeTab,    setActiveTab]    = useState('today');
   const [rows,         setRows]         = useState(null);   // null = not yet loaded
   const [loading,      setLoading]      = useState(false);
@@ -44,6 +44,11 @@ export default function Leaderboard({ playerResult, playerId }) {
     setLoading(true);
     setError(false);
     const data = await fetchLeaderboard(tab);
+    if (data === null) {
+      setLoading(false);
+      setError(true);
+      return;
+    }
     cacheRef.current[tab] = data;
     setRows(data);
     setLoading(false);
@@ -63,6 +68,7 @@ export default function Leaderboard({ playerResult, playerId }) {
   }
 
   async function commitRename() {
+    if (!editingName) return;   // guard: Enter fires onBlur immediately after — skip second call
     const trimmed = editValue.trim();
     setEditingName(false);
     if (!trimmed || trimmed === displayName) return;
@@ -130,7 +136,7 @@ export default function Leaderboard({ playerResult, playerId }) {
 
           return (
             <div
-              key={row.player_id + i}
+              key={row.player_id}
               className={`lb__row ${isPlayer ? 'lb__row--player' : ''}`}
             >
               {/* Rank */}
