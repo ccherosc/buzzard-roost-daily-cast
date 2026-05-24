@@ -27,7 +27,7 @@ import './FightMeter.css';
 const DEFAULTS = {
   FIGHT_DURATION_MS:  8000,
   DRIFT_RATE:         0.00015,
-  REEL_POWER:         0.12,
+  REEL_POWER:         0.09,
   SURGE_INTERVAL_MIN: 2000,
   SURGE_INTERVAL_MAX: 4000,
   SURGE_AMOUNT:       0.15,
@@ -101,6 +101,7 @@ export default function FightMeter({
   const surgeTimestampRef = useRef(-Infinity);
   const tapTimestampsRef  = useRef([]);
   const comboTimeoutRef   = useRef(null);
+  const lastTouchTimeRef  = useRef(0);   // ghost-click guard: touchstart sets this
 
   // ── DOM helpers (bypasses React render for 60fps on mobile) ───────────────
   // style.left on a position:absolute element is always parent-relative (CSS spec).
@@ -300,8 +301,16 @@ export default function FightMeter({
   return (
     <div
       className={`fm fm--${phase}${surging ? ' fm--surge' : ''}${panicMode ? ' fm--panic' : ''}`}
-      onClick={handleReel}
-      onTouchStart={(e) => { e.preventDefault(); handleReel(); }}
+      onClick={() => {
+        // React 17+ makes touch listeners passive, so e.preventDefault() in onTouchStart
+        // can't block the synthesized ghost click. Guard it here instead.
+        if (Date.now() - lastTouchTimeRef.current < 500) return;
+        handleReel();
+      }}
+      onTouchStart={(e) => {
+        lastTouchTimeRef.current = Date.now();
+        handleReel();
+      }}
       role="button" tabIndex={0}
       onKeyDown={e => (e.key === ' ' || e.key === 'Enter') && handleReel()}
       aria-label="Fight meter — tap to reel!"
