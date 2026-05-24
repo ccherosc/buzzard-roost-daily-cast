@@ -57,7 +57,7 @@ export default function SetupScreen({ castNumber, lockedSpot, lockedLure, onComp
     }
     return castNumber > 1
       ? "Same spot, same lure — just pick your cast style."
-      : "Where you casting today?";
+      : "Spot and lure change your rarity odds. Cast style controls the risk. Safer picks on the left, wilder on the right.";
   }, [selectedSpot, selectedLure, selectedCast, castNumber]);
 
   function handleComplete() {
@@ -67,6 +67,13 @@ export default function SetupScreen({ castNumber, lockedSpot, lockedLure, onComp
 
   return (
     <div className="ss">
+      {/* ── Difficulty progression indicator (once, above all rows) ── */}
+      <div className="ss__diff-bar">
+        <span className="ss__diff-label">SAFER</span>
+        <div className="ss__diff-track" />
+        <span className="ss__diff-label">RISKIER</span>
+      </div>
+
       {/* ── Spot: scene strip ── */}
       <section className="ss__section">
         <h3 className="ss__section-label">SPOT</h3>

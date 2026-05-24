@@ -7,6 +7,31 @@
   padding-bottom: var(--space-8);
 }
 
+/* ── Difficulty progression bar (once, above all rows) ── */
+.ss__diff-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.ss__diff-label {
+  font-family: var(--font-display);
+  font-size: 0.55rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.ss__diff-track {
+  flex: 1;
+  height: 5px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(to right, #22c55e 0%, #f59e0b 55%, #ef4444 100%);
+  opacity: 0.75;
+}
+
 /* ── Section ── */
 .ss__section {
   display: flex;
