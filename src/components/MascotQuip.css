@@ -55,6 +55,7 @@
 /* ── Right variant: sprite on right, bubble on left ────────────────────── */
 .mq--right {
   flex-direction: row-reverse;
+  align-items: flex-start;   /* bubble aligns with mascot's head, not feet */
 }
 
 /* Bubble fills available space — no cap needed when sprite is on the right */
@@ -62,10 +63,12 @@
   max-width: none;
 }
 
-/* Tail pointing right (toward sprite on right) */
+/* Tail pointing right (toward sprite on right) — anchored near top to match head */
 .mq--right .mq__tail {
   left: auto;
   right: -8px;
+  bottom: auto;
+  top: 14px;
   border-right: none;
   border-left: 8px solid var(--border-card);
 }

@@ -72,7 +72,7 @@
 
 .fm__msg {
   font-family: var(--font-display);
-  font-size: 1rem;
+  font-size: 1.1rem;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   animation: msgPop 0.22s ease-out forwards;
@@ -89,8 +89,8 @@
 
 .fm__sub {
   font-family: var(--font-body);
-  font-size: 0.9rem;
-  color: var(--text-secondary);
+  font-size: 1.05rem;
+  color: var(--text-primary);
   text-align: center;
 }
 
@@ -181,13 +181,13 @@
   align-items: center;
   width: 100%;
   font-family: var(--font-display);
-  font-size: 0.52rem;
+  font-size: 0.7rem;
   letter-spacing: 1px;
   text-transform: uppercase;
 }
 
 .fm__bh-l { color: #ef4444; }
-.fm__bh-c { color: var(--text-muted); }
+.fm__bh-c { color: var(--text-secondary); }
 .fm__bh-r { color: #f97316; }
 
 /* ── Fish depth bar ──────────────────────────────────────────────────────── */
