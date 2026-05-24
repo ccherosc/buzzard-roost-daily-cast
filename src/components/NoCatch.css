@@ -1,0 +1,47 @@
+/* src/components/NoCatch.css */
+.nc {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  min-height: calc(100dvh - 140px);
+  padding: var(--space-6) var(--space-4);
+  text-align: center;
+  animation: popIn 0.4s ease forwards;
+}
+
+.nc__icon {
+  font-size: 4rem;
+  line-height: 1;
+}
+
+.nc__title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.nc__sub {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.nc__cast {
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.nc__cta {
+  margin-top: var(--space-2);
+  min-width: 180px;
+}

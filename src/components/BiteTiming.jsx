@@ -29,7 +29,7 @@ export default function BiteTiming({ config, onComplete }) {
     biteTimeRef.current = performance.now();
     timerRef.current = setTimeout(() => {
       setPhase('miss');
-      setTimeout(() => onComplete(0), 900);
+      setTimeout(() => onComplete(null), 900);  // null = no fish
     }, WINDOW_MS);
   }, [onComplete, WINDOW_MS]);
 
@@ -53,7 +53,7 @@ export default function BiteTiming({ config, onComplete }) {
       clearTimeout(timerRef.current);
       clearTimeout(cueTimerRef.current);
       setPhase('late');
-      setTimeout(() => onComplete(0.1), 900);
+      setTimeout(() => onComplete(null), 900);  // null = no fish (tapped too early)
       return;
     }
     if (phase !== 'bite') return;

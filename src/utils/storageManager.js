@@ -141,6 +141,21 @@ export function checkAndUnlockBadges(result, streak) {
   return { earnedIds: earned, newBadges };
 }
 
+// ── Record an empty cast (no fish caught) ────────────────────
+// Increments the daily cast counter and appends a null summary so
+// the "Already Played" screen shows the correct cast count.
+export function recordEmptyCast() {
+  const today = todayStr();
+  const used  = getCastsUsedToday() + 1;
+  localStorage.setItem(KEYS.castsToday, JSON.stringify({ date: today, count: used }));
+  const raw      = localStorage.getItem(KEYS.todayCatches);
+  const todayObj = (raw && JSON.parse(raw).date === today)
+    ? JSON.parse(raw)
+    : { date: today, catches: [] };
+  todayObj.catches.push({ fishName: null, rarity: null, points: 0, weight: 0, empty: true });
+  localStorage.setItem(KEYS.todayCatches, JSON.stringify(todayObj));
+}
+
 // ── Record a single cast result ───────────────────────────────
 export function recordCastResult(result) {
   const today = todayStr();

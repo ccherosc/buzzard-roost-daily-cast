@@ -16,7 +16,7 @@ import { buildGameParams }    from './utils/gameParams.js';
 import { DEV_DISABLE_DAILY_LIMIT, DAILY_CAST_LIMIT } from './config/gameConfig.js';
 import {
   hasUsedAllCastsToday, loadTodayResult, loadTodayCatches, loadPlayerData,
-  recordCastResult, updateStreak, checkAndUnlockBadges,
+  recordCastResult, recordEmptyCast, updateStreak, checkAndUnlockBadges,
 } from './utils/storageManager.js';
 import { submitCatch } from './utils/leaderboardApi.js';
 import MascotQuip            from './components/MascotQuip.jsx';
@@ -67,22 +67,30 @@ export default function App() {
   }
 
   // ── Called after each cast's gameplay phases complete ─────────────────────
+  // finalResult is null for empty casts (missed bite / line broke / fish escaped).
   function handleCastComplete(finalResult) {
-    const streak = updateStreak();
-    const { newBadges: fresh } = checkAndUnlockBadges(finalResult, streak);
-    recordCastResult(finalResult);
-    submitCatch(finalResult);   // fire-and-forget: localStorage already saved above
-
-    const updatedCatches = [...sessionCatches, finalResult];
+    const updatedCatches = [...sessionCatches, finalResult];  // null for empty casts
     setSessionCatches(updatedCatches);
 
-    const best = updatedCatches.reduce((b, c) => (!b || c.points > b.points) ? c : b, null);
-    setBestResult(best);
-    setNewBadges(prev => {
-      const existingIds = prev.map(b => b.id);
-      return [...prev, ...fresh.filter(b => !existingIds.includes(b.id))];
-    });
-    setPlayerData(loadPlayerData());
+    if (!finalResult) {
+      // Empty cast — count it but don't record a fish or submit to leaderboard
+      recordEmptyCast();
+      setPlayerData(loadPlayerData());
+    } else {
+      // Fish caught — full record + leaderboard
+      const streak = updateStreak();
+      const { newBadges: fresh } = checkAndUnlockBadges(finalResult, streak);
+      recordCastResult(finalResult);
+      submitCatch(finalResult);   // fire-and-forget
+      const realCatches = updatedCatches.filter(Boolean);
+      const best = realCatches.reduce((b, c) => (!b || c.points > b.points) ? c : b, null);
+      setBestResult(best);
+      setNewBadges(prev => {
+        const existingIds = prev.map(b => b.id);
+        return [...prev, ...fresh.filter(b => !existingIds.includes(b.id))];
+      });
+      setPlayerData(loadPlayerData());
+    }
 
     const castsUsed = updatedCatches.length;
     const canCastAgain = DEV_DISABLE_DAILY_LIMIT
@@ -154,19 +162,29 @@ export default function App() {
             />
           )}
 
-          {phase === 'result' && bestResult && (
+          {phase === 'result' && (
             <div className="phase-enter">
-              <ResultCard
-                result={bestResult}
-                newBadges={newBadges}
-                buildChallengeUrl={buildChallengeUrl}
-              />
-              <Leaderboard playerResult={bestResult} playerId={playerData?.playerId} />
-              <PlayerStats playerData={playerData} />
+              {bestResult ? (
+                <>
+                  <ResultCard
+                    result={bestResult}
+                    newBadges={newBadges}
+                    buildChallengeUrl={buildChallengeUrl}
+                  />
+                  <Leaderboard playerResult={bestResult} playerId={playerData?.playerId} />
+                  <PlayerStats playerData={playerData} />
+                </>
+              ) : (
+                <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:'var(--space-4)', padding:'var(--space-8) var(--space-4)', textAlign:'center' }}>
+                  <span style={{ fontSize:'3.5rem' }}>😔</span>
+                  <p style={{ fontFamily:'var(--font-display)', fontSize:'1.6rem', letterSpacing:'2px', textTransform:'uppercase', color:'var(--text-primary)', margin:0 }}>Tough Day</p>
+                  <p style={{ fontFamily:'var(--font-body)', color:'var(--text-secondary)', margin:0 }}>No catches today. Come back tomorrow!</p>
+                </div>
+              )}
               {/* Snowball wrap-up — always visible at session end */}
               <MascotQuip
                 mascot="snowball"
-                line={getSnowballResultLine(playerData?.streak?.count ?? 0, sessionCatches)}
+                line={getSnowballResultLine(playerData?.streak?.count ?? 0, sessionCatches.filter(Boolean))}
                 size={110}
               />
             </div>
