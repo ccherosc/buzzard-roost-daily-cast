@@ -1,6 +1,10 @@
 // scripts/strip-mascot-bg.mjs
-// Flood-fills from all 4 corners to remove white/near-white backgrounds
-// from mascot PNGs, replacing them with true alpha transparency.
+// Flood-fills from all edges to remove the uniform dark-gray background
+// from mascot PNGs, replacing it with true alpha transparency.
+//
+// Algorithm: sample the top-left corner to get the background color,
+// then flood-fill from ALL edge pixels removing any pixel within
+// TOLERANCE Euclidean distance of that background color.
 import { Jimp } from 'jimp';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -8,7 +12,7 @@ import { fileURLToPath } from 'url';
 const __dir = dirname(fileURLToPath(import.meta.url));
 const ASSETS = join(__dir, '..', 'assets', 'reference');
 
-const THRESHOLD = 210; // 0-255: pixels >= this in all channels are "background"
+const TOLERANCE = 38; // Euclidean RGB distance — background is ~(52,52,50), character colors much warmer
 
 async function stripBg(filename) {
   const filePath = join(ASSETS, filename);
@@ -17,9 +21,13 @@ async function stripBg(filename) {
   const img = await Jimp.read(filePath);
   const { width, height, data } = img.bitmap;
 
+  // Sample background color from top-left corner pixel
+  const bgR = data[0], bgG = data[1], bgB = data[2];
+  console.log(`  Background color sampled: rgb(${bgR}, ${bgG}, ${bgB})`);
+
   const visited = new Uint8Array(width * height);
 
-  // Seed from ALL edge pixels (not just 4 corners) so nothing gets missed
+  // Seed from ALL edge pixels
   const queue = [];
   for (let x = 0; x < width; x++) {
     queue.push(x);                        // top edge
@@ -41,9 +49,12 @@ async function stripBg(filename) {
 
     const r = data[p], g = data[p + 1], b = data[p + 2];
 
-    // If near-white, make transparent and spread to neighbours
-    if (r >= THRESHOLD && g >= THRESHOLD && b >= THRESHOLD) {
-      data[p + 3] = 0; // alpha = 0
+    // Euclidean distance from background color
+    const dr = r - bgR, dg = g - bgG, db = b - bgB;
+    const dist = Math.sqrt(dr * dr + dg * dg + db * db);
+
+    if (dist <= TOLERANCE) {
+      data[p + 3] = 0; // make transparent
       if (x > 0)          queue.push(idx - 1);
       if (x < width - 1)  queue.push(idx + 1);
       if (y > 0)          queue.push(idx - width);
@@ -51,8 +62,15 @@ async function stripBg(filename) {
     }
   }
 
+  // Count how many pixels were made transparent
+  let transparent = 0;
+  for (let i = 0; i < width * height; i++) {
+    if (data[i * 4 + 3] === 0) transparent++;
+  }
+  const pct = (transparent / (width * height) * 100).toFixed(1);
+
   await img.write(filePath);
-  console.log(`  ✓ Saved ${filename} (${width}×${height})`);
+  console.log(`  ✓ Saved ${filename} (${width}×${height}), removed ${pct}% as background`);
 }
 
 await stripBg('Mascot_TModel2.png');

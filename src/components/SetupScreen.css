@@ -318,17 +318,18 @@
   border-top: 8px solid var(--bg-surface);
 }
 
-/* TModel2 sprite — full figure visible, grounded at the bottom */
+/* TModel2 — head at top of wrap, feet clipped at bottom */
 .ss__mascot-wrap {
   width: 100%;
-  height: 280px;
+  height: 220px;
+  overflow: hidden;
   display: flex;
   justify-content: center;
-  align-items: flex-end;
+  align-items: flex-start;
 }
 
 .ss__mascot-sprite {
-  height: 270px;
+  height: 300px;
   width: auto;
   object-fit: contain;
 }
