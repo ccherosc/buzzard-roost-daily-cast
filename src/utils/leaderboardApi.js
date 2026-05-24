@@ -30,6 +30,7 @@ export function getDisplayName() {
  */
 export async function submitCatch(result) {
   try {
+    if (!supabase) return;                     // no credentials configured
     const playerId    = getPlayerId();
     const displayName = getDisplayName();
     const now         = new Date().toISOString();
@@ -62,6 +63,7 @@ export async function submitCatch(result) {
  */
 export async function fetchLeaderboard(period) {
   try {
+    if (!supabase) return null;                // no credentials → treat as error
     const { data, error } = await supabase.rpc('get_leaderboard', { period });
     if (error) return null;   // null = fetch failed
     return data ?? [];        // [] = successful fetch, no data
@@ -83,6 +85,7 @@ export async function renamePlayer(displayName) {
   if (!/^[\w\s]+$/.test(trimmed)) return false;   // \w = [a-zA-Z0-9_], \s = spaces
 
   try {
+    if (!supabase) return false;               // no credentials configured
     const playerId = getPlayerId();
     const { error } = await supabase.from('players').upsert(
       { player_id: playerId, display_name: trimmed, last_seen_at: new Date().toISOString() },
