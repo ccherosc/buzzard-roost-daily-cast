@@ -13,7 +13,7 @@ import './SetupScreen.css';
 import { SPOTS, LURES, CAST_STYLES } from '../data/gameData.js';
 import { computeWeights } from '../utils/gameLogic.js';
 import { getSpotQuip, getSpotLureQuip, getSetupQuip } from '../utils/mascotLines.js';
-import MascotQuip from './MascotQuip.jsx';
+import tmodel2Src from '../../assets/reference/mascot-tmodel.png';
 
 // Risk level label based on epic+legendary fraction of the odds
 function riskLabel(riskFrac) {
@@ -176,8 +176,13 @@ export default function SetupScreen({ castNumber, lockedSpot, lockedLure, onComp
         </button>
       </div>
 
-      {/* ── TModel2 — full body left, speech bubble right ── */}
-      <MascotQuip mascot="tmodel2" line={quip} size={160} />
+      {/* ── TModel2 — full body left, commercial speech bubble right ── */}
+      <div className="ss__quip-row">
+        <img className="ss__quip-sprite" src={tmodel2Src} alt="T-Model2" />
+        <div className="ss__quip-bubble">
+          <p className="ss__quip-text">{quip}</p>
+        </div>
+      </div>
     </div>
   );
 }

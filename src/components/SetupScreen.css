@@ -263,4 +263,51 @@
   box-shadow: none !important;
 }
 
-/* TModel2 mascot now uses MascotQuip component (sprite left, bubble right) */
+/* ── TModel2 quip row: full-body sprite left, commercial bubble right ── */
+.ss__quip-row {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4) var(--space-4);
+}
+
+/* Full body — PNG is 417×598; at 190px height = ~132px wide, nothing clipped */
+.ss__quip-sprite {
+  flex-shrink: 0;
+  height: 190px;
+  width: auto;
+  display: block;
+}
+
+/* Commercial speech bubble */
+.ss__quip-bubble {
+  flex: 1;
+  position: relative;
+  background: #f7f0e0;
+  border-radius: 18px;
+  padding: 13px 16px 13px 15px;
+  /* drop-shadow applies to the whole shape including the ::before tail */
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.45));
+  min-width: 0;
+}
+
+/* Tail pointing left toward T-Model2 */
+.ss__quip-bubble::before {
+  content: '';
+  position: absolute;
+  left: -13px;
+  bottom: 28px;
+  border-top: 9px solid transparent;
+  border-bottom: 9px solid transparent;
+  border-right: 14px solid #f7f0e0;
+}
+
+.ss__quip-text {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-style: italic;
+  font-weight: 500;
+  color: #1c1408;
+  line-height: 1.55;
+  margin: 0;
+}
