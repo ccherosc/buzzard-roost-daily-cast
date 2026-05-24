@@ -266,7 +266,7 @@
 /* ── TModel2 quip row: full-body sprite left, commercial bubble right ── */
 .ss__quip-row {
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: var(--space-3);
   padding: var(--space-2) var(--space-4) var(--space-4);
 }
@@ -291,16 +291,6 @@
   min-width: 0;
 }
 
-/* Tail pointing left toward T-Model2 */
-.ss__quip-bubble::before {
-  content: '';
-  position: absolute;
-  left: -13px;
-  bottom: 28px;
-  border-top: 9px solid transparent;
-  border-bottom: 9px solid transparent;
-  border-right: 14px solid #f7f0e0;
-}
 
 .ss__quip-text {
   font-family: var(--font-body);
