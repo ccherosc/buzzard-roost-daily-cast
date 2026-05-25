@@ -1,6 +1,7 @@
 // src/components/BiteTiming.jsx
 // Wait for the bite, then tap at the right moment to hook it.
-// Layout: Snowball coaching (top) → bobber scene (middle) → instructions (bottom).
+// Layout: Snowball coaching (top) → bobber stage (fixed, middle) → footer (fixed rows, bottom).
+// The bobber stage NEVER changes size — outcome feedback is an absolute overlay inside it.
 import { useRef, useEffect, useState, useCallback } from 'react';
 import './BiteTiming.css';
 import SnowballCoach from './SnowballCoach.jsx';
@@ -75,72 +76,83 @@ export default function BiteTiming({ config, onComplete }) {
     return                                         { expression: 'waiting',    line: "Watch the bobber... patience now." };
   })();
 
+  const isDone = phase === 'hit' || phase === 'miss' || phase === 'late';
+
   return (
     <div
-      className={`bt bt--${phase}`}
+      className="bt"
       onClick={handleHookset}
       role="button" tabIndex={0}
       onKeyDown={e => (e.key === ' ' || e.key === 'Enter') && handleHookset()}
       aria-label="Bite timing — tap when the bobber dips!"
     >
-      {/* TOP — Snowball coaching */}
+      {/* TOP — Snowball coaching (fixed height via SnowballCoach.css) */}
       <SnowballCoach expression={coach.expression} line={coach.line} />
 
-      {/* MIDDLE — bobber scene (waiting + bite phases) */}
-      {(phase === 'waiting' || phase === 'bite') && (
-        <div className="bt__scene-wrap">
-          <div className={`bt__scene ${phase === 'bite' ? 'bt__scene--bite' : ''}`}>
-            <div className="bt__water">
-              <div className={`bt__wave ${phase === 'bite' ? 'bt__wave--fast' : ''}`} />
-              <div className="bt__wave bt__wave--2" />
-            </div>
+      {/* MIDDLE — bobber stage: fixed size, never moves.
+          Outcome feedback overlays inside it so layout stays locked. */}
+      <div className={`bt__stage${phase === 'bite' ? ' bt__stage--bite' : ''}`}>
 
-            {/* Bobber rig: fishing line → float (red top / cream bot) */}
-            <div className={`bt__rig ${phase === 'bite' ? 'bt__rig--down' : ''} ${showCue ? 'bt__rig--cue' : ''}`}>
-              <div className="bt__line" />
-              <div className="bt__float">
-                <div className="bt__float-top" />
-                <div className="bt__float-bot" />
-              </div>
-            </div>
+        {/* Water + waves — always rendered */}
+        <div className="bt__water">
+          <div className={`bt__wave${phase === 'bite' ? ' bt__wave--fast' : ''}`} />
+          <div className="bt__wave bt__wave--2" />
+        </div>
 
-            {phase === 'bite' && <div className="bt__splash" />}
+        {/* Bobber rig — always rendered, animates on bite */}
+        <div className={`bt__rig${phase === 'bite' ? ' bt__rig--down' : ''}${showCue ? ' bt__rig--cue' : ''}`}>
+          <div className="bt__line" />
+          <div className="bt__float">
+            <div className="bt__float-top" />
+            <div className="bt__float-bot" />
           </div>
         </div>
-      )}
 
-      {/* Outcome feedback panels */}
-      {(phase === 'hit' || phase === 'miss' || phase === 'late') && (
-        <div className={`bt__feedback bt__feedback--${phase}`}>
-          <span className="bt__icon">
-            {phase === 'hit' ? '🎣' : phase === 'miss' ? '💨' : '🌊'}
-          </span>
-          <p className="bt__prompt">
-            {phase === 'hit'  ? 'Got it!'    :
-             phase === 'miss' ? 'Too slow!'  : 'Too early!'}
-          </p>
-        </div>
-      )}
+        {/* Bite splash ripple */}
+        {phase === 'bite' && <div className="bt__splash" />}
 
-      {/* BOTTOM — instructions */}
+        {/* Outcome overlay — absolute, covers stage; bobber keeps animating behind */}
+        {isDone && (
+          <div className={`bt__outcome bt__outcome--${phase}`}>
+            <span className="bt__outcome-icon">
+              {phase === 'hit' ? '🎣' : phase === 'miss' ? '💨' : '🌊'}
+            </span>
+            <p className="bt__outcome-text">
+              {phase === 'hit'  ? 'Got it!'    :
+               phase === 'miss' ? 'Too slow!'  : 'Too early!'}
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* BOTTOM — three fixed-height footer rows.
+          Each row always reserves its space; only the content inside changes.
+          This prevents the stage from jumping when text changes length. */}
       <div className="bt__footer">
-        {phase === 'waiting' && (
-          <>
-            <p className="bt__watching">🎣 Watching the bobber…</p>
-            <p className="bt__cta">TAP THE MOMENT IT DIPS!</p>
-            <p className="bt__hint">Tap · Click · Space · Enter</p>
-          </>
-        )}
-        {phase === 'bite' && (
-          <p className="bt__cta bt__cta--now">🪝 HOOKSET — NOW!</p>
-        )}
-        {phase === 'hit' && (
-          <p className="bt__sub">
-            {quality >= 0.75 ? 'Perfect hookset!' : quality >= 0.4 ? 'Solid hookset!' : 'Hooked!'}
-          </p>
-        )}
-        {phase === 'miss' && <p className="bt__sub">The fish got away with the bait</p>}
-        {phase === 'late' && <p className="bt__sub">Wait for the bobber to dip first</p>}
+
+        {/* Row 1: context label — "Watching the bobber" or empty */}
+        <div className="bt__frow bt__frow--label">
+          {phase === 'waiting' && <p className="bt__watching">🎣 Watching the bobber…</p>}
+        </div>
+
+        {/* Row 2: primary CTA — changes between states */}
+        <div className="bt__frow bt__frow--cta">
+          {phase === 'waiting' && <p className="bt__cta">TAP THE MOMENT IT DIPS!</p>}
+          {phase === 'bite'    && <p className="bt__cta bt__cta--now">🪝 HOOKSET — NOW!</p>}
+          {phase === 'hit'     && (
+            <p className="bt__sub">
+              {quality >= 0.75 ? 'Perfect hookset!' : quality >= 0.4 ? 'Solid hookset!' : 'Hooked!'}
+            </p>
+          )}
+          {phase === 'miss'    && <p className="bt__sub">The fish got away with the bait</p>}
+          {phase === 'late'    && <p className="bt__sub">Wait for the bobber to dip first</p>}
+        </div>
+
+        {/* Row 3: hint — "Tap · Click · Space · Enter" or empty */}
+        <div className="bt__frow bt__frow--hint">
+          {phase === 'waiting' && <p className="bt__hint">Tap · Click · Space · Enter</p>}
+        </div>
+
       </div>
     </div>
   );

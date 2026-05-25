@@ -3,28 +3,22 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   min-height: calc(100dvh - 120px);
-  padding: var(--space-2) 0 var(--space-6);
+  padding: var(--space-2) 0 var(--space-4);
+  gap: var(--space-4);
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
 }
 
-/* ── Scene wrapper — fills middle space ── */
-.bt__scene-wrap {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  padding: 0 var(--space-4);
-  box-sizing: border-box;
-}
-
-/* ── Bobber scene ── */
-.bt__scene {
+/* ── Bobber stage — fixed size, never moves, never resizes ──────────────────
+   All state changes happen INSIDE via the outcome overlay.
+   Do not apply margin, padding, height, transform, or scale based on state. */
+.bt__stage {
+  flex-shrink: 0;
   position: relative;
-  width: 100%;
+  width: calc(100% - var(--space-8));
   max-width: 320px;
   height: 160px;
   background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-card) 100%);
@@ -34,7 +28,8 @@
   transition: box-shadow 0.15s ease;
 }
 
-.bt__scene--bite {
+/* Only glow changes on bite — no size/position change */
+.bt__stage--bite {
   box-shadow: 0 0 0 2px rgba(232,168,76,0.6), 0 0 24px rgba(232,168,76,0.25);
 }
 
@@ -58,12 +53,12 @@
 .bt__wave--2    { top: -2px; opacity: 0.5; animation-delay: 1.5s; }
 .bt__wave--fast { animation-duration: 0.8s; background: rgba(74,124,47,0.30); }
 
-/* ── Bobber rig: fishing line + proper float ── */
-/* Positioned so waterline (72px from bottom) bisects the float */
+/* ── Bobber rig: fishing line + float ── */
+/* bottom: 55px → float center (55+17=72px) exactly at waterline */
 .bt__rig {
   position: absolute;
   left: 50%;
-  bottom: 55px;    /* float center (55+17=72px) = waterline (72px) → perfect split */
+  bottom: 55px;
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
@@ -80,7 +75,7 @@
   box-shadow: 0 0 10px rgba(232,168,76,0.7), 0 2px 4px rgba(0,0,0,0.4);
 }
 
-/* Fishing line — tapers slightly */
+/* Fishing line */
 .bt__line {
   width: 2px;
   height: 52px;
@@ -91,7 +86,7 @@
   );
 }
 
-/* Bobber float — single oval, red top / cream bottom split at waterline */
+/* Float — oval, red top / cream bottom split at waterline */
 .bt__float {
   width: 20px;
   height: 34px;
@@ -123,40 +118,59 @@
   animation: ripple 0.6s ease-out forwards;
 }
 
-/* ── Outcome feedback (hit / miss / late) ── */
-.bt__feedback {
-  flex: 1;
+/* ── Outcome overlay — sits inside .bt__stage, never affects layout ── */
+.bt__outcome {
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--space-3);
+  gap: var(--space-2);
+  background: rgba(8, 12, 20, 0.88);
   animation: popIn 0.4s ease forwards;
 }
-.bt__icon { font-size: 3.2rem; }
 
-.bt__prompt {
+.bt__outcome-icon { font-size: 2.8rem; }
+
+.bt__outcome-text {
   font-family: var(--font-display);
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   letter-spacing: 2px;
   text-transform: uppercase;
   text-align: center;
   margin: 0;
 }
-.bt__feedback--hit  .bt__prompt { color: var(--brand-accent); }
-.bt__feedback--miss .bt__prompt { color: #ef4444; }
-.bt__feedback--late .bt__prompt { color: var(--text-muted); }
+.bt__outcome--hit  .bt__outcome-text { color: var(--brand-accent); }
+.bt__outcome--miss .bt__outcome-text { color: #ef4444; }
+.bt__outcome--late .bt__outcome-text { color: var(--text-muted); }
 
-/* ── Bottom instructions ── */
+/* ── Footer — three fixed-height rows, never causes layout shift ────────────
+   Each row reserves its height even when empty.
+   Content inside changes; the rows themselves never move. */
 .bt__footer {
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-4) var(--space-4) 0;
+  width: 100%;
+  padding: 0 var(--space-4);
   text-align: center;
 }
 
+.bt__frow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+/* Heights sized to fit the tallest content that appears in each row */
+.bt__frow--label { min-height: 1.8rem; }   /* "🎣 Watching the bobber…" */
+.bt__frow--cta   { min-height: 3.2rem; }   /* "TAP THE MOMENT IT DIPS!" / "HOOKSET NOW!" */
+.bt__frow--hint  { min-height: 1.4rem; }   /* "Tap · Click · Space · Enter" */
+
+/* ── Text styles ── */
 .bt__watching {
   font-family: var(--font-display);
   font-size: 1.1rem;
@@ -166,7 +180,6 @@
   margin: 0;
 }
 
-/* "TAP THE MOMENT IT DIPS!" — the main call-to-action */
 .bt__cta {
   font-family: var(--font-display);
   font-size: 1.65rem;
