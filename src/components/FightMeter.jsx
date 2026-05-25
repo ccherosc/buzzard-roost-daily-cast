@@ -85,12 +85,12 @@ export default function FightMeter({
   const [comboActive,  setComboActive]  = useState(false);
   const [perfectFlash, setPerfectFlash] = useState(false);
   const [counterFlash, setCounterFlash] = useState(false);
-  const [fishProgress, setFishProgress] = useState(0);   // 0=deep, 1=surface
 
   // ── Refs ──────────────────────────────────────────────────────────────────
   const cursorRef         = useRef(null);
   const timeFillRef       = useRef(null);
-  const fishProgressRef   = useRef(0);
+  const depthFishRef      = useRef(null);   // direct DOM handle for fish depth emoji
+  const fishProgressRef   = useRef(0);      // 0=deep, 1=surface (no React state — DOM only)
   const indicatorRef      = useRef(BAND_CENTER_START);
   const bandCenterRef     = useRef(BAND_CENTER_START);
   const lastTickRef       = useRef(null);
@@ -111,6 +111,15 @@ export default function FightMeter({
     cursorRef.current.style.left = `${Math.max(0, Math.min(100, value * 100)).toFixed(2)}%`;
   }, []);
 
+  // Direct DOM update for depth fish — same pattern as moveCursor.
+  // bottom:N% on position:absolute is parent-height-relative (CSS spec).
+  // No React state — avoids transition-restart flicker at 60fps.
+  const moveDepthFish = useCallback((progress) => {
+    if (!depthFishRef.current) return;
+    const pct = Math.max(2, Math.min(88, progress * 88));
+    depthFishRef.current.style.bottom = `${pct.toFixed(1)}%`;
+  }, []);
+
   const setTimeFill = useCallback((fraction) => {
     if (timeFillRef.current) {
       timeFillRef.current.style.width = `${(fraction * 100).toFixed(1)}%`;
@@ -129,11 +138,11 @@ export default function FightMeter({
       : 0;
     if (outcome === 'won') {
       fishProgressRef.current = 1.0;
-      setFishProgress(1.0);
+      moveDepthFish(1.0);
     }
     setPhase(outcome);
     setTimeout(() => onComplete({ quality, outcome }), 900);
-  }, [onComplete]);
+  }, [onComplete, moveDepthFish]);
 
   // ── Fire a surge ─────────────────────────────────────────────────────────
   const fireSurge = useCallback((amount) => {
@@ -143,7 +152,7 @@ export default function FightMeter({
     setIndicator(indicatorRef.current);
     // Fish dives slightly on each surge
     fishProgressRef.current = Math.max(0, fishProgressRef.current - 0.07);
-    setFishProgress(fishProgressRef.current);
+    moveDepthFish(fishProgressRef.current);
     surgeTimestampRef.current = Date.now();
     setSurging(true);
     setTimeout(() => { if (!doneRef.current) setSurging(false); }, 500);
@@ -163,7 +172,7 @@ export default function FightMeter({
         moveCursor(indicatorRef.current);
         setIndicator(indicatorRef.current);
         fishProgressRef.current = Math.max(0, fishProgressRef.current - 0.05);
-        setFishProgress(fishProgressRef.current);
+        moveDepthFish(fishProgressRef.current);
         surgeTimestampRef.current = Date.now();
         setSurging(true);
         setTimeout(() => { if (!doneRef.current) setSurging(false); }, 400);
@@ -174,7 +183,7 @@ export default function FightMeter({
         }
       }, delay);
     }
-  }, [BAND_JUMP, BAND_HALF, BUFFER, rarity, moveCursor]);
+  }, [BAND_JUMP, BAND_HALF, BUFFER, rarity, moveCursor, moveDepthFish]);
 
   // ── Surge scheduler ───────────────────────────────────────────────────────
   const scheduleSurge = useCallback(() => {
@@ -229,7 +238,7 @@ export default function FightMeter({
       fishProgressRef.current = Math.max(0, Math.min(1,
         fishProgressRef.current + (inSafe ? FISH_RISE_RATE : FISH_SINK_RATE) * dt
       ));
-      setFishProgress(fishProgressRef.current);
+      moveDepthFish(fishProgressRef.current);
 
       if (indicatorRef.current <= breakAt)  { finish('broke');   return; }
       if (indicatorRef.current >= escapeAt) { finish('escaped'); return; }
@@ -243,7 +252,7 @@ export default function FightMeter({
       cancelAnimationFrame(rafRef.current);
       clearTimeout(surgeRef.current);
     };
-  }, [finish, scheduleSurge, moveCursor, setTimeFill,
+  }, [finish, scheduleSurge, moveCursor, moveDepthFish, setTimeFill,
       cfg.FIGHT_DURATION_MS, cfg.DRIFT_RATE, BAND_HALF, BUFFER, BAND_DRIFT_RATE]);
 
   // ── Tap handler ───────────────────────────────────────────────────────────
@@ -320,9 +329,6 @@ export default function FightMeter({
     return                          { expression: 'reeling',    line: "Steady... keep the dot in the green!" };
   })();
 
-  // Fish depth display: 0% = bottom of track (deep), 85% = near top (surface)
-  const fishPct = `${Math.max(2, fishProgress * 85).toFixed(1)}%`;
-
   return (
     <div
       className={`fm${surging ? ' fm--surge' : ''}${panicMode ? ' fm--panic' : ''} fm--${phase}`}
@@ -343,12 +349,10 @@ export default function FightMeter({
 
       {phase === 'fighting' && (
         <>
-          {/* Real-time event message */}
-          {msg && (
-            <div className="fm__messages">
-              <p className={`fm__msg ${msg.cls}`}>{msg.text}</p>
-            </div>
-          )}
+          {/* Real-time event message — always rendered to prevent layout shift */}
+          <div className="fm__messages">
+            {msg && <p className={`fm__msg ${msg.cls}`}>{msg.text}</p>}
+          </div>
 
           {/* Time bar */}
           <div className="fm__time-bar">
@@ -386,7 +390,7 @@ export default function FightMeter({
             <div className="fm__depth-v">
               <span className="fm__dv-lbl">🌊</span>
               <div className="fm__dv-track">
-                <span className="fm__dv-fish" style={{ bottom: fishPct }}>🐟</span>
+                <span className="fm__dv-fish" ref={depthFishRef}>🐟</span>
               </div>
               <span className="fm__dv-lbl">↓</span>
             </div>

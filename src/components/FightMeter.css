@@ -209,11 +209,10 @@
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  bottom: 5%;   /* JS sets this */
+  bottom: 5%;   /* JS sets this via direct DOM — no transition (avoids RAF flicker) */
   font-size: 0.95rem;
   line-height: 1;
   filter: drop-shadow(0 0 4px rgba(100,180,255,0.7));
-  transition: bottom 0.4s ease;
 }
 
 /* ── Bottom instructions ─────────────────────────────────────────────────── */
