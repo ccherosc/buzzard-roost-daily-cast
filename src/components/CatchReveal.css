@@ -102,6 +102,9 @@
 }
 .cr__fish-emoji { font-size: 5rem; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5)); }
 
+/* Per-fish overrides — bump up compact/round fish that have extra headroom */
+.cr__fish-img--sunfish { max-width: 90%; max-height: 135px; }
+
 /* ── Name ─────────────────────────────────────────────── */
 .cr__name {
   font-family: var(--font-display);

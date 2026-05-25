@@ -47,7 +47,7 @@ export default function CatchReveal({ result, castNumber, totalCasts, onContinue
 
             <div className={`cr__fish-wrap cr__fish-wrap--${result.rarity}`}>
               {fishImg
-                ? <img className="cr__fish-img" src={fishImg} alt={result.fishName} />
+                ? <img className={`cr__fish-img cr__fish-img--${result.fishId}`} src={fishImg} alt={result.fishName} />
                 : <span className="cr__fish-emoji" role="img" aria-label={result.fishName}>{result.emoji}</span>
               }
             </div>
