@@ -94,8 +94,8 @@
 .cr__fish-wrap--uncommon  { box-shadow: var(--glow-uncommon); }
 
 .cr__fish-img {
-  max-width: 100%;
-  max-height: 148px;
+  max-width: 85%;
+  max-height: 126px;
   width: auto; height: auto;
   object-fit: contain;
   filter: drop-shadow(0 6px 20px rgba(0,0,0,0.6));
