@@ -41,9 +41,12 @@ const CLUSTER = {
 
 const BAND_CENTER_START = 0.40;
 
-// Fish progress rates (per ms): rises in safe zone, sinks outside
-const FISH_RISE_RATE =  0.00010;
-const FISH_SINK_RATE = -0.00006;
+// Fish progress rates (per ms): rises in safe zone, sinks outside.
+// Calibrated so a good player (2 avg surges, mostly in-zone) reaches the surface
+// just as the 8-second timer expires. 0.000145 × 8000ms ≈ 1.16; minus ~0.16
+// from surge knockdowns = ~1.0 at the buzzer.
+const FISH_RISE_RATE =  0.000145;
+const FISH_SINK_RATE = -0.000070;
 
 export default function FightMeter({
   config,
