@@ -63,7 +63,7 @@
 .bt__rig {
   position: absolute;
   left: 50%;
-  bottom: 60px;    /* float bottom sits 12px below waterline → partially submerged */
+  bottom: 55px;    /* float center (55+17=72px) = waterline (72px) → perfect split */
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;

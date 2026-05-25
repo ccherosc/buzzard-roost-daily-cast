@@ -9,7 +9,7 @@ const RARITY_LABELS = {
   epic: 'Epic', legendary: 'Legendary',
 };
 
-export default function ResultCard({ result, newBadges = [], buildChallengeUrl }) {
+export default function ResultCard({ result, allCatches = [], newBadges = [], buildChallengeUrl }) {
   const [flipped,       setFlipped]       = useState(false);
   const [couponVisible, setCouponVisible] = useState(false);
   const [shareStatus,   setShareStatus]   = useState('idle'); // idle | copied
@@ -40,9 +40,11 @@ export default function ResultCard({ result, newBadges = [], buildChallengeUrl }
     }
   }
 
+  const multiCatch = allCatches.length > 1;
+
   return (
     <div className="rc">
-      <h2 className="rc__heading">Today's Catch</h2>
+      <h2 className="rc__heading">Today's Catch{multiCatch ? 'es' : ''}</h2>
 
       {/* Performance summary if bonuses were applied */}
       {result.performance && (
@@ -54,43 +56,68 @@ export default function ResultCard({ result, newBadges = [], buildChallengeUrl }
         </div>
       )}
 
-      {/* 3D flip card */}
-      <div className={`rc__flip-wrap ${flipped ? 'rc__flip-wrap--flipped' : ''}`}>
-        <div className="rc__flip">
-          {/* Back face */}
-          <div className="rc__face rc__face--back">
-            <span className="rc__back-eagle">🦅</span>
-            <span className="rc__back-brand">Buzzard Roost</span>
-            <span className="rc__back-q">?</span>
-          </div>
-          {/* Front face */}
-          <div className={`rc__face rc__face--front rc__face--${result.rarity}`}>
-            <span className={`rc__rarity-badge rc__rarity-badge--${result.rarity}`}>
-              ★ {RARITY_LABELS[result.rarity].toUpperCase()}
-            </span>
-            {getFishImage(result.fishId)
-              ? <img className="rc__fish-img" src={getFishImage(result.fishId)} alt={result.fishName} />
-              : <span className="rc__emoji" role="img" aria-label={result.fishName}>{result.emoji}</span>
-            }
-            <h3 className="rc__name">{result.fishName}</h3>
-            <p  className="rc__flavor"><em>{result.flavor}</em></p>
-            <div className="rc__stats">
-              <div className="rc__stat">
-                <span className="rc__stat-label">Weight</span>
-                <span className="rc__stat-value">{result.weight} lbs</span>
+      {/* ── Multi-catch row (2 or 3 catches) ── */}
+      {multiCatch && (
+        <div className="rc__catches">
+          {allCatches.map((c, i) => {
+            const isBest = c.points === result.points;
+            return (
+              <div key={i} className={`rc__catch-mini rc__catch-mini--${c.rarity}${isBest ? ' rc__catch-mini--best' : ''}`}>
+                {isBest && <span className="rc__catch-best-label">⭐ Best</span>}
+                <span className={`rc__rarity-badge rc__rarity-badge--${c.rarity}`}>
+                  ★ {RARITY_LABELS[c.rarity].toUpperCase()}
+                </span>
+                {getFishImage(c.fishId)
+                  ? <img className={`rc__catch-fish rc__catch-fish--${c.fishId}`} src={getFishImage(c.fishId)} alt={c.fishName} />
+                  : <span className="rc__emoji" role="img" aria-label={c.fishName}>{c.emoji}</span>
+                }
+                <span className="rc__catch-name-sm">{c.fishName}</span>
+                <span className="rc__catch-stats-sm">{c.weight} lbs · {c.points.toLocaleString()} pts</span>
               </div>
-              <div className="rc__stat-divider" />
-              <div className="rc__stat">
-                <span className="rc__stat-label">Points</span>
-                <span className="rc__stat-value">{result.points.toLocaleString()}</span>
-              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* ── Single-catch flip card (only when 1 catch) ── */}
+      {!multiCatch && (
+        <div className={`rc__flip-wrap ${flipped ? 'rc__flip-wrap--flipped' : ''}`}>
+          <div className="rc__flip">
+            {/* Back face */}
+            <div className="rc__face rc__face--back">
+              <span className="rc__back-eagle">🦅</span>
+              <span className="rc__back-brand">Buzzard Roost</span>
+              <span className="rc__back-q">?</span>
             </div>
-            {SCARCITY_COPY[result.rarity] && (
-              <p className="rc__scarcity">{SCARCITY_COPY[result.rarity]}</p>
-            )}
+            {/* Front face */}
+            <div className={`rc__face rc__face--front rc__face--${result.rarity}`}>
+              <span className={`rc__rarity-badge rc__rarity-badge--${result.rarity}`}>
+                ★ {RARITY_LABELS[result.rarity].toUpperCase()}
+              </span>
+              {getFishImage(result.fishId)
+                ? <img className="rc__fish-img" src={getFishImage(result.fishId)} alt={result.fishName} />
+                : <span className="rc__emoji" role="img" aria-label={result.fishName}>{result.emoji}</span>
+              }
+              <h3 className="rc__name">{result.fishName}</h3>
+              <p  className="rc__flavor"><em>{result.flavor}</em></p>
+              <div className="rc__stats">
+                <div className="rc__stat">
+                  <span className="rc__stat-label">Weight</span>
+                  <span className="rc__stat-value">{result.weight} lbs</span>
+                </div>
+                <div className="rc__stat-divider" />
+                <div className="rc__stat">
+                  <span className="rc__stat-label">Points</span>
+                  <span className="rc__stat-value">{result.points.toLocaleString()}</span>
+                </div>
+              </div>
+              {SCARCITY_COPY[result.rarity] && (
+                <p className="rc__scarcity">{SCARCITY_COPY[result.rarity]}</p>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Coupon */}
       {couponVisible && (

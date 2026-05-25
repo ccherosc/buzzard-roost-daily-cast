@@ -120,13 +120,80 @@
 
 .rc__emoji { font-size: 5rem; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5)); }
 
+/* Single-catch flip card fish — portrait images, explicit height */
 .rc__fish-img {
-  max-width: 200px;
-  max-height: 110px;
+  height: 110px;
   width: auto;
-  height: auto;
-  object-fit: contain;
+  max-width: 90%;
   filter: drop-shadow(0 4px 18px rgba(0,0,0,0.55));
+}
+
+/* ── Multi-catch row ──────────────────────────────────── */
+.rc__catches {
+  display: flex;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.rc__catch-mini {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-2);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card-raised);
+  border: 1px solid var(--border-card);
+  position: relative;
+  min-width: 0;
+  animation: popIn 0.4s ease both;
+}
+.rc__catch-mini:nth-child(2) { animation-delay: 0.1s; }
+.rc__catch-mini:nth-child(3) { animation-delay: 0.2s; }
+
+.rc__catch-mini--legendary { border-color: rgba(245,158,11,0.5); box-shadow: var(--glow-legendary); }
+.rc__catch-mini--epic      { border-color: rgba(168,85,247,0.5); box-shadow: var(--glow-epic); }
+.rc__catch-mini--rare      { border-color: rgba(59,130,246,0.5); box-shadow: var(--glow-rare); }
+.rc__catch-mini--uncommon  { border-color: rgba(34,197,94,0.4); }
+.rc__catch-mini--best      { outline: 2px solid rgba(244,196,48,0.6); }
+
+.rc__catch-best-label {
+  font-family: var(--font-display);
+  font-size: 0.55rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--brand-accent);
+  background: rgba(244,196,48,0.12);
+  border: 1px solid rgba(244,196,48,0.3);
+  padding: 2px 6px;
+  border-radius: var(--radius-full);
+}
+
+/* Portrait fish images in mini-cards */
+.rc__catch-fish {
+  height: 80px;
+  width: auto;
+  max-width: 90%;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
+}
+.rc__catch-fish--sunfish { height: 88px; }
+.rc__catch-fish--walleye { height: 68px; }
+
+.rc__catch-name-sm {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: center;
+  line-height: 1.2;
+}
+.rc__catch-stats-sm {
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+  text-align: center;
 }
 
 .rc__name {

@@ -168,6 +168,7 @@ export default function App() {
                 <>
                   <ResultCard
                     result={bestResult}
+                    allCatches={sessionCatches.filter(Boolean)}
                     newBadges={newBadges}
                     buildChallengeUrl={buildChallengeUrl}
                   />
