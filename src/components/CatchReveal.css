@@ -82,10 +82,9 @@
   width: 100%;
   max-width: 340px;
   height: 170px;
-  padding: 0 var(--space-4);
-  box-sizing: border-box;
   border-radius: var(--radius-lg);
   background: rgba(0,0,0,0.25);
+  overflow: hidden;   /* safety clip */
   animation: catchFloat 1.8s ease-in-out infinite;
 }
 .cr__fish-wrap--legendary { box-shadow: var(--glow-legendary); }
@@ -93,18 +92,21 @@
 .cr__fish-wrap--rare      { box-shadow: var(--glow-rare); }
 .cr__fish-wrap--uncommon  { box-shadow: var(--glow-uncommon); }
 
+/* Fish images are portrait (tall/narrow). Use explicit height — not max-height —
+   so the constraint is always applied. Width is auto (computed from aspect ratio).
+   max-width: 92% prevents any wide fish from touching the frame edge.          */
 .cr__fish-img {
-  max-width: 85%;
-  max-height: 126px;
-  width: auto; height: auto;
-  object-fit: contain;
+  display: block;
+  height: 144px;      /* 85% of 170px wrap */
+  width: auto;
+  max-width: 92%;
   filter: drop-shadow(0 6px 20px rgba(0,0,0,0.6));
 }
 .cr__fish-emoji { font-size: 5rem; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5)); }
 
-/* Per-fish overrides — adjust individual fish that need more or less room */
-.cr__fish-img--sunfish  { max-width: 90%; max-height: 135px; }
-.cr__fish-img--walleye  { max-width: 75%; max-height: 113px; }
+/* Per-fish overrides — change height only */
+.cr__fish-img--sunfish { height: 153px; }  /* 90% of wrap */
+.cr__fish-img--walleye { height: 127px; }  /* 75% of wrap */
 
 /* ── Name ─────────────────────────────────────────────── */
 .cr__name {
