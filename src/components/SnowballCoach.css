@@ -6,6 +6,10 @@
   padding: var(--space-2) var(--space-3) var(--space-2);
   width: 100%;
   box-sizing: border-box;
+  /* Fixed height — prevents layout shifts when coaching text changes length */
+  height: 108px;
+  flex-shrink: 0;
+  overflow: hidden;
 }
 
 .sc__face {
@@ -24,6 +28,7 @@
   position: relative;
   display: flex;
   align-items: center;
+  overflow: hidden;   /* clip long lines — height is fixed by parent */
 }
 
 /* Speech tail pointing left toward Snowball's face */
